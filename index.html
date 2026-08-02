@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin</title>
+<title>Basket Elite Gabin V10.3</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -229,35 +229,101 @@ function render(){
  ${section('🌙 Soir – Abdos / mobilité',d.evening,'e')}
  <div class="card"><h3>🎯 Scores par exercice</h3>${scores}<div class="hero"><div class="metric"><span>Total réussis</span><b id="totalMade">0</b></div><div class="metric"><span>Total tentés</span><b id="totalAtt">0</b></div><div class="metric"><span>Réussite</span><b id="totalPct">—</b></div></div></div>
  <div class="card"><h3>🧠 Bilan du jour</h3>
- <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}" oninput="localStorage.setItem('fat'+idx,this.value)"></div>
- <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}" oninput="localStorage.setItem('confidence'+idx,this.value)"></div>
- <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}" oninput="localStorage.setItem('sleep'+idx,this.value)"></div>
- <label>Ma meilleure action</label><textarea id="win" rows="2" oninput="localStorage.setItem('win'+idx,this.value)">${localStorage.getItem('win'+idx)||''}</textarea>
- <label>Ce que j'améliore demain</label><textarea id="next" rows="2" oninput="localStorage.setItem('next'+idx,this.value)">${localStorage.getItem('next'+idx)||''}</textarea>
- <p class="small">✅ Chaque saisie est enregistrée immédiatement.</p><button class="good" style="margin-top:8px" onclick="saveDay()">VALIDER LA JOURNÉE</button></div>`;
+ <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}" oninput="localStorage.setItem('fat'+idx,this.value);writeSnapshot()"></div>
+ <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}" oninput="localStorage.setItem('confidence'+idx,this.value);writeSnapshot()"></div>
+ <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}" oninput="localStorage.setItem('sleep'+idx,this.value);writeSnapshot()"></div>
+ <label>Ma meilleure action</label><textarea id="win" rows="2" oninput="localStorage.setItem('win'+idx,this.value);writeSnapshot()">${localStorage.getItem('win'+idx)||''}</textarea>
+ <label>Ce que j'améliore demain</label><textarea id="next" rows="2" oninput="localStorage.setItem('next'+idx,this.value);writeSnapshot()">${localStorage.getItem('next'+idx)||''}</textarea>
+ <p id="saveStatus" class="small">✅ Sauvegarde automatique active.</p>
+<div class="grid2" style="margin-top:8px">
+<button onclick="saveDraft()">💾 SAUVEGARDER</button>
+<button class="good" onclick="validateDay()">✅ VALIDER LA JOURNÉE</button>
+</div>
+<p class="small">Sauvegarder = brouillon modifiable. Valider = journée terminée et ajoutée au journal.</p></div>`;
  updateTotals();
 }
 
 
+
+const STATE_KEY='basket_gabin_state_v103';
+
+function collectState(){
+  const state={version:'10.3',savedAt:new Date().toISOString(),values:{}};
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(k && k!==STATE_KEY) state.values[k]=localStorage.getItem(k);
+  }
+  return state;
+}
+
+function writeSnapshot(){
+  try{
+    localStorage.setItem(STATE_KEY,JSON.stringify(collectState()));
+    updateSaveStatus('Brouillon sauvegardé');
+  }catch(e){
+    updateSaveStatus('Erreur de sauvegarde');
+  }
+}
+
+function restoreSnapshot(){
+  try{
+    const raw=localStorage.getItem(STATE_KEY);
+    if(!raw)return;
+    const state=JSON.parse(raw);
+    Object.entries(state.values||{}).forEach(([k,v])=>{
+      if(localStorage.getItem(k)===null)localStorage.setItem(k,v);
+    });
+  }catch(e){}
+}
+
+function updateSaveStatus(text){
+  const el=document.getElementById('saveStatus');
+  if(el) el.textContent='✅ '+text+' • '+new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+}
+
 function saveMadeField(gi,ii,value){
   localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,value);
+  localStorage.setItem('draftSaved'+idx,'1');
+  writeSnapshot();
 }
+
 function saveAttField(gi,ii,value){
   localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,value);
+  localStorage.setItem('draftSaved'+idx,'1');
+  writeSnapshot();
 }
+
 function saveAllVisibleInputs(){
   const d=days[idx];
-  d.scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{
-    const made=document.getElementById('made_'+gi+'_'+ii);
-    const att=document.getElementById('att_'+gi+'_'+ii);
-    if(made) localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,made.value);
-    if(att) localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,att.value);
-  }));
+  if(d && d.scoreDetails){
+    d.scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{
+      const made=document.getElementById('made_'+gi+'_'+ii);
+      const att=document.getElementById('att_'+gi+'_'+ii);
+      if(made)localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,made.value);
+      if(att)localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,att.value);
+    }));
+  }
   ['fat','confidence','sleep','win','next'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) localStorage.setItem(id+idx,el.value);
+    if(el)localStorage.setItem(id+idx,el.value);
   });
+  localStorage.setItem('draftSaved'+idx,'1');
+  writeSnapshot();
 }
+
+function saveDraft(){
+  saveAllVisibleInputs();
+  alert('Brouillon sauvegardé. Tu peux quitter l’application et reprendre plus tard.');
+}
+
+async function requestPersistentStorage(){
+  try{
+    if(navigator.storage && navigator.storage.persist){
+      await navigator.storage.persist();
+    }
+  }catch(e){}
+}
+
 
 function updateTotals(){let m=0,a=0;days[idx].scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{m+=Number((document.getElementById('made_'+gi+'_'+ii)||{}).value||0);a+=Number((document.getElementById('att_'+gi+'_'+ii)||{}).value||0)}));document.getElementById('totalMade').textContent=m;document.getElementById('totalAtt').textContent=a;document.getElementById('totalPct').textContent=a?Math.round(m/a*100)+' %':'—'}
 
@@ -267,30 +333,14 @@ function openDay(i){saveAllVisibleInputs();idx=i;render();show('home');scrollTo(
 function renderDays(){document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{const c=count(i);return `<button onclick="openDay(${i})"><b>${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`}).join('')}
 
 
-function persistVisibleForm(){
- const d=days[idx];
- d.score_groups.forEach((g,gi)=>g.items.forEach((_,ii)=>{
-   const m=document.getElementById('m_'+gi+'_'+ii),a=document.getElementById('a_'+gi+'_'+ii);
-   if(m)localStorage.setItem('v10m_'+idx+'_'+gi+'_'+ii,m.value);
-   if(a)localStorage.setItem('v10a_'+idx+'_'+gi+'_'+ii,a.value);
- }));
- [['fat','fat'],['conf','conf'],['sleep','sleep'],['note','note']].forEach(([id,k])=>{
-   const el=document.getElementById(id);if(el)localStorage.setItem('v10'+k+'_'+idx,el.value);
- });
-}
-function saveScoreField(gi,ii,type,value){
- localStorage.setItem('v10'+type+'_'+idx+'_'+gi+'_'+ii,value);
- localStorage.setItem('v10draft_'+idx,'1');
-}
-function saveDailyField(field,value){
- localStorage.setItem('v10'+field+'_'+idx,value);
- localStorage.setItem('v10draft_'+idx,'1');
-}
 
-function saveDay(){
- days[idx].scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,document.getElementById('made_'+gi+'_'+ii).value);localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,document.getElementById('att_'+gi+'_'+ii).value)}));
- ['fat','confidence','sleep','win','next'].forEach(id=>localStorage.setItem(id+idx,document.getElementById(id).value));
- localStorage.setItem('journalSaved'+idx,'1');render();alert('Journée enregistrée');
+function validateDay(){
+ saveAllVisibleInputs();
+ localStorage.setItem('journalSaved'+idx,'1');
+ localStorage.setItem('validatedAt'+idx,new Date().toISOString());
+ writeSnapshot();
+ render();
+ alert('Journée validée et ajoutée au journal.');
 }
 
 function renderJournal(){
@@ -395,12 +445,12 @@ function openMatchMode(){document.getElementById('matchMode').classList.remove('
 function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data[k]=localStorage.getItem(k)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='basket-gabin-sauvegarde.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
 
-render();renderDays();loadTests();showStartup();
+restoreSnapshot();render();renderDays();loadTests();showStartup();requestPersistentStorage();
 
 window.addEventListener('pagehide',saveAllVisibleInputs);
 window.addEventListener('beforeunload',saveAllVisibleInputs);
 document.addEventListener('visibilitychange',()=>{
-  if(document.visibilityState==='hidden') saveAllVisibleInputs();
+  if(document.visibilityState==='hidden'){saveAllVisibleInputs();writeSnapshot();}
 });
 
 </script>
