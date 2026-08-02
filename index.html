@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.3.1 Firebase</title>
+<title>Basket Elite Gabin V12.4.1 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -38,6 +38,19 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .cloud-box{max-width:520px;margin:6vh auto;background:#101827;border:1px solid #334155;border-radius:18px;padding:18px}
 .cloud-box input{margin:6px 0 12px}.cloud-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .cloud-note{background:#08101d;border-left:4px solid #38bdf8;border-radius:10px;padding:10px;margin:10px 0}
+
+
+.stat-kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:10px 0}
+.stat-kpi{background:#08101d;border:1px solid #334155;border-radius:14px;padding:12px}
+.stat-kpi .value{font-size:1.55rem;font-weight:900;color:#f59e0b}
+.stat-kpi .label{font-size:.76rem;color:#94a3b8;margin-top:3px}
+.stats-switch{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}
+.stats-filter{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.stats-filter button{white-space:nowrap;flex:0 0 auto}
+.stat-table{width:100%;border-collapse:collapse;font-size:.78rem}
+.stat-table th,.stat-table td{padding:8px 5px;border-bottom:1px solid #263244;text-align:right}
+.stat-table th:first-child,.stat-table td:first-child{text-align:left}
+.stat-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
 
 </style>
 </head>
@@ -129,36 +142,76 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <section id="days" class="hidden"><div class="card"><h2>📅 Planning complet</h2><div id="dayGrid" class="days"></div></div></section>
 
+
 <section id="scores" class="hidden">
-<div class="card"><h2>📊 Tableau de bord</h2>
-<div class="grid2">
-<div class="stat"><b id="statShots">0</b>Tirs tentés</div>
-<div class="stat"><b id="statMade">0</b>Tirs réussis</div>
-<div class="stat"><b id="statPct">—</b>Réussite globale</div>
-<div class="stat"><b id="statBestPct">—</b>Meilleure séance</div>
-<div class="stat"><b id="statSleep">—</b>Sommeil moyen</div>
-<div class="stat"><b id="statSleep10">—</b>Nuits ≥ 10 h</div>
-<div class="stat"><b id="statConfidence">—</b>Confiance moyenne</div>
-<div class="stat"><b id="statCompletion">—</b>Programme réalisé</div><div class="stat"><b id="statStreak">0</b>Jours validés</div><div class="stat"><b id="statJournal">0</b>Entrées journal</div>
-</div><p class="small" id="trendMessage" style="margin-top:12px"></p></div>
-<div class="card">
-<h3>🏆 Mes badges</h3>
-<div id="badgesGrid" class="grid2"></div>
-</div>
-<div class="card"><h3>Réussite au tir</h3><canvas id="chartShot"></canvas></div>
-<div class="card"><h3>Lancers francs</h3><canvas id="chartFT"></canvas></div>
-<div class="card"><h3>Sommeil</h3><canvas id="chartSleep"></canvas></div>
-<div class="card"><h3>Confiance</h3><canvas id="chartConfidence"></canvas></div><div class="card"><h3>Fatigue</h3><canvas id="chartFat"></canvas></div><div class="card"><h3>Progression 10 m</h3><canvas id="chart10"></canvas><p class="small">Une courbe qui descend signifie un meilleur chrono.</p></div><div class="card"><h3>Progression 20 m</h3><canvas id="chart20"></canvas></div><div class="card"><h3>Progression détente</h3><canvas id="chartJump"></canvas></div>
-<div class="card"><h3>Tests physiques</h3>
-<div class="metric"><label>9 août – 10 m</label><input id="t9_10" type="number" step=".01"></div>
-<div class="metric"><label>16 août – 10 m</label><input id="t16_10" type="number" step=".01"></div>
-<div class="metric"><label>9 août – 20 m</label><input id="t9_20" type="number" step=".01"></div>
-<div class="metric"><label>16 août – 20 m</label><input id="t16_20" type="number" step=".01"></div>
-<div class="metric"><label>9 août – détente</label><input id="t9_jump" type="number" step=".1"></div>
-<div class="metric"><label>16 août – détente</label><input id="t16_jump" type="number" step=".1"></div>
-<button class="primary" onclick="saveTests()">Enregistrer</button>
-</div>
-<div class="card"><h3>💾 Sauvegarde</h3><button onclick="exportData()">Exporter mes données</button><input id="importFile" type="file" accept=".json" onchange="importData(event)"></div>
+  <div class="hero">
+    <h2>📊 Statistiques</h2>
+    <p class="quote">Séparer la préparation d’été et les matchs pour lire la progression clairement.</p>
+  </div>
+
+  <div class="stats-switch">
+    <button id="statsSummerBtn" class="active" onclick="showStatsView('summer')">☀️ Prépa été</button>
+    <button id="statsMatchesBtn" onclick="showStatsView('matches')">🏆 Matchs</button>
+  </div>
+
+  <div id="statsSummerView">
+    <div class="card">
+      <div class="stat-section-title">
+        <div>
+          <h3>Préparation été 2026</h3>
+          <p class="small">Données du programme jusqu’au 16 août inclus.</p>
+        </div>
+        <span class="pill">Archive au 17 août</span>
+      </div>
+      <div id="summerStatsKpis" class="stat-kpis"></div>
+    </div>
+
+    <div class="card">
+      <h3>🏀 Technique basket</h3>
+      <div id="summerShootStats"></div>
+    </div>
+
+    <div class="card">
+      <h3>💪 Charge et régularité</h3>
+      <div id="summerTrainingStats"></div>
+    </div>
+
+    <div class="card">
+      <h3>📈 Évolution quotidienne</h3>
+      <canvas id="summerProgressChart" height="190"></canvas>
+    </div>
+  </div>
+
+  <div id="statsMatchesView" class="hidden">
+    <div class="stats-filter">
+      <button id="matchFilterAll" class="active" onclick="setMatchStatsFilter('all')">Tous</button>
+      <button id="matchFilterRegion" onclick="setMatchStatsFilter('region')">Région 1</button>
+      <button id="matchFilterElite" onclick="setMatchStatsFilter('elite')">Élite</button>
+    </div>
+
+    <div class="card">
+      <div class="stat-section-title">
+        <div>
+          <h3 id="matchStatsTitle">Tous les matchs</h3>
+          <p class="small">Seuls les matchs validés sont comptabilisés.</p>
+        </div>
+      </div>
+      <div id="matchStatsKpis" class="stat-kpis"></div>
+    </div>
+
+    <div class="card">
+      <h3>🎯 Adresse et moyennes</h3>
+      <div id="matchShootingStats"></div>
+    </div>
+
+    <div class="card">
+      <h3>📋 Match par match</h3>
+      <div style="overflow-x:auto"><table class="stat-table">
+        <thead><tr><th>Match</th><th>Équipe</th><th>Pts</th><th>Reb</th><th>PD</th><th>Int</th></tr></thead>
+        <tbody id="matchStatsRows"></tbody>
+      </table></div>
+    </div>
+  </div>
 </section>
 
 <section id="journal" class="hidden">
@@ -276,7 +329,7 @@ function show(id){saveAllVisibleInputs();
  sections.forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===id));
  if(id==='training')renderTraining();
  if(id==='matches')renderMatches();
- if(id==='scores')setTimeout(drawAll,40);
+ if(id==='scores')setTimeout(()=>{renderSummerStats();renderMatchStats();},40);
  if(id==='journal')renderJournal();
 }
 
@@ -333,8 +386,15 @@ function validateMatch(id){
 }
 function matchForm(m){
  const id=m.id;
+ if(!matchValue(id,'competition'))setAppValue('match_'+id+'_competition','region');
  const n=(f,p='0')=>`<input type="number" placeholder="${p}" value="${matchValue(id,f)}" oninput="saveMatchField('${id}','${f}',this.value)">`;
  return `<div id="mf_${id}" class="match-form hidden">
+ <label>Équipe jouée</label>
+ <select onchange="saveMatchField('${id}','competition',this.value)">
+   <option value="">Choisir</option>
+   <option value="region" ${matchValue(id,'competition')==='region'?'selected':''}>Région 1 / U15 M2</option>
+   <option value="elite" ${matchValue(id,'competition')==='elite'?'selected':''}>U15 Élite</option>
+ </select>
  <div class="grid2"><div><label>Score Bruguières</label>${n('scoreFor')}</div><div><label>Score adversaire</label>${n('scoreAgainst')}</div></div>
  <div class="grid2"><div><label>Temps de jeu estimé</label>${n('minutes')}</div><div><label>Points</label>${n('points')}</div></div>
  <h3 style="margin-top:14px">Adresse</h3>
@@ -432,7 +492,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v1231';
+const STATE_KEY='basket_gabin_state_v1241';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -487,7 +547,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.3',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.4',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function writeSnapshot(){
@@ -547,7 +607,7 @@ function mergeStates(localState,remoteState){
     }
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.3',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.4',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -645,6 +705,207 @@ function draw(id,labels,values,invert=false,suffix=''){
 }
 
 function allShotData(){return days.map((d,i)=>{let m=0,a=0;d.scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{m+=Number(localStorage.getItem('v10made_'+i+'_'+gi+'_'+ii)||0);a+=Number(localStorage.getItem('v10att_'+i+'_'+gi+'_'+ii)||0)}));return pct(m,a)})}
+
+let activeMatchStatsFilter='all';
+
+function showStatsView(view){
+  document.getElementById('statsSummerView').classList.toggle('hidden',view!=='summer');
+  document.getElementById('statsMatchesView').classList.toggle('hidden',view!=='matches');
+  document.getElementById('statsSummerBtn').classList.toggle('active',view==='summer');
+  document.getElementById('statsMatchesBtn').classList.toggle('active',view==='matches');
+  if(view==='summer')renderSummerStats();
+  else renderMatchStats();
+}
+
+function numVal(key){
+  const v=parseFloat(localStorage.getItem(key)||'0');
+  return Number.isFinite(v)?v:0;
+}
+function pct(made,att){
+  return att>0?Math.round(made*1000/att)/10:0;
+}
+function avg(total,count){
+  return count>0?Math.round(total*10/count)/10:0;
+}
+function statKpi(value,label){
+  return `<div class="stat-kpi"><div class="value">${value}</div><div class="label">${label}</div></div>`;
+}
+function summerDayIndexes(){
+  // The summer program ends on 16 August; current program indexes are retained as the source.
+  return days.map((d,i)=>({d,i})).filter(x=>x.i<=14);
+}
+function readDayShotTotals(i){
+  let made=0,att=0;
+  for(let gi=0;gi<days[i].groups.length;gi++){
+    for(let ii=0;ii<days[i].groups[gi].items.length;ii++){
+      made+=numVal('v10made_'+i+'_'+gi+'_'+ii);
+      att+=numVal('v10att_'+i+'_'+gi+'_'+ii);
+    }
+  }
+  return {made,att};
+}
+function countCompletedBlocks(i){
+  let done=0,total=0;
+  for(let gi=0;gi<days[i].groups.length;gi++){
+    for(let ii=0;ii<days[i].groups[gi].items.length;ii++){
+      total++;
+      if(localStorage.getItem(key(i,gi,ii))==='1')done++;
+    }
+  }
+  return {done,total};
+}
+function renderSummerStats(){
+  const list=summerDayIndexes();
+  let totalMade=0,totalAtt=0,doneBlocks=0,totalBlocks=0,validated=0;
+  let stretchMin=0,absMin=0;
+  const daily=[];
+
+  list.forEach(({i})=>{
+    const s=readDayShotTotals(i);
+    const b=countCompletedBlocks(i);
+    totalMade+=s.made; totalAtt+=s.att;
+    doneBlocks+=b.done; totalBlocks+=b.total;
+    if(localStorage.getItem('validatedAt'+i))validated++;
+    stretchMin+=numVal('freeStretchMin'+i);
+    absMin+=numVal('freeAbsMin'+i);
+    daily.push({label:'J'+(i+1),value:b.total?Math.round(b.done*100/b.total):0});
+  });
+
+  document.getElementById('summerStatsKpis').innerHTML=
+    statKpi(validated,'Journées validées')+
+    statKpi(doneBlocks+' / '+totalBlocks,'Blocs terminés')+
+    statKpi(totalMade+' / '+totalAtt,'Tirs réussis / tentés')+
+    statKpi(pct(totalMade,totalAtt)+' %','Adresse globale');
+
+  document.getElementById('summerShootStats').innerHTML=`
+    <div class="stat-kpis">
+      ${statKpi(totalMade,'Tirs réussis')}
+      ${statKpi(totalAtt,'Tirs tentés')}
+      ${statKpi(pct(totalMade,totalAtt)+' %','Pourcentage')}
+      ${statKpi(totalAtt-totalMade,'Tirs manqués')}
+    </div>`;
+
+  document.getElementById('summerTrainingStats').innerHTML=`
+    <div class="stat-kpis">
+      ${statKpi(doneBlocks,'Blocs effectués')}
+      ${statKpi(totalBlocks?Math.round(doneBlocks*100/totalBlocks)+' %':'0 %','Régularité')}
+      ${statKpi(stretchMin+' min','Étirements libres')}
+      ${statKpi(absMin+' min','Abdos / gainage')}
+    </div>`;
+
+  drawSimpleProgressChart('summerProgressChart',daily);
+}
+
+function drawSimpleProgressChart(canvasId,data){
+  const c=document.getElementById(canvasId);
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const w=c.clientWidth||320,h=190;
+  c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+  ctx.strokeStyle='#334155';ctx.lineWidth=1;
+  for(let y=0;y<=4;y++){
+    const py=15+y*(h-40)/4;
+    ctx.beginPath();ctx.moveTo(30,py);ctx.lineTo(w-10,py);ctx.stroke();
+  }
+  if(!data.length)return;
+  const step=(w-50)/Math.max(1,data.length-1);
+  ctx.strokeStyle='#f59e0b';ctx.lineWidth=3;ctx.beginPath();
+  data.forEach((p,i)=>{
+    const x=30+i*step;
+    const y=15+(100-p.value)*(h-40)/100;
+    if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.stroke();
+  ctx.fillStyle='#f59e0b';
+  data.forEach((p,i)=>{
+    const x=30+i*step;
+    const y=15+(100-p.value)*(h-40)/100;
+    ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+  });
+}
+
+function setMatchStatsFilter(filter){
+  activeMatchStatsFilter=filter;
+  ['all','region','elite'].forEach(f=>{
+    const id=f==='all'?'matchFilterAll':f==='region'?'matchFilterRegion':'matchFilterElite';
+    document.getElementById(id).classList.toggle('active',f===filter);
+  });
+  renderMatchStats();
+}
+
+function getValidatedMatchStats(){
+  return seasonMatches.map(m=>{
+    const id=m.id;
+    if(localStorage.getItem('match_'+id+'_validated')!=='1')return null;
+    return {
+      id,
+      date:m.date,
+      opponent:matchOpponent(m),
+      competition:matchValue(id,'competition')||'region',
+      minutes:numVal('match_'+id+'_minutes'),
+      points:numVal('match_'+id+'_points'),
+      rebounds:numVal('match_'+id+'_rebounds'),
+      assists:numVal('match_'+id+'_assists'),
+      steals:numVal('match_'+id+'_steals'),
+      blocks:numVal('match_'+id+'_blocks'),
+      fouls:numVal('match_'+id+'_fouls'),
+      turnovers:numVal('match_'+id+'_turnovers'),
+      ftMade:numVal('match_'+id+'_ftMade'),
+      ftAtt:numVal('match_'+id+'_ftAtt'),
+      twoMade:numVal('match_'+id+'_twoMade'),
+      twoAtt:numVal('match_'+id+'_twoAtt'),
+      threeMade:numVal('match_'+id+'_threeMade'),
+      threeAtt:numVal('match_'+id+'_threeAtt'),
+      scoreFor:numVal('match_'+id+'_scoreFor'),
+      scoreAgainst:numVal('match_'+id+'_scoreAgainst')
+    };
+  }).filter(Boolean);
+}
+
+function renderMatchStats(){
+  const all=getValidatedMatchStats();
+  const matches=all.filter(m=>activeMatchStatsFilter==='all'||m.competition===activeMatchStatsFilter);
+  const count=matches.length;
+  const sum=f=>matches.reduce((a,m)=>a+(m[f]||0),0);
+  const wins=matches.filter(m=>m.scoreFor>m.scoreAgainst).length;
+  const title=activeMatchStatsFilter==='region'?'Région 1 / U15 M2':
+              activeMatchStatsFilter==='elite'?'U15 Élite':'Tous les matchs';
+  document.getElementById('matchStatsTitle').textContent=title;
+
+  document.getElementById('matchStatsKpis').innerHTML=
+    statKpi(count,'Matchs validés')+
+    statKpi(wins,'Victoires')+
+    statKpi(avg(sum('points'),count),'Points / match')+
+    statKpi(avg(sum('minutes'),count),'Minutes / match')+
+    statKpi(avg(sum('rebounds'),count),'Rebonds / match')+
+    statKpi(avg(sum('assists'),count),'Passes / match')+
+    statKpi(avg(sum('steals'),count),'Interceptions / match')+
+    statKpi(avg(sum('turnovers'),count),'Balles perdues / match');
+
+  const ftM=sum('ftMade'),ftA=sum('ftAtt');
+  const twoM=sum('twoMade'),twoA=sum('twoAtt');
+  const threeM=sum('threeMade'),threeA=sum('threeAtt');
+  document.getElementById('matchShootingStats').innerHTML=`
+    <div class="stat-kpis">
+      ${statKpi(ftM+' / '+ftA,'Lancers francs')}
+      ${statKpi(pct(ftM,ftA)+' %','% lancers francs')}
+      ${statKpi(twoM+' / '+twoA,'Tirs à 2 points')}
+      ${statKpi(pct(twoM,twoA)+' %','% à 2 points')}
+      ${statKpi(threeM+' / '+threeA,'Tirs à 3 points')}
+      ${statKpi(pct(threeM,threeA)+' %','% à 3 points')}
+    </div>`;
+
+  document.getElementById('matchStatsRows').innerHTML=matches.length?matches.map(m=>`
+    <tr>
+      <td>${formatDateFR(m.date)}<br><span class="small">${m.opponent}</span></td>
+      <td>${m.competition==='elite'?'Élite':'R1'}</td>
+      <td>${m.points}</td><td>${m.rebounds}</td><td>${m.assists}</td><td>${m.steals}</td>
+    </tr>`).join(''):`<tr><td colspan="6" style="text-align:center;color:#94a3b8">Aucun match validé dans cette catégorie.</td></tr>`;
+}
+
+
 function drawAll(){
  draw('chartShot',days.map((_,i)=>i+2),allShotData(),false,'%');
  draw('chartFT',days.map((_,i)=>i+2),days.map((d,i)=>{let m=0,a=0;d.basket.forEach((x,j)=>{if(x[0].toLowerCase().includes('lancer')){m+=Number(localStorage.getItem('made_'+i+'_'+j)||0);a+=Number(localStorage.getItem('att_'+i+'_'+j)||0)}});return pct(m,a)}),false,'%');
@@ -828,6 +1089,7 @@ function applyRemoteState(remote){
   render();renderDays();loadTests();
   if(!document.getElementById('matches').classList.contains('hidden'))renderMatches();
   if(!document.getElementById('training').classList.contains('hidden'))renderTraining();
+  if(!document.getElementById('scores').classList.contains('hidden')){renderSummerStats();renderMatchStats();}
 }
 
 async function uploadLocalState(force=false){
