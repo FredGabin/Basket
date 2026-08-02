@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.2.1 Firebase</title>
+<title>Basket Elite Gabin V12.3.1 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -432,7 +432,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v1221';
+const STATE_KEY='basket_gabin_state_v1231';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -487,7 +487,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.2',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.3',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function writeSnapshot(){
@@ -547,7 +547,7 @@ function mergeStates(localState,remoteState){
     }
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.2',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.3',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -717,8 +717,16 @@ function renderBadges(){
 
 function openCloudPanel(){document.getElementById('cloudPanel').classList.remove('hidden');if(window.refreshCloudPanel)window.refreshCloudPanel()}
 function closeCloudPanel(){document.getElementById('cloudPanel').classList.add('hidden')}
-function cloudLogin(){if(window.firebaseFamilyLogin)window.firebaseFamilyLogin()}
-function cloudCreateAccount(){if(window.firebaseFamilyCreate)window.firebaseFamilyCreate()}
+function cloudLogin(){
+  if(window.firebaseFamilyLogin)return window.firebaseFamilyLogin();
+  const el=document.getElementById('cloudMessage');
+  if(el){el.textContent='Firebase est encore en cours de chargement. Réessaie dans quelques secondes.';el.style.color='#fbbf24';}
+}
+function cloudCreateAccount(){
+  if(window.firebaseFamilyCreate)return window.firebaseFamilyCreate();
+  const el=document.getElementById('cloudMessage');
+  if(el){el.textContent='Firebase est encore en cours de chargement. Réessaie dans quelques secondes.';el.style.color='#fbbf24';}
+}
 function cloudLogout(){if(window.firebaseFamilyLogout)window.firebaseFamilyLogout()}
 function cloudSyncNow(){if(window.firebaseSyncNow)window.firebaseSyncNow()}
 
@@ -856,7 +864,12 @@ window.queueCloudSync=function(){
     console.error(e);setCloudUI('err','Cloud en attente');cloudMessage('Synchronisation reportée : '+e.message,true);
   }),700);
 };
-window.firebaseSyncNow=()=>{saveAllVisibleInputs();return uploadLocalState(true)}.then(()=>cloudMessage('Fusion terminée : les champs les plus récents ont été conservés.')).catch(e=>cloudMessage(e.message,true));
+window.firebaseSyncNow=()=>{
+  saveAllVisibleInputs();
+  return uploadLocalState(true)
+    .then(()=>cloudMessage('Fusion terminée : les champs les plus récents ont été conservés.'))
+    .catch(e=>cloudMessage(e.message,true));
+};
 
 async function startCloud(uid){
   if(unsubscribeCloud)unsubscribeCloud();
