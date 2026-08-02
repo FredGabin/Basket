@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.1.1 Firebase</title>
+<title>Basket Elite Gabin V12.2.1 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -320,15 +320,15 @@ function matchLocation(m){
 }
 function matchValue(id,field){return localStorage.getItem('match_'+id+'_'+field)||''}
 function saveMatchField(id,field,value){
- localStorage.setItem('match_'+id+'_'+field,value);
+ setAppValue('match_'+id+'_'+field,value);
  writeSnapshot();
 }
 function toggleMatchForm(id){
  document.getElementById('mf_'+id).classList.toggle('hidden');
 }
 function validateMatch(id){
- localStorage.setItem('match_'+id+'_validated','1');
- localStorage.setItem('match_'+id+'_validatedAt',new Date().toISOString());
+ setAppValue('match_'+id+'_validated','1');
+ setAppValue('match_'+id+'_validatedAt',new Date().toISOString());
  writeSnapshot();renderMatches();alert('Match validé et ajouté aux statistiques.');
 }
 function matchForm(m){
@@ -364,8 +364,8 @@ function freeEveningSection(){
  const stretch=localStorage.getItem('freeStretch'+idx)==='1';
  const abs=localStorage.getItem('freeAbs'+idx)==='1';
  return `<div class="card"><h2>🌙 Soir – choix libre</h2>
- <div class="exercise"><label class="check"><input type="checkbox" ${stretch?'checked':''} onchange="localStorage.setItem('freeStretch'+idx,this.checked?'1':'0');writeSnapshot()"><span><b>🧘 Étirements libres</b><br><span class="small">Je choisis les zones dont mon corps a besoin aujourd’hui.</span></span></label><div class="metric"><label>Durée (min)</label><input type="number" value="${localStorage.getItem('freeStretchMin'+idx)||''}" oninput="localStorage.setItem('freeStretchMin'+idx,this.value);writeSnapshot()"></div></div>
- <div class="exercise"><label class="check"><input type="checkbox" ${abs?'checked':''} onchange="localStorage.setItem('freeAbs'+idx,this.checked?'1':'0');writeSnapshot()"><span><b>💪 Abdos / gainage libres</b><br><span class="small">Je choisis mes exercices et je garde une exécution propre.</span></span></label><div class="grid2"><input type="number" placeholder="Durée (min)" value="${localStorage.getItem('freeAbsMin'+idx)||''}" oninput="localStorage.setItem('freeAbsMin'+idx,this.value);writeSnapshot()"><select onchange="localStorage.setItem('freeAbsIntensity'+idx,this.value);writeSnapshot()"><option value="">Intensité</option><option ${localStorage.getItem('freeAbsIntensity'+idx)==='Légère'?'selected':''}>Légère</option><option ${localStorage.getItem('freeAbsIntensity'+idx)==='Moyenne'?'selected':''}>Moyenne</option><option ${localStorage.getItem('freeAbsIntensity'+idx)==='Forte'?'selected':''}>Forte</option></select></div></div>
+ <div class="exercise"><label class="check"><input type="checkbox" ${stretch?'checked':''} onchange="setAppValue('freeStretch'+idx,this.checked?'1':'0');writeSnapshot()"><span><b>🧘 Étirements libres</b><br><span class="small">Je choisis les zones dont mon corps a besoin aujourd’hui.</span></span></label><div class="metric"><label>Durée (min)</label><input type="number" value="${localStorage.getItem('freeStretchMin'+idx)||''}" oninput="setAppValue('freeStretchMin'+idx,this.value);writeSnapshot()"></div></div>
+ <div class="exercise"><label class="check"><input type="checkbox" ${abs?'checked':''} onchange="setAppValue('freeAbs'+idx,this.checked?'1':'0');writeSnapshot()"><span><b>💪 Abdos / gainage libres</b><br><span class="small">Je choisis mes exercices et je garde une exécution propre.</span></span></label><div class="grid2"><input type="number" placeholder="Durée (min)" value="${localStorage.getItem('freeAbsMin'+idx)||''}" oninput="setAppValue('freeAbsMin'+idx,this.value);writeSnapshot()"><select onchange="setAppValue('freeAbsIntensity'+idx,this.value);writeSnapshot()"><option value="">Intensité</option><option ${localStorage.getItem('freeAbsIntensity'+idx)==='Légère'?'selected':''}>Légère</option><option ${localStorage.getItem('freeAbsIntensity'+idx)==='Moyenne'?'selected':''}>Moyenne</option><option ${localStorage.getItem('freeAbsIntensity'+idx)==='Forte'?'selected':''}>Forte</option></select></div></div>
  </div>`;
 }
 
@@ -416,11 +416,11 @@ function render(){
  ${freeEveningSection()}
  <div class="card"><h3>🎯 Scores par exercice</h3>${scores}<div class="hero"><div class="metric"><span>Total réussis</span><b id="totalMade">0</b></div><div class="metric"><span>Total tentés</span><b id="totalAtt">0</b></div><div class="metric"><span>Réussite</span><b id="totalPct">—</b></div></div></div>
  <div class="card"><h3>🧠 Bilan du jour</h3>
- <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}" oninput="localStorage.setItem('fat'+idx,this.value);writeSnapshot()"></div>
- <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}" oninput="localStorage.setItem('confidence'+idx,this.value);writeSnapshot()"></div>
- <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}" oninput="localStorage.setItem('sleep'+idx,this.value);writeSnapshot()"></div>
- <label>Ma meilleure action</label><textarea id="win" rows="2" oninput="localStorage.setItem('win'+idx,this.value);writeSnapshot()">${localStorage.getItem('win'+idx)||''}</textarea>
- <label>Ce que j'améliore demain</label><textarea id="next" rows="2" oninput="localStorage.setItem('next'+idx,this.value);writeSnapshot()">${localStorage.getItem('next'+idx)||''}</textarea>
+ <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}" oninput="setAppValue('fat'+idx,this.value);writeSnapshot()"></div>
+ <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}" oninput="setAppValue('confidence'+idx,this.value);writeSnapshot()"></div>
+ <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}" oninput="setAppValue('sleep'+idx,this.value);writeSnapshot()"></div>
+ <label>Ma meilleure action</label><textarea id="win" rows="2" oninput="setAppValue('win'+idx,this.value);writeSnapshot()">${localStorage.getItem('win'+idx)||''}</textarea>
+ <label>Ce que j'améliore demain</label><textarea id="next" rows="2" oninput="setAppValue('next'+idx,this.value);writeSnapshot()">${localStorage.getItem('next'+idx)||''}</textarea>
  <p id="saveStatus" class="small">✅ Sauvegarde automatique active.</p>
 <div class="grid2" style="margin-top:8px">
 <button onclick="saveDraft()">💾 SAUVEGARDER</button>
@@ -432,38 +432,74 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v121';
+const STATE_KEY='basket_gabin_state_v1221';
+
+
+const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
+let suppressFieldClock=false;
 
 function isAppStorageKey(k){
-  if(!k || k===STATE_KEY)return false;
+  if(!k || k===STATE_KEY || k===FIELD_CLOCK_KEY)return false;
   if(k.startsWith('firebase:') || k.startsWith('firebaseLocalStorage'))return false;
   if(k.startsWith('cloud_'))return false;
   return true;
 }
+
+function readFieldClock(){
+  try{return JSON.parse(localStorage.getItem(FIELD_CLOCK_KEY)||'{}')}catch(e){return {}}
+}
+function writeFieldClock(clock){
+  localStorage.setItem(FIELD_CLOCK_KEY,JSON.stringify(clock||{}));
+}
+function touchField(key,ts=Date.now()){
+  if(!isAppStorageKey(key) || suppressFieldClock)return;
+  const clock=readFieldClock();
+  clock[key]=Math.max(Number(clock[key]||0),Number(ts||Date.now()));
+  writeFieldClock(clock);
+}
+function setAppValue(key,value,ts=Date.now()){
+  suppressFieldClock=true;
+  try{localStorage.setItem(key,String(value));}
+  finally{suppressFieldClock=false;}
+  touchField(key,ts);
+}
+function applyAppValue(key,value,ts){
+  suppressFieldClock=true;
+  try{localStorage.setItem(key,String(value));}
+  finally{suppressFieldClock=false;}
+  const clock=readFieldClock();
+  clock[key]=Math.max(Number(clock[key]||0),Number(ts||0));
+  writeFieldClock(clock);
+}
+
 function readSnapshot(){
   try{return JSON.parse(localStorage.getItem(STATE_KEY)||'null')}catch(e){return null}
 }
+
 function collectState(){
-  const previous=readSnapshot()||{values:{},updated:{}};
-  const now=Date.now();
-  const values={},updated={...(previous.updated||{})};
+  const clock=readFieldClock();
+  const values={},updated={};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
     if(!isAppStorageKey(k))continue;
-    const value=localStorage.getItem(k);
-    values[k]=value;
-    if(previous.values?.[k]!==value || !updated[k])updated[k]=now;
+    values[k]=localStorage.getItem(k);
+    // Legacy values get priority 1 only. They cannot overwrite a genuinely edited field.
+    updated[k]=Number(clock[k]||1);
   }
-  return {version:'12.1',savedAt:new Date(now).toISOString(),values,updated};
+  const latest=Math.max(1,...Object.values(updated));
+  return {version:'12.2',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function writeSnapshot(){
   try{
     const state=collectState();
-    localStorage.setItem(STATE_KEY,JSON.stringify(state));
+    suppressFieldClock=true;
+    try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
+    finally{suppressFieldClock=false;}
     if(window.queueCloudSync)window.queueCloudSync();
     updateSaveStatus('Brouillon sauvegardé');
   }catch(e){
+    console.error(e);
     updateSaveStatus('Erreur de sauvegarde');
   }
 }
@@ -473,9 +509,9 @@ function restoreSnapshot(){
     const state=readSnapshot();
     if(!state)return;
     Object.entries(state.values||{}).forEach(([k,v])=>{
-      if(localStorage.getItem(k)===null)localStorage.setItem(k,v);
+      if(localStorage.getItem(k)===null)applyAppValue(k,v,Number(state.updated?.[k]||1));
     });
-  }catch(e){}
+  }catch(e){console.error(e)}
 }
 
 function mergeStates(localState,remoteState){
@@ -483,14 +519,35 @@ function mergeStates(localState,remoteState){
   const remote=remoteState||{values:{},updated:{}};
   const keys=new Set([...Object.keys(local.values||{}),...Object.keys(remote.values||{})]);
   const values={},updated={};
+
   for(const k of keys){
-    const lt=Number(local.updated?.[k]||0),rt=Number(remote.updated?.[k]||0);
-    if(rt>lt){values[k]=remote.values[k];updated[k]=rt;}
-    else if(lt>0 || local.values?.[k]!==undefined){values[k]=local.values[k];updated[k]=lt||Date.now();}
-    else {values[k]=remote.values[k];updated[k]=rt||Date.now();}
+    const lv=local.values?.[k];
+    const rv=remote.values?.[k];
+    const lt=Number(local.updated?.[k]||0);
+    const rt=Number(remote.updated?.[k]||0);
+
+    if(rt>lt){
+      values[k]=rv;
+      updated[k]=rt;
+    }else if(lt>rt){
+      values[k]=lv;
+      updated[k]=lt;
+    }else{
+      // Equal timestamps: preserve a non-empty value rather than an empty legacy value.
+      const localNonEmpty=lv!==undefined && lv!==null && String(lv)!=='';
+      const remoteNonEmpty=rv!==undefined && rv!==null && String(rv)!=='';
+      if(localNonEmpty && !remoteNonEmpty){
+        values[k]=lv; updated[k]=lt||1;
+      }else if(remoteNonEmpty && !localNonEmpty){
+        values[k]=rv; updated[k]=rt||1;
+      }else{
+        values[k]=lv!==undefined?lv:rv;
+        updated[k]=lt||rt||1;
+      }
+    }
   }
-  const latest=Math.max(0,...Object.values(updated));
-  return {version:'12.1',savedAt:new Date(latest||Date.now()).toISOString(),values,updated};
+  const latest=Math.max(1,...Object.values(updated));
+  return {version:'12.2',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -499,14 +556,14 @@ function updateSaveStatus(text){
 }
 
 function saveMadeField(gi,ii,value){
-  localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,value);
-  localStorage.setItem('draftSaved'+idx,'1');
+  setAppValue('v10made_'+idx+'_'+gi+'_'+ii,value);
+  setAppValue('draftSaved'+idx,'1');
   writeSnapshot();
 }
 
 function saveAttField(gi,ii,value){
-  localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,value);
-  localStorage.setItem('draftSaved'+idx,'1');
+  setAppValue('v10att_'+idx+'_'+gi+'_'+ii,value);
+  setAppValue('draftSaved'+idx,'1');
   writeSnapshot();
 }
 
@@ -516,15 +573,15 @@ function saveAllVisibleInputs(){
     d.scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{
       const made=document.getElementById('made_'+gi+'_'+ii);
       const att=document.getElementById('att_'+gi+'_'+ii);
-      if(made)localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,made.value);
-      if(att)localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,att.value);
+      if(made)setAppValue('v10made_'+idx+'_'+gi+'_'+ii,made.value);
+      if(att)setAppValue('v10att_'+idx+'_'+gi+'_'+ii,att.value);
     }));
   }
   ['fat','confidence','sleep','win','next'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el)localStorage.setItem(id+idx,el.value);
+    if(el)setAppValue(id+idx,el.value);
   });
-  localStorage.setItem('draftSaved'+idx,'1');
+  setAppValue('draftSaved'+idx,'1');
   writeSnapshot();
 }
 
@@ -544,7 +601,7 @@ async function requestPersistentStorage(){
 
 function updateTotals(){let m=0,a=0;days[idx].scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{m+=Number((document.getElementById('made_'+gi+'_'+ii)||{}).value||0);a+=Number((document.getElementById('att_'+gi+'_'+ii)||{}).value||0)}));document.getElementById('totalMade').textContent=m;document.getElementById('totalAtt').textContent=a;document.getElementById('totalPct').textContent=a?Math.round(m/a*100)+' %':'—'}
 
-function toggle(p,j,v){saveAllVisibleInputs();localStorage.setItem(key(idx,p,j),v?'1':'0');render();renderDays()}
+function toggle(p,j,v){saveAllVisibleInputs();setAppValue(key(idx,p,j),v?'1':'0');render();renderDays()}
 function move(n){saveAllVisibleInputs();idx=Math.max(0,Math.min(days.length-1,idx+n));render();scrollTo(0,0)}
 function openDay(i){saveAllVisibleInputs();idx=i;render();show('home');scrollTo(0,0)}
 function renderDays(){document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{const c=count(i);return `<button onclick="openDay(${i})"><b>${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`}).join('')}
@@ -553,8 +610,8 @@ function renderDays(){document.getElementById('dayGrid').innerHTML=days.map((d,i
 
 function validateDay(){
  saveAllVisibleInputs();
- localStorage.setItem('journalSaved'+idx,'1');
- localStorage.setItem('validatedAt'+idx,new Date().toISOString());
+ setAppValue('journalSaved'+idx,'1');
+ setAppValue('validatedAt'+idx,new Date().toISOString());
  writeSnapshot();
  render();
  alert('Journée validée et ajoutée au journal.');
@@ -754,9 +811,11 @@ function applyRemoteState(remote){
     const local=collectState();
     const merged=mergeStates(local,remote);
     Object.entries(merged.values||{}).forEach(([k,v])=>{
-      if(isAppStorageKey(k))localStorage.setItem(k,String(v));
+      if(isAppStorageKey(k))applyAppValue(k,v,Number(merged.updated?.[k]||1));
     });
-    localStorage.setItem(STATE_KEY,JSON.stringify(merged));
+    suppressFieldClock=true;
+    try{localStorage.setItem(STATE_KEY,JSON.stringify(merged));}
+    finally{suppressFieldClock=false;}
   }finally{applyingRemote=false;}
   render();renderDays();loadTests();
   if(!document.getElementById('matches').classList.contains('hidden'))renderMatches();
@@ -770,8 +829,12 @@ async function uploadLocalState(force=false){
   const existing=await getDoc(cloudDocRef(currentUser.uid));
   const remote=existing.exists()?existing.data()?.state:null;
   const state=mergeStates(local,remote);
-  localStorage.setItem(STATE_KEY,JSON.stringify(state));
-  Object.entries(state.values||{}).forEach(([k,v])=>{if(isAppStorageKey(k))localStorage.setItem(k,String(v));});
+  suppressFieldClock=true;
+  try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
+  finally{suppressFieldClock=false;}
+  Object.entries(state.values||{}).forEach(([k,v])=>{
+    if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
+  });
   await setDoc(cloudDocRef(currentUser.uid),{
     ownerUid:currentUser.uid,
     ownerEmail:currentUser.email||'',
@@ -793,7 +856,7 @@ window.queueCloudSync=function(){
     console.error(e);setCloudUI('err','Cloud en attente');cloudMessage('Synchronisation reportée : '+e.message,true);
   }),700);
 };
-window.firebaseSyncNow=()=>uploadLocalState(true).then(()=>cloudMessage('Synchronisation terminée.')).catch(e=>cloudMessage(e.message,true));
+window.firebaseSyncNow=()=>{saveAllVisibleInputs();return uploadLocalState(true)}.then(()=>cloudMessage('Fusion terminée : les champs les plus récents ont été conservés.')).catch(e=>cloudMessage(e.message,true));
 
 async function startCloud(uid){
   if(unsubscribeCloud)unsubscribeCloud();
