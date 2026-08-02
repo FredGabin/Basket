@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.7 Firebase</title>
+<title>Basket Elite Gabin V12.9 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -72,7 +72,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.7</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.9</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -102,7 +102,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <div class="card">
   <h3>💾 Protection des données</h3>
   <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
-  <b>Cloud :</b> synchronisation Firebase dès que le compte familial est connecté.</p>
+  <b>Cloud :</b> envoi et récupération manuels pour éviter tout écrasement.</p>
   <p class="small">Sauvegarder conserve un brouillon. Valider marque une journée ou un match comme terminé.</p>
 </div>
 
@@ -269,22 +269,24 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
       <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V12.7 protection renforcée</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
+      <div class="cloud-note"><b>V12.9 envoi protégé par code</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
-        <button onclick="cloudSyncNow()">🔄 Télécharger / fusionner</button>
+        <button class="primary" onclick="cloudUploadNow()">🔐 Envoyer vers le cloud</button>
+        <button onclick="cloudDownloadNow()">⬇️ Récupérer du cloud</button>
+      </div>
+      <div class="cloud-actions" style="margin-top:8px">
+        <button onclick="cloudRestoreBackup()">🛟 Restaurer sauvegarde</button>
         <button onclick="cloudLogout()">Déconnexion</button>
       </div>
-      <button style="width:100%;margin-top:8px" onclick="cloudRestoreBackup()">🛟 Restaurer la sauvegarde cloud précédente</button>
       <div class="cloud-note">
-        <b>Sécurité V12.7 :</b><br>
-        • une case vide ne peut plus effacer une valeur remplie ;<br>
-        • une sauvegarde cloud précédente est créée avant chaque écriture ;<br><br>
-        <b>Fonctionnement :</b><br>
-        • chaque saisie reste enregistrée localement ;<br>
-        • une copie est envoyée dans Firestore ;<br>
-        • l’autre téléphone reçoit les changements automatiquement.
+        <b>Mode manuel V12.8 :</b><br>
+        • chaque saisie reste enregistrée automatiquement sur le téléphone ;<br>
+        • <b>Envoyer vers le cloud</b> demande le code parent puis copie ce téléphone vers Firebase ;<br>
+        • <b>Récupérer du cloud</b> copie Firebase vers ce téléphone ;<br>
+        • aucune synchronisation automatique ne peut écraser les données.<br><br>
+        <b>Conseil :</b> après une séance, envoyer depuis le téléphone utilisé. Sur l’autre téléphone, récupérer ensuite.
       </div>
     </div>
     <p id="cloudMessage" class="small"></p>
@@ -496,7 +498,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v1271';
+const STATE_KEY='basket_gabin_state_v1291';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -551,7 +553,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.7',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.9',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function writeSnapshot(){
@@ -611,7 +613,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.7',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.9',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -1037,7 +1039,17 @@ function cloudCreateAccount(){
   if(el){el.textContent='Firebase est encore en cours de chargement. Réessaie dans quelques secondes.';el.style.color='#fbbf24';}
 }
 function cloudLogout(){if(window.firebaseFamilyLogout)window.firebaseFamilyLogout()}
-function cloudSyncNow(){if(window.firebaseSyncNow)window.firebaseSyncNow()}
+function cloudUploadNow(){
+  const code=prompt('Code requis pour envoyer vers le cloud :');
+  if(code===null)return;
+  if(code!=='2013'){
+    const el=document.getElementById('cloudMessage');
+    if(el){el.textContent='Code incorrect. Envoi annulé.';el.style.color='#fca5a5';}
+    return;
+  }
+  if(window.firebaseUploadNow)window.firebaseUploadNow();
+}
+function cloudDownloadNow(){if(window.firebaseDownloadNow)window.firebaseDownloadNow()}
 function cloudRestoreBackup(){if(window.firebaseRestoreBackup)window.firebaseRestoreBackup()}
 
 function openMatchMode(){document.getElementById('matchMode').classList.remove('hidden')} function closeMatchMode(){document.getElementById('matchMode').classList.add('hidden')}
@@ -1187,78 +1199,133 @@ async function uploadLocalState(force=false){
 }
 
 window.queueCloudSync=function(){
-  if(!currentUser || applyingRemote)return;
-  clearTimeout(cloudTimer);
-  setCloudUI('sync','À synchroniser…');
-  cloudTimer=setTimeout(()=>uploadLocalState().catch(e=>{
-    console.error(e);setCloudUI('err','Cloud en attente');cloudMessage('Synchronisation reportée : '+e.message,true);
-  }),700);
+  // V12.8: sauvegarde cloud uniquement sur action manuelle.
 };
 
-window.firebaseSyncNow=async()=>{
+window.firebaseUploadNow=async()=>{
+  if(!currentUser)return;
+  if(!confirm('Envoyer les données de ce téléphone vers le cloud ?'))return;
   try{
     saveAllVisibleInputs();
-    setCloudUI('sync','Téléchargement du cloud…');
-    const snap=await getDoc(cloudDocRef(currentUser.uid));
-    if(snap.exists() && snap.data()?.state)applyRemoteState(snap.data().state);
-    await uploadLocalState(true);
-    cloudMessage('Fusion terminée. Une valeur vide ne peut pas effacer une valeur remplie.');
+    setCloudUI('sync','Envoi vers le cloud…');
+
+    const local=collectState();
+    const current=await getDoc(cloudDocRef(currentUser.uid));
+    const previous=current.exists()?current.data()?.state:null;
+
+    if(previous && Object.keys(previous.values||{}).length){
+      await setDoc(cloudBackupRef(currentUser.uid),{
+        ownerUid:currentUser.uid,
+        ownerEmail:currentUser.email||'',
+        app:'Basket Gabin backup',
+        backedUpAt:serverTimestamp(),
+        state:previous
+      },{merge:false});
+    }
+
+    await setDoc(cloudDocRef(currentUser.uid),{
+      ownerUid:currentUser.uid,
+      ownerEmail:currentUser.email||'',
+      app:'Basket Gabin',
+      updatedAt:serverTimestamp(),
+      clientSavedAt:local.savedAt,
+      state:local
+    },{merge:false});
+
+    setCloudUI('ok','Cloud sauvegardé');
+    cloudMessage('Les données de ce téléphone ont été envoyées vers le cloud.');
   }catch(e){
-    cloudMessage(e.message,true);
+    setCloudUI('err','Erreur envoi');
+    cloudMessage('Envoi impossible : '+e.message,true);
+  }
+};
+
+window.firebaseDownloadNow=async()=>{
+  if(!currentUser)return;
+  if(!confirm('Récupérer les données du cloud sur ce téléphone ? Les données locales seront remplacées.'))return;
+  try{
+    setCloudUI('sync','Récupération du cloud…');
+    const snap=await getDoc(cloudDocRef(currentUser.uid));
+    if(!snap.exists() || !snap.data()?.state){
+      cloudMessage('Aucune donnée disponible dans le cloud.',true);
+      setCloudUI('err','Cloud vide');
+      return;
+    }
+
+    const state=snap.data().state;
+    applyingRemote=true;
+    try{
+      Object.entries(state.values||{}).forEach(([k,v])=>{
+        if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
+      });
+      suppressFieldClock=true;
+      try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
+      finally{suppressFieldClock=false;}
+    }finally{
+      applyingRemote=false;
+    }
+
+    restoreSnapshot();
+    render();
+    renderDays();
+    loadTests();
+    if(!document.getElementById('matches')?.classList.contains('hidden'))renderMatches();
+    if(!document.getElementById('training')?.classList.contains('hidden'))renderTraining();
+    if(!document.getElementById('scores')?.classList.contains('hidden')){renderSummerStats();renderMatchStats();}
+
+    setCloudUI('ok','Cloud récupéré');
+    cloudMessage('Les données du cloud ont été copiées sur ce téléphone.');
+  }catch(e){
+    setCloudUI('err','Erreur récupération');
+    cloudMessage('Récupération impossible : '+e.message,true);
   }
 };
 
 window.firebaseRestoreBackup=async()=>{
   if(!currentUser)return;
-  if(!confirm('Restaurer la sauvegarde cloud précédente ? Les valeurs présentes seront fusionnées, pas effacées.'))return;
+  if(!confirm('Restaurer la sauvegarde cloud précédente sur ce téléphone ?'))return;
   try{
     const snap=await getDoc(cloudBackupRef(currentUser.uid));
     if(!snap.exists() || !snap.data()?.state){
       cloudMessage('Aucune sauvegarde cloud précédente disponible.',true);
       return;
     }
-    applyRemoteState(snap.data().state);
-    await uploadLocalState(true);
-    cloudMessage('Sauvegarde précédente restaurée et fusionnée.');
+    const state=snap.data().state;
+    applyingRemote=true;
+    try{
+      Object.entries(state.values||{}).forEach(([k,v])=>{
+        if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
+      });
+      suppressFieldClock=true;
+      try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
+      finally{suppressFieldClock=false;}
+    }finally{
+      applyingRemote=false;
+    }
+    restoreSnapshot(); render(); renderDays(); loadTests();
+    setCloudUI('ok','Sauvegarde restaurée');
+    cloudMessage('La sauvegarde cloud précédente a été restaurée sur ce téléphone.');
   }catch(e){
     cloudMessage('Restauration impossible : '+e.message,true);
   }
 };
 
+
 async function startCloud(uid){
-  if(unsubscribeCloud)unsubscribeCloud();
-  const ref=cloudDocRef(uid);
-  const initial=await getDoc(ref);
-  if(!initial.exists()){
-    await uploadLocalState(true);
+  if(unsubscribeCloud){unsubscribeCloud();unsubscribeCloud=null;}
+  const snap=await getDoc(cloudDocRef(uid));
+  if(snap.exists()){
+    setCloudUI('ok','Cloud disponible');
+    cloudMessage('Cloud disponible. Choisis Envoyer ou Récupérer.');
   }else{
-    const merged=mergeStates(collectState(),initial.data()?.state);
-    applyRemoteState(merged);
-    await setDoc(ref,{ownerUid:currentUser.uid,ownerEmail:currentUser.email||'',app:'Basket Gabin',updatedAt:serverTimestamp(),clientSavedAt:merged.savedAt,state:merged},{merge:true});
+    setCloudUI('','Cloud vide');
+    cloudMessage('Aucune sauvegarde cloud pour le moment.');
   }
-  firstSnapshot=true;
-  unsubscribeCloud=onSnapshot(ref,{includeMetadataChanges:true},snap=>{
-    if(!snap.exists())return;
-    const data=snap.data();
-    const remote=data?.state;
-    if(!remote)return;
-    if(snap.metadata.hasPendingWrites)return;
-    if(firstSnapshot){firstSnapshot=false;return}
-    const before=JSON.stringify(collectState().values||{});
-    applyRemoteState(remote);
-    const after=JSON.stringify(collectState().values||{});
-    if(before!==after){
-      setCloudUI('ok','Cloud reçu');
-      cloudMessage('Données fusionnées depuis l’autre appareil.');
-    }
-  },err=>{
-    console.error(err);setCloudUI('err','Erreur cloud');cloudMessage(err.message,true);
-  });
 }
 
 window.firebaseFamilyLogin=async function(){
-  const email=document.getElementById('cloudEmail').value.trim();
-  const password=document.getElementById('cloudPassword').value;
+  const email=(document.getElementById('cloudEmail')?.value||'').trim();
+  const password=(document.getElementById('cloudPassword')?.value||'');
   cloudMessage('Connexion…');
   try{await signInWithEmailAndPassword(auth,email,password);cloudMessage('Connexion réussie.')}
   catch(e){
@@ -1269,8 +1336,8 @@ window.firebaseFamilyLogin=async function(){
     }
 };
 window.firebaseFamilyCreate=async function(){
-  const email=document.getElementById('cloudEmail').value.trim();
-  const password=document.getElementById('cloudPassword').value;
+  const email=(document.getElementById('cloudEmail')?.value||'').trim();
+  const password=(document.getElementById('cloudPassword')?.value||'');
   if(password.length<6){cloudMessage('Le mot de passe doit contenir au moins 6 caractères.',true);return}
   cloudMessage('Création du compte…');
   try{await createUserWithEmailAndPassword(auth,email,password);cloudMessage('Compte familial créé.')}
