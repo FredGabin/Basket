@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.10 Firebase</title>
+<title>Basket Elite Gabin V13.1 Stable</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -53,10 +53,17 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .stat-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
 
 
-.day-validated{opacity:.48;filter:grayscale(.55)}
-.day-validated::before{content:"✅ JOURNÉE VALIDÉE";display:block;background:#14532d;color:#dcfce7;border:1px solid #22c55e;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:900;text-align:center}
+.day-validated[data-validated="true"]{opacity:.48;filter:grayscale(.55)}
+.day-validated[data-validated="true"]::before{content:"✅ JOURNÉE VALIDÉE";display:block;background:#14532d;color:#dcfce7;border:1px solid #22c55e;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:900;text-align:center}
 .day-button-validated{opacity:.5;filter:grayscale(.7);border-color:#22c55e!important}
 .day-button-current{outline:2px solid #f59e0b;outline-offset:2px}
+
+
+.manual-entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.manual-entry-grid .full{grid-column:1/-1}
+.manual-entry-list{display:grid;gap:8px;margin-top:12px}
+.manual-entry-item{background:#08101d;border:1px solid #334155;border-radius:12px;padding:10px}
+.manual-entry-item b{color:#f59e0b}
 
 </style>
 </head>
@@ -78,7 +85,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.10</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V13.1</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -105,6 +112,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 
 <div id="homeAgenda" class="card"></div>
+<div class="card"><b>🛡️ V13.1 Stable</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
 <div class="card">
   <h3>💾 Protection des données</h3>
   <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
@@ -276,7 +284,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
       <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V12.10 navigation quotidienne</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
+      <div class="cloud-note"><b>V13.1 stable</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -360,6 +368,18 @@ function currentProgramDayIndex(){
   });
   return nearest;
 }
+
+function cleanInvalidValidationMarkers(){
+  days.forEach((_,i)=>{
+    const journal=localStorage.getItem('journalSaved'+i);
+    const timestamp=localStorage.getItem('validatedAt'+i);
+    if(timestamp && journal!=='1'){
+      localStorage.removeItem('validatedAt'+i);
+    }
+  });
+}
+
+cleanInvalidValidationMarkers();
 let idx=currentProgramDayIndex();
 
 
@@ -498,6 +518,98 @@ function renderHomeAgenda(){
  <div class="grid2"><button onclick="show('training')">Voir entraînements</button><button onclick="show('matches')">Voir matchs</button></div>`;
 }
 
+
+function readJsonList(keyName){
+  try{return JSON.parse(localStorage.getItem(keyName)||'[]')}catch(e){return []}
+}
+function writeJsonList(keyName,list){
+  setAppValue(keyName,JSON.stringify(list));
+  writeSnapshot();
+}
+function addStrengthEntry(){
+  const exercise=(document.getElementById('strengthExercise')?.value||'').trim();
+  if(!exercise){alert('Indique un exercice.');return;}
+  const entry={
+    exercise,
+    sets:Number(document.getElementById('strengthSets')?.value||0),
+    reps:Number(document.getElementById('strengthReps')?.value||0),
+    load:Number(document.getElementById('strengthLoad')?.value||0),
+    rpe:Number(document.getElementById('strengthRpe')?.value||0),
+    createdAt:new Date().toISOString()
+  };
+  const keyName='strengthEntries'+idx;
+  const list=readJsonList(keyName);
+  list.push(entry);
+  writeJsonList(keyName,list);
+  renderManualEntries();
+  ['strengthExercise','strengthSets','strengthReps','strengthLoad','strengthRpe'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.value='';
+  });
+}
+function deleteStrengthEntry(i){
+  const keyName='strengthEntries'+idx;
+  const list=readJsonList(keyName);
+  list.splice(i,1);
+  writeJsonList(keyName,list);
+  renderManualEntries();
+}
+function addRunEntry(){
+  const duration=Number(document.getElementById('runDuration')?.value||0);
+  const distance=Number(document.getElementById('runDistance')?.value||0);
+  if(!duration && !distance){alert('Indique au moins une durée ou une distance.');return;}
+  const entry={
+    type:document.getElementById('runType')?.value||'Course',
+    duration,
+    distance,
+    rpe:Number(document.getElementById('runRpe')?.value||0),
+    note:(document.getElementById('runNote')?.value||'').trim(),
+    createdAt:new Date().toISOString()
+  };
+  const keyName='runEntries'+idx;
+  const list=readJsonList(keyName);
+  list.push(entry);
+  writeJsonList(keyName,list);
+  renderManualEntries();
+  ['runDuration','runDistance','runRpe','runNote'].forEach(id=>{
+    const el=document.getElementById(id); if(el)el.value='';
+  });
+}
+function deleteRunEntry(i){
+  const keyName='runEntries'+idx;
+  const list=readJsonList(keyName);
+  list.splice(i,1);
+  writeJsonList(keyName,list);
+  renderManualEntries();
+}
+function renderManualEntries(){
+  const sEl=document.getElementById('strengthEntries');
+  if(sEl){
+    const list=readJsonList('strengthEntries'+idx);
+    sEl.innerHTML=list.length?list.map((e,i)=>`
+      <div class="manual-entry-item">
+        <b>${e.exercise}</b><br>
+        ${e.sets||0} séries × ${e.reps||0} reps
+        ${e.load?` • ${e.load} kg`:''}
+        ${e.rpe?` • intensité ${e.rpe}/10`:''}
+        <button style="float:right" onclick="deleteStrengthEntry(${i})">✕</button>
+      </div>`).join(''):'<div class="small">Aucune séance muscu saisie.</div>';
+  }
+  const rEl=document.getElementById('runEntries');
+  if(rEl){
+    const list=readJsonList('runEntries'+idx);
+    rEl.innerHTML=list.length?list.map((e,i)=>`
+      <div class="manual-entry-item">
+        <b>${e.type}</b><br>
+        ${e.duration?`${e.duration} min`:''}
+        ${e.distance?` • ${e.distance} km`:''}
+        ${e.rpe?` • intensité ${e.rpe}/10`:''}
+        ${e.note?`<br><span class="small">${e.note}</span>`:''}
+        <button style="float:right" onclick="deleteRunEntry(${i})">✕</button>
+      </div>`).join(''):'<div class="small">Aucune séance course saisie.</div>';
+  }
+}
+
+
 function render(){
  const d=days[idx];localStorage.setItem('u15day',idx);
  const qi=Math.floor(Date.now()/86400000)%championQuotes.length;const q=championQuotes[qi];document.getElementById('dailyQuote').textContent='“'+q.text+'”';document.getElementById('dailyAuthor').textContent='— '+q.author;
@@ -515,7 +627,40 @@ function render(){
  <div class="two">${section('🏀 Matin – Basket',d.basket,'b')}${section('💪 Après-midi – Physique',d.physical,'p')}</div>
  ${freeEveningSection()}
  <div class="card"><h3>🎯 Scores par exercice</h3>${scores}<div class="hero"><div class="metric"><span>Total réussis</span><b id="totalMade">0</b></div><div class="metric"><span>Total tentés</span><b id="totalAtt">0</b></div><div class="metric"><span>Réussite</span><b id="totalPct">—</b></div></div></div>
- <div class="card"><h3>🧠 Bilan du jour</h3>
+ 
+<div class="card">
+  <h3>🏋️ Musculation</h3>
+  <div class="manual-entry-grid">
+    <input id="strengthExercise" class="full" placeholder="Exercice (ex. développé, tirage, fentes)">
+    <input id="strengthSets" type="number" min="0" placeholder="Séries">
+    <input id="strengthReps" type="number" min="0" placeholder="Répétitions">
+    <input id="strengthLoad" type="number" min="0" step="0.5" placeholder="Charge kg">
+    <input id="strengthRpe" type="number" min="1" max="10" placeholder="Intensité /10">
+    <button class="primary full" onclick="addStrengthEntry()">+ Ajouter la séance muscu</button>
+  </div>
+  <div id="strengthEntries" class="manual-entry-list"></div>
+</div>
+
+<div class="card">
+  <h3>🏃 Course</h3>
+  <div class="manual-entry-grid">
+    <select id="runType" class="full">
+      <option value="Endurance">Endurance</option>
+      <option value="Fractionné">Fractionné</option>
+      <option value="Sprint">Sprint</option>
+      <option value="Escaliers">Escaliers</option>
+      <option value="Autre">Autre</option>
+    </select>
+    <input id="runDuration" type="number" min="0" placeholder="Durée min">
+    <input id="runDistance" type="number" min="0" step="0.1" placeholder="Distance km">
+    <input id="runRpe" type="number" min="1" max="10" placeholder="Intensité /10">
+    <input id="runNote" placeholder="Note">
+    <button class="primary full" onclick="addRunEntry()">+ Ajouter la séance course</button>
+  </div>
+  <div id="runEntries" class="manual-entry-list"></div>
+</div>
+
+<div class="card"><h3>🧠 Bilan du jour</h3>
  <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}" oninput="setAppValue('fat'+idx,this.value);writeSnapshot()"></div>
  <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}" oninput="setAppValue('confidence'+idx,this.value);writeSnapshot()"></div>
  <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}" oninput="setAppValue('sleep'+idx,this.value);writeSnapshot()"></div>
@@ -527,20 +672,30 @@ function render(){
 <button class="good" onclick="validateDay()">✅ VALIDER LA JOURNÉE</button>
 </div>
 <p class="small">Sauvegarder = brouillon modifiable. Valider = journée terminée et ajoutée au journal.</p></div>`;
- const validated=localStorage.getItem('validatedAt'+idx)!==null;
+ const validated=
+   localStorage.getItem('journalSaved'+idx)==='1' &&
+   Boolean(localStorage.getItem('validatedAt'+idx));
  const hc=document.getElementById('homeContent');
+ hc.dataset.validated=validated?'true':'false';
  hc.classList.toggle('day-validated',validated);
  if(validated){
    hc.querySelectorAll('input,textarea,select,button').forEach(el=>el.disabled=true);
    const status=document.getElementById('saveStatus');
    if(status)status.textContent='✅ Journée validée — saisie verrouillée.';
+   const unlock=document.createElement('button');
+   unlock.textContent='🔓 Corriger / déverrouiller';
+   unlock.style.width='100%';
+   unlock.style.marginTop='10px';
+   unlock.disabled=false;
+   unlock.onclick=unlockCurrentDay;
+   hc.appendChild(unlock);
  }
- updateTotals();renderHomeAgenda();
+ updateTotals();renderManualEntries();renderHomeAgenda();
 }
 
 
 
-const STATE_KEY='basket_gabin_state_v1210';
+const STATE_KEY='basket_gabin_state_v131';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -595,39 +750,28 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.10',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'13.1',savedAt:new Date(latest).toISOString(),values,updated};
 }
+
 
 
 function writeSnapshot(){
+  const savedAt=new Date().toISOString();
   try{
-    // Every field is already stored directly in localStorage by setAppValue().
-    // Store only compact metadata here to avoid quota errors from duplicating the whole database.
-    const meta={version:'12.10',savedAt:new Date().toISOString()};
-    suppressFieldClock=true;
+    localStorage.setItem('basket_gabin_last_local_save',savedAt);
     try{
-      localStorage.setItem(STATE_KEY,JSON.stringify(meta));
-      localStorage.setItem('basket_gabin_last_local_save',meta.savedAt);
-    }finally{suppressFieldClock=false;}
+      localStorage.setItem(STATE_KEY,JSON.stringify({version:'13.1',savedAt}));
+    }catch(metaError){
+      // The actual fields are already saved individually; metadata failure is non-blocking.
+      console.warn('Snapshot metadata skipped',metaError);
+    }
     updateSaveStatus('Brouillon sauvegardé');
   }catch(e){
-    console.error('Local save error',e);
-    // Remove obsolete duplicated snapshots, then retry compact metadata once.
-    try{
-      const stale=[];
-      for(let i=0;i<localStorage.length;i++){
-        const k=localStorage.key(i);
-        if(k && k.startsWith('basket_gabin_state_v') && k!==STATE_KEY)stale.push(k);
-      }
-      stale.forEach(k=>localStorage.removeItem(k));
-      localStorage.setItem(STATE_KEY,JSON.stringify({version:'12.10',savedAt:new Date().toISOString()}));
-      updateSaveStatus('Brouillon sauvegardé');
-    }catch(finalError){
-      console.error(finalError);
-      updateSaveStatus('Erreur de sauvegarde locale');
-    }
+    console.error('Local storage unavailable',e);
+    updateSaveStatus('Sauvegarde locale indisponible');
   }
 }
+
 
 function restoreSnapshot(){
   try{
@@ -672,7 +816,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.10',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'13.1',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -733,13 +877,28 @@ function renderDays(){
  const current=currentProgramDayIndex();
  document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{
    const c=count(i);
-   const validated=localStorage.getItem('validatedAt'+i)!==null;
+   const validated=
+     localStorage.getItem('journalSaved'+i)==='1' &&
+     Boolean(localStorage.getItem('validatedAt'+i));
    const classes=[validated?'day-button-validated':'',i===current?'day-button-current':''].filter(Boolean).join(' ');
    return `<button class="${classes}" onclick="openDay(${i})"><b>${validated?'✅ ':''}${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`;
  }).join('');
 }
 
 
+
+
+function unlockCurrentDay(){
+  const code=prompt('Code parent à 4 chiffres :');
+  if(code===null)return;
+  if(code!=='2013'){alert('Code incorrect.');return;}
+  localStorage.removeItem('journalSaved'+idx);
+  localStorage.removeItem('validatedAt'+idx);
+  writeSnapshot();
+  render();
+  renderDays();
+  alert('Journée déverrouillée.');
+}
 
 function validateDay(){
  if(localStorage.getItem('validatedAt'+idx)){
@@ -830,49 +989,24 @@ function readDayShotTotals(i){
   return {made,att};
 }
 
+
 function countCompletedBlocks(i){
   let done=0,total=0;
-
-  // Count all saved completion keys for the day.
-  for(let n=0;n<localStorage.length;n++){
-    const k=localStorage.key(n);
-    if(!k)continue;
-
-    // Existing completion keys are generated by key(i,p,j).
-    // We detect the current day index anywhere in the standard task key pattern.
-    const isCompletion =
-      k.startsWith('done_'+i+'_') ||
-      k.startsWith('check_'+i+'_') ||
-      k.startsWith('task_'+i+'_') ||
-      k.startsWith('v10done_'+i+'_');
-
-    if(isCompletion){
+  const d=days[i]||{};
+  const groups=[
+    ['b',Array.isArray(d.basket)?d.basket:[]],
+    ['p',Array.isArray(d.physical)?d.physical:[]],
+    ['e',Array.isArray(d.evening)?d.evening:[]]
+  ];
+  groups.forEach(([prefix,items])=>{
+    items.forEach((_,j)=>{
       total++;
-      if(localStorage.getItem(k)==='1')done++;
-    }
-  }
-
-  // Fallback: use the visible day structure when no completion keys exist yet.
-  if(total===0){
-    const d=days[i]||{};
-    const sections=['basket','physical','evening'];
-    sections.forEach(section=>{
-      const arr=Array.isArray(d[section])?d[section]:[];
-      total+=arr.length;
-      arr.forEach((_,j)=>{
-        const candidates=[
-          'done_'+i+'_'+section+'_'+j,
-          'check_'+i+'_'+section+'_'+j,
-          'task_'+i+'_'+section+'_'+j,
-          'v10done_'+i+'_'+section+'_'+j
-        ];
-        if(candidates.some(k=>localStorage.getItem(k)==='1'))done++;
-      });
+      if(localStorage.getItem(key(i,prefix,j))==='1')done++;
     });
-  }
-
+  });
   return {done,total};
 }
+
 
 function renderSummerStats(){
 
@@ -912,6 +1046,8 @@ function renderSummerStats(){
       ${statKpi(totalBlocks?Math.round(doneBlocks*100/totalBlocks)+' %':'0 %','Régularité')}
       ${statKpi(stretchMin+' min','Étirements libres')}
       ${statKpi(absMin+' min','Abdos / gainage')}
+      ${statKpi(list.reduce((n,x)=>n+readJsonList('strengthEntries'+x.i).length,0),'Entrées musculation')}
+      ${statKpi(list.reduce((n,x)=>n+readJsonList('runEntries'+x.i).length,0),'Entrées course')}
     </div>`;
 
   drawSimpleProgressChart('summerProgressChart',daily);
