@@ -30,10 +30,25 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .score{font-size:1.7rem;font-weight:800;color:var(--gold)} canvas{width:100%;height:220px;background:#050a13;border-radius:10px}
 .fullscreen{position:fixed;inset:0;background:linear-gradient(180deg,#020409,#111827);z-index:100;padding:18px;overflow:auto}
 .match-card{background:#101827;border:1px solid #334155;border-radius:16px;padding:14px;margin:10px 0}
-.stat{text-align:center;background:#09111f;border-radius:12px;padding:12px} .stat b{font-size:1.5rem;color:var(--gold);display:block}
+.stat{text-align:center;background:#09111f;border-radius:12px;padding:12px} .stat b{font-size:1.5rem;color:var(--gold);display:block}.badge-card{background:#09111f;border:1px solid #29364c;border-radius:12px;padding:12px;text-align:center}.badge-card.locked{opacity:.38}.badge-icon{font-size:1.8rem}.badge-name{font-weight:800;margin-top:4px}
 </style>
 </head>
 <body>
+
+<div id="startupScreen" class="fullscreen hidden" style="display:flex;align-items:center;justify-content:center">
+  <div style="max-width:620px;width:100%;text-align:center">
+    <div class="small">BASKET ELITE • GABIN</div>
+    <h1 style="font-size:2.4rem;margin:14px 0">AUJOURD'HUI, JE PROGRESSE.</h1>
+    <div class="hero">
+      <div class="small">INSPIRATION DU JOUR</div>
+      <p class="quote" id="startupQuote" style="font-size:1.15rem;text-align:left"></p>
+      <div class="small" id="startupAuthor"></div>
+    </div>
+    <div class="score" id="startupCountdown" style="margin:18px 0"></div>
+    <button class="primary" style="font-size:1.15rem;padding:14px 24px" onclick="enterApp()">🏀 C'EST PARTI</button>
+  </div>
+</div>
+
 <header><div class="wrap">
 <h1>BASKET ELITE • GABIN</h1><div class="small">Objectif stage du 17 août</div>
 <div class="menu">
@@ -86,8 +101,12 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <div class="stat"><b id="statSleep">—</b>Sommeil moyen</div>
 <div class="stat"><b id="statSleep10">—</b>Nuits ≥ 10 h</div>
 <div class="stat"><b id="statConfidence">—</b>Confiance moyenne</div>
-<div class="stat"><b id="statCompletion">—</b>Programme réalisé</div>
+<div class="stat"><b id="statCompletion">—</b>Programme réalisé</div><div class="stat"><b id="statStreak">0</b>Jours validés</div><div class="stat"><b id="statJournal">0</b>Entrées journal</div>
 </div><p class="small" id="trendMessage" style="margin-top:12px"></p></div>
+<div class="card">
+<h3>🏆 Mes badges</h3>
+<div id="badgesGrid" class="grid2"></div>
+</div>
 <div class="card"><h3>Réussite au tir</h3><canvas id="chartShot"></canvas></div>
 <div class="card"><h3>Lancers francs</h3><canvas id="chartFT"></canvas></div>
 <div class="card"><h3>Sommeil</h3><canvas id="chartSleep"></canvas></div>
@@ -154,6 +173,13 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <div class="match-card"><h3>⚡ Énergie</h3><p>Je suis partout. Je mets du rythme.</p></div>
 <div class="match-card"><h3>🤝 Collectif</h3><p>Je rends mon équipe meilleure.</p></div>
 <div class="match-card"><h3>😤 Compétiteur</h3><p>J'aime les défis.</p></div>
+</div>
+<div class="hero">
+<h3>🎬 Mes 4 premières actions</h3>
+<div class="exercise">🗣️ Je parle dès la première défense.</div>
+<div class="exercise">🏃 Je sprinte au repli.</div>
+<div class="exercise">🤝 Je fais une action utile pour l'équipe.</div>
+<div class="exercise">🔥 J'attaque le premier espace ouvert.</div>
 </div>
 <div class="hero" style="text-align:center"><div class="score">C'EST MA SIGNATURE.</div></div>
 </div>
@@ -271,7 +297,56 @@ function updateStats(){
  days.forEach((d,i)=>{let dm=0,da=0;d.basket.forEach((_,j)=>{const mm=Number(localStorage.getItem('made_'+i+'_'+j)||0),aa=Number(localStorage.getItem('att_'+i+'_'+j)||0);m+=mm;a+=aa;dm+=mm;da+=aa});if(da>0){const p=Math.round(dm/da*100);best=best===null?p:Math.max(best,p)}const sv=Number(localStorage.getItem('sleep'+i));if(sv){s+=sv;sn++;if(sv>=10)s10++}const cv=Number(localStorage.getItem('confidence'+i));if(cv){conf+=cv;cn++}});
  const gc=globalCount(),completion=gc[1]?Math.round(gc[0]/gc[1]*100):0;
  document.getElementById('statShots').textContent=a;document.getElementById('statMade').textContent=m;document.getElementById('statPct').textContent=a?Math.round(m/a*100)+' %':'—';document.getElementById('statBestPct').textContent=best===null?'—':best+' %';document.getElementById('statSleep').textContent=sn?(s/sn).toFixed(1)+' h':'—';document.getElementById('statSleep10').textContent=sn?s10+'/'+sn:'—';document.getElementById('statConfidence').textContent=cn?(conf/cn).toFixed(1)+'/10':'—';document.getElementById('statCompletion').textContent=completion+' %';
+ let valid=0,journal=0;days.forEach((_,i)=>{if(localStorage.getItem('journalSaved'+i)==='1'){valid++;journal++}});
+ document.getElementById('statStreak').textContent=valid;
+ document.getElementById('statJournal').textContent=journal;
+ renderBadges();
  const pcts=allShotData().filter(v=>v!=null);let trend='Enregistre plusieurs séances pour voir une tendance.';if(pcts.length>=2){const diff=pcts[pcts.length-1]-pcts[pcts.length-2];trend=diff>2?'📈 Dernière séance en hausse de '+diff+' points.':diff<-2?'🎯 Dernière séance en baisse : regarde surtout la qualité des tirs.':'➡️ Réussite stable sur les deux dernières séances.'}document.getElementById('trendMessage').textContent=trend;
+}
+
+
+function getDailyQuote(){
+  const index=Math.floor(Date.now()/86400000)%championQuotes.length;
+  return championQuotes[(index+championQuotes.length)%championQuotes.length];
+}
+function enterApp(){
+  document.getElementById('startupScreen').classList.add('hidden');
+  localStorage.setItem('startupSeen',new Date().toISOString().slice(0,10));
+}
+function showStartup(){
+  const today=new Date().toISOString().slice(0,10);
+  if(localStorage.getItem('startupSeen')===today)return;
+  const q=getDailyQuote();
+  document.getElementById('startupQuote').textContent='“'+q.text+'”';
+  document.getElementById('startupAuthor').textContent='— '+q.author;
+  const target=new Date('2026-08-17T08:00:00');
+  const left=Math.max(0,Math.ceil((target-new Date())/86400000));
+  document.getElementById('startupCountdown').textContent=left>0?'J-'+left+' AVANT LE STAGE':'JOUR DU STAGE';
+  document.getElementById('startupScreen').classList.remove('hidden');
+}
+function computeBadges(){
+  let completedDays=0,journalDays=0,totalMade=0,sleep10=0,scoreDays=0;
+  days.forEach((d,i)=>{
+    const c=count(i); if(c[0]===c[1])completedDays++;
+    if(localStorage.getItem('journalSaved'+i)==='1')journalDays++;
+    const sl=Number(localStorage.getItem('sleep'+i));if(sl>=10)sleep10++;
+    let made=0,att=0;d.basket.forEach((_,j)=>{made+=Number(localStorage.getItem('made_'+i+'_'+j)||0);att+=Number(localStorage.getItem('att_'+i+'_'+j)||0)});
+    totalMade+=made;if(att>0)scoreDays++;
+  });
+  return [
+    ['🔥','Première mission',completedDays>=1,'1 journée complète'],
+    ['🏀','100 paniers',totalMade>=100,'100 tirs réussis'],
+    ['🎯','Scoreur régulier',scoreDays>=3,'3 journées scorées'],
+    ['😴','Dormir fait grandir',sleep10>=3,'3 nuits à 10 h'],
+    ['📖','Journal sérieux',journalDays>=5,'5 bilans enregistrés'],
+    ['💪','Semaine solide',completedDays>=7,'7 journées complètes'],
+    ['⭐','Camp exemplaire',completedDays>=12 && sleep10>=8,'Régularité totale'],
+    ['👑','Leader du camp',completedDays===days.length,'Programme terminé']
+  ];
+}
+function renderBadges(){
+  const el=document.getElementById('badgesGrid');if(!el)return;
+  el.innerHTML=computeBadges().map(b=>`<div class="badge-card ${b[2]?'':'locked'}"><div class="badge-icon">${b[0]}</div><div class="badge-name">${b[1]}</div><div class="small">${b[2]?'Débloqué':b[3]}</div></div>`).join('');
 }
 
 function openMatchMode(){document.getElementById('matchMode').classList.remove('hidden')} function closeMatchMode(){document.getElementById('matchMode').classList.add('hidden')}
@@ -279,7 +354,7 @@ function openMatchMode(){document.getElementById('matchMode').classList.remove('
 function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data[k]=localStorage.getItem(k)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='basket-gabin-sauvegarde.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
 
-render();renderDays();loadTests();
+render();renderDays();loadTests();showStartup();
 </script>
 <script>
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
