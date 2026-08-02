@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.6 Firebase</title>
+<title>Basket Elite Gabin V12.7 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -72,7 +72,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.6</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.7</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -269,14 +269,18 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
       <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V12.1 active</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
+      <div class="cloud-note"><b>V12.7 protection renforcée</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
-        <button onclick="cloudSyncNow()">🔄 Synchroniser</button>
+        <button onclick="cloudSyncNow()">🔄 Télécharger / fusionner</button>
         <button onclick="cloudLogout()">Déconnexion</button>
       </div>
+      <button style="width:100%;margin-top:8px" onclick="cloudRestoreBackup()">🛟 Restaurer la sauvegarde cloud précédente</button>
       <div class="cloud-note">
+        <b>Sécurité V12.7 :</b><br>
+        • une case vide ne peut plus effacer une valeur remplie ;<br>
+        • une sauvegarde cloud précédente est créée avant chaque écriture ;<br><br>
         <b>Fonctionnement :</b><br>
         • chaque saisie reste enregistrée localement ;<br>
         • une copie est envoyée dans Firestore ;<br>
@@ -492,7 +496,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v1261';
+const STATE_KEY='basket_gabin_state_v1271';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -547,7 +551,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.6',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.7',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function writeSnapshot(){
@@ -574,6 +578,7 @@ function restoreSnapshot(){
   }catch(e){console.error(e)}
 }
 
+
 function mergeStates(localState,remoteState){
   const local=localState||{values:{},updated:{}};
   const remote=remoteState||{values:{},updated:{}};
@@ -585,29 +590,28 @@ function mergeStates(localState,remoteState){
     const rv=remote.values?.[k];
     const lt=Number(local.updated?.[k]||0);
     const rt=Number(remote.updated?.[k]||0);
+    const localNonEmpty=lv!==undefined && lv!==null && String(lv)!=='';
+    const remoteNonEmpty=rv!==undefined && rv!==null && String(rv)!=='';
+
+    if(localNonEmpty && !remoteNonEmpty){
+      values[k]=lv; updated[k]=lt||1; continue;
+    }
+    if(remoteNonEmpty && !localNonEmpty){
+      values[k]=rv; updated[k]=rt||1; continue;
+    }
 
     if(rt>lt){
-      values[k]=rv;
-      updated[k]=rt;
+      values[k]=rv; updated[k]=rt;
     }else if(lt>rt){
-      values[k]=lv;
-      updated[k]=lt;
+      values[k]=lv; updated[k]=lt;
     }else{
-      // Equal timestamps: preserve a non-empty value rather than an empty legacy value.
-      const localNonEmpty=lv!==undefined && lv!==null && String(lv)!=='';
-      const remoteNonEmpty=rv!==undefined && rv!==null && String(rv)!=='';
-      if(localNonEmpty && !remoteNonEmpty){
-        values[k]=lv; updated[k]=lt||1;
-      }else if(remoteNonEmpty && !localNonEmpty){
-        values[k]=rv; updated[k]=rt||1;
-      }else{
-        values[k]=lv!==undefined?lv:rv;
-        updated[k]=lt||rt||1;
-      }
+      values[k]=lv!==undefined?lv:rv;
+      updated[k]=lt||rt||1;
     }
   }
+
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.6',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.7',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -1034,6 +1038,7 @@ function cloudCreateAccount(){
 }
 function cloudLogout(){if(window.firebaseFamilyLogout)window.firebaseFamilyLogout()}
 function cloudSyncNow(){if(window.firebaseSyncNow)window.firebaseSyncNow()}
+function cloudRestoreBackup(){if(window.firebaseRestoreBackup)window.firebaseRestoreBackup()}
 
 function openMatchMode(){document.getElementById('matchMode').classList.remove('hidden')} function closeMatchMode(){document.getElementById('matchMode').classList.add('hidden')}
 
@@ -1094,6 +1099,9 @@ let lastCloudSavedAt = null;
 function cloudDocRef(uid){
   return doc(db, "users", uid, "apps", "basket-gabin");
 }
+function cloudBackupRef(uid){
+  return doc(db, "users", uid, "apps", "basket-gabin-backup");
+}
 function setCloudUI(state, text){
   const dot=document.getElementById('cloudDot');
   const label=document.getElementById('cloudLabel');
@@ -1136,19 +1144,34 @@ function applyRemoteState(remote){
   if(!document.getElementById('scores').classList.contains('hidden')){renderSummerStats();renderMatchStats();}
 }
 
+
 async function uploadLocalState(force=false){
   if(!currentUser || applyingRemote)return;
-  setCloudUI('sync','Synchronisation…');
+  setCloudUI('sync','Protection + synchronisation…');
+
   const local=collectState();
   const existing=await getDoc(cloudDocRef(currentUser.uid));
   const remote=existing.exists()?existing.data()?.state:null;
   const state=mergeStates(local,remote);
+
+  if(remote && Object.keys(remote.values||{}).length){
+    await setDoc(cloudBackupRef(currentUser.uid),{
+      ownerUid:currentUser.uid,
+      ownerEmail:currentUser.email||'',
+      app:"Basket Gabin backup",
+      backedUpAt:serverTimestamp(),
+      state:remote
+    },{merge:false});
+  }
+
   suppressFieldClock=true;
   try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
   finally{suppressFieldClock=false;}
+
   Object.entries(state.values||{}).forEach(([k,v])=>{
     if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
   });
+
   await setDoc(cloudDocRef(currentUser.uid),{
     ownerUid:currentUser.uid,
     ownerEmail:currentUser.email||'',
@@ -1157,8 +1180,9 @@ async function uploadLocalState(force=false){
     clientSavedAt:state.savedAt,
     state
   },{merge:true});
+
   lastCloudSavedAt=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-  setCloudUI('ok','Cloud synchronisé');
+  setCloudUI('ok','Cloud protégé');
   showAccountState();
 }
 
@@ -1170,11 +1194,35 @@ window.queueCloudSync=function(){
     console.error(e);setCloudUI('err','Cloud en attente');cloudMessage('Synchronisation reportée : '+e.message,true);
   }),700);
 };
-window.firebaseSyncNow=()=>{
-  saveAllVisibleInputs();
-  return uploadLocalState(true)
-    .then(()=>cloudMessage('Fusion terminée : les champs les plus récents ont été conservés.'))
-    .catch(e=>cloudMessage(e.message,true));
+
+window.firebaseSyncNow=async()=>{
+  try{
+    saveAllVisibleInputs();
+    setCloudUI('sync','Téléchargement du cloud…');
+    const snap=await getDoc(cloudDocRef(currentUser.uid));
+    if(snap.exists() && snap.data()?.state)applyRemoteState(snap.data().state);
+    await uploadLocalState(true);
+    cloudMessage('Fusion terminée. Une valeur vide ne peut pas effacer une valeur remplie.');
+  }catch(e){
+    cloudMessage(e.message,true);
+  }
+};
+
+window.firebaseRestoreBackup=async()=>{
+  if(!currentUser)return;
+  if(!confirm('Restaurer la sauvegarde cloud précédente ? Les valeurs présentes seront fusionnées, pas effacées.'))return;
+  try{
+    const snap=await getDoc(cloudBackupRef(currentUser.uid));
+    if(!snap.exists() || !snap.data()?.state){
+      cloudMessage('Aucune sauvegarde cloud précédente disponible.',true);
+      return;
+    }
+    applyRemoteState(snap.data().state);
+    await uploadLocalState(true);
+    cloudMessage('Sauvegarde précédente restaurée et fusionnée.');
+  }catch(e){
+    cloudMessage('Restauration impossible : '+e.message,true);
+  }
 };
 
 async function startCloud(uid){
