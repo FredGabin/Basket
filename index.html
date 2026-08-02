@@ -7,25 +7,20 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite – Objectif 17 août V5</title>
+<title>Basket Elite Gabin</title>
 <style>
-:root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--text:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
-*{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--text);font-family:Arial,system-ui,sans-serif;line-height:1.48}
+:root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
+*{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
 header{position:sticky;top:0;z-index:20;background:rgba(3,5,10,.96);border-bottom:1px solid var(--line);backdrop-filter:blur(10px)}
-.wrap{max-width:960px;margin:auto;padding:12px}
-h1{font-size:1.08rem;letter-spacing:.08em;margin:0} h2{margin:.2rem 0 .8rem} h3{color:var(--gold);margin:.2rem 0 .6rem} h4{margin:.8rem 0 .3rem}
+.wrap{max-width:980px;margin:auto;padding:12px} h1{font-size:1.05rem;letter-spacing:.08em;margin:0} h2{margin:.2rem 0 .8rem} h3{color:var(--gold);margin:.2rem 0 .6rem}
 .small{font-size:.84rem;color:var(--muted)} .hidden{display:none!important}
-.menu{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
-.menu button{font-size:.72rem;padding:9px 2px}
-button{border:0;border-radius:10px;padding:10px;background:#243044;color:white;font-weight:700}
-button.active,button.primary{background:var(--gold);color:#111827} button.good{background:var(--green);color:#052e16}
+.menu{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;margin-top:10px} .menu button{font-size:.72rem;padding:9px 2px}
+button{border:0;border-radius:10px;padding:10px;background:#243044;color:white;font-weight:700} button.active,button.primary{background:var(--gold);color:#111827} button.good{background:var(--green);color:#052e16}
 .hero{background:linear-gradient(135deg,#1a263c,#09111f);border:1px solid #34445f;border-radius:18px;padding:16px;margin:10px 0}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;margin:10px 0}
 .exercise{background:var(--panel2);border-radius:11px;padding:10px;margin:8px 0}
 .quote{border-left:4px solid var(--gold);padding-left:10px;color:#e2e8f0;font-weight:700}
 .tag{display:inline-block;border:1px solid #3b4b63;border-radius:999px;padding:3px 8px;font-size:.76rem;color:#cbd5e1}
-.badge{display:inline-block;background:#1d4ed8;border-radius:999px;padding:5px 9px;font-size:.78rem}
 .progress{height:12px;background:#263246;border-radius:999px;overflow:hidden} .bar{height:100%;background:linear-gradient(90deg,var(--gold),var(--green))}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px} .two{display:grid;grid-template-columns:1fr;gap:10px} .days{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 @media(min-width:760px){.two{grid-template-columns:1fr 1fr}.days{grid-template-columns:repeat(3,1fr)}}
@@ -33,27 +28,35 @@ label.check{display:flex;gap:10px;align-items:flex-start} input[type=checkbox]{w
 input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid #3b4b63;border-radius:9px;padding:10px;font:inherit}
 .metric{display:grid;grid-template-columns:1.45fr 1fr;gap:8px;align-items:center;margin:8px 0}
 .score{font-size:1.7rem;font-weight:800;color:var(--gold)} canvas{width:100%;height:220px;background:#050a13;border-radius:10px}
-.danger{border-left:4px solid var(--red)} .mental-card{border-left:4px solid var(--blue)}
+.fullscreen{position:fixed;inset:0;background:linear-gradient(180deg,#020409,#111827);z-index:100;padding:18px;overflow:auto}
+.match-card{background:#101827;border:1px solid #334155;border-radius:16px;padding:14px;margin:10px 0}
+.stat{text-align:center;background:#09111f;border-radius:12px;padding:12px} .stat b{font-size:1.5rem;color:var(--gold);display:block}
 </style>
 </head>
 <body>
 <header><div class="wrap">
-<h1>BASKET ELITE • OBJECTIF 17 AOÛT</h1>
-<div class="small">Camp personnel U15 • du 2 au 17 août 2026</div>
+<h1>BASKET ELITE • GABIN</h1><div class="small">Objectif stage du 17 août</div>
 <div class="menu">
-<button id="m-home" class="active" onclick="show('home')">Mission</button>
+<button id="m-home" class="active" onclick="show('home')">Accueil</button>
 <button id="m-days" onclick="show('days')">Planning</button>
-<button id="m-scores" onclick="show('scores')">Scores</button>
+<button id="m-scores" onclick="show('scores')">Stats</button>
+<button id="m-journal" onclick="show('journal')">Journal</button>
 <button id="m-life" onclick="show('life')">Hygiène</button>
 <button id="m-mental" onclick="show('mental')">Mental</button>
-<button id="m-identity" onclick="show('identity')">Identité</button>
-<button id="m-rules" onclick="show('rules')">Règles</button>
 </div></div></header>
 
 <main class="wrap">
 <section id="home">
 <div class="hero">
-<div class="badge" id="levelBadge"></div>
+<div class="grid2">
+<div><div class="small">Jours avant le stage</div><div class="score" id="countdown">—</div></div>
+<div><div class="small">Progression du camp</div><div class="score" id="globalProgress">0 %</div></div>
+</div>
+<div class="progress" style="margin-top:12px"><div class="bar" id="globalBar"></div></div>
+</div>
+
+<div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
+<div class="hero">
 <h2 id="date"></h2>
 <div class="score" id="mission"></div>
 <p class="quote" id="mindset"></p>
@@ -62,170 +65,110 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <p class="small" id="prog"></p>
 <div class="grid2"><button onclick="move(-1)">← Précédent</button><button class="primary" onclick="move(1)">Suivant →</button></div>
 </div>
+
+<div class="grid2">
+<button class="primary" onclick="openMatchMode()">🎮 MODE MATCH</button>
+<button onclick="show('journal')">📖 MON JOURNAL</button>
+</div>
+
 <div id="homeContent"></div>
 </section>
 
-<section id="days" class="hidden">
-<div class="card"><h2>📅 Planning complet</h2><div id="dayGrid" class="days"></div></div>
-</section>
+<section id="days" class="hidden"><div class="card"><h2>📅 Planning complet</h2><div id="dayGrid" class="days"></div></div></section>
 
 <section id="scores" class="hidden">
-<div class="card"><h2>📊 Tes courbes</h2><p class="small">Les courbes utilisent les scores saisis atelier par atelier.</p></div>
-<div class="card"><h3>Réussite globale au tir</h3><canvas id="chartShot"></canvas></div>
+<div class="card"><h2>📊 Tableau de bord</h2>
+<div class="grid2">
+<div class="stat"><b id="statShots">0</b>Tirs tentés</div>
+<div class="stat"><b id="statMade">0</b>Tirs réussis</div>
+<div class="stat"><b id="statPct">—</b>Réussite globale</div>
+<div class="stat"><b id="statBestPct">—</b>Meilleure séance</div>
+<div class="stat"><b id="statSleep">—</b>Sommeil moyen</div>
+<div class="stat"><b id="statSleep10">—</b>Nuits ≥ 10 h</div>
+<div class="stat"><b id="statConfidence">—</b>Confiance moyenne</div>
+<div class="stat"><b id="statCompletion">—</b>Programme réalisé</div>
+</div><p class="small" id="trendMessage" style="margin-top:12px"></p></div>
+<div class="card"><h3>Réussite au tir</h3><canvas id="chartShot"></canvas></div>
 <div class="card"><h3>Lancers francs</h3><canvas id="chartFT"></canvas></div>
-<div class="card"><h3>Chrono 10 m</h3><canvas id="chart10"></canvas></div>
-<div class="card"><h3>Chrono 20 m</h3><canvas id="chart20"></canvas></div>
-<div class="card"><h3>Détente</h3><canvas id="chartJump"></canvas></div>
 <div class="card"><h3>Sommeil</h3><canvas id="chartSleep"></canvas></div>
-<div class="card"><h3>Fatigue</h3><canvas id="chartFat"></canvas></div>
+<div class="card"><h3>Confiance</h3><canvas id="chartConfidence"></canvas></div><div class="card"><h3>Fatigue</h3><canvas id="chartFat"></canvas></div><div class="card"><h3>Progression 10 m</h3><canvas id="chart10"></canvas><p class="small">Une courbe qui descend signifie un meilleur chrono.</p></div><div class="card"><h3>Progression 20 m</h3><canvas id="chart20"></canvas></div><div class="card"><h3>Progression détente</h3><canvas id="chartJump"></canvas></div>
 <div class="card"><h3>Tests physiques</h3>
 <div class="metric"><label>9 août – 10 m</label><input id="t9_10" type="number" step=".01"></div>
 <div class="metric"><label>16 août – 10 m</label><input id="t16_10" type="number" step=".01"></div>
 <div class="metric"><label>9 août – 20 m</label><input id="t9_20" type="number" step=".01"></div>
 <div class="metric"><label>16 août – 20 m</label><input id="t16_20" type="number" step=".01"></div>
-<div class="metric"><label>9 août – détente cm</label><input id="t9_jump" type="number" step=".1"></div>
-<div class="metric"><label>16 août – détente cm</label><input id="t16_jump" type="number" step=".1"></div>
-<button class="primary" onclick="saveTests()">Enregistrer les tests</button>
+<div class="metric"><label>9 août – détente</label><input id="t9_jump" type="number" step=".1"></div>
+<div class="metric"><label>16 août – détente</label><input id="t16_jump" type="number" step=".1"></div>
+<button class="primary" onclick="saveTests()">Enregistrer</button>
 </div>
+<div class="card"><h3>💾 Sauvegarde</h3><button onclick="exportData()">Exporter mes données</button><input id="importFile" type="file" accept=".json" onchange="importData(event)"></div>
+</section>
+
+<section id="journal" class="hidden">
+<div class="hero"><h2>📖 Journal du compétiteur</h2><p class="quote">Chaque journée laisse une trace. Ton travail construit ta confiance.</p></div>
+<div id="journalEntries"></div>
 </section>
 
 <section id="life" class="hidden">
-<div class="hero"><h2>🔥 HYGIÈNE DE VIE • LE JOUEUR QUE TU CONSTRUIS</h2><p class="quote">Tu veux grandir, récupérer, devenir plus rapide et gagner ta place ? Ton sommeil, ton alimentation et ta rigueur font partie de l’entraînement.</p></div>
-<div class="card"><h3>😴 😴 Dormir fait grandir.</h3><p class="quote">Tu ne grandis pas seulement à l’entraînement. Tu grandis aussi quand tu dors.</p><ul><li>Pendant la nuit, ton corps récupère des séances, reconstruit les muscles et soutient ta croissance.</li><li>Le sommeil protège ta vitesse, ta précision, ta concentration et ta capacité à prendre de bonnes décisions.</li><li>La règle de la maison est simple : 10 heures minimum. Ce n’est pas du temps perdu, c’est une partie de l’entraînement.</li><li>Le sommeil d’aujourd’hui construit le joueur de demain.</li></ul></div><div class="card"><h3>🥗 🥗 Bien manger construit le joueur de demain.</h3><p class="quote">Ton repas est une séance invisible.</p><ul><li>Avant le basket : ne pars pas à vide. Pain, flocons d’avoine, fruit, lait, yaourt ou œufs.</li><li>Après le basket : eau, fruit et une source de protéines dans l’heure.</li><li>Au déjeuner : féculents, légumes, viande, poisson ou œufs, puis fruit ou laitage.</li><li>Avant le physique : une collation simple 60 à 90 minutes avant.</li><li>Le soir : un dîner complet. Les muscles ne progressent pas seulement sous les haltères, ils progressent aussi à table.</li></ul></div><div class="card"><h3>💧 💧 Boire avant d'avoir soif garde ton jeu rapide.</h3><p class="quote">Bois avant d’avoir soif.</p><ul><li>Quelques gorgées régulièrement valent mieux qu’une grande quantité prise trop tard.</li><li>Pendant l’effort, bois toutes les 15 à 20 minutes.</li><li>Des urines foncées indiquent souvent que tu dois davantage boire.</li><li>Un corps déshydraté perd de la vitesse avant même que tu t’en rendes compte.</li></ul></div><div class="card"><h3>🎒 💪 La rigueur rend meilleur.</h3><p class="quote">La rigueur rend meilleur.</p><ul><li>Prépare ton sac la veille.</li><li>Arrive en avance.</li><li>Fais les exercices proprement, même quand personne ne regarde.</li><li>Note honnêtement tes scores.</li><li>Respecte les jours faciles et les jours de repos.</li><li>Ce que tu fais quand personne ne regarde finit par se voir en match.</li></ul></div><div class="card"><h3>🚿 🚀 Récupérer, c'est progresser.</h3><p class="quote">Récupérer, c’est préparer la prochaine accélération.</p><ul><li>Après la séance : eau, repas, douche et vêtements secs.</li><li>Les étirements restent doux et jamais douloureux.</li><li>Tu ne rajoutes pas une troisième séance parce que tu te sens bien.</li><li>Une douleur persistante, une boiterie ou un gonflement doivent être signalés immédiatement.</li></ul></div>
-<div class="card"><h3>✅ Ton suivi</h3>
-<div class="metric"><label>Heure de coucher prévue</label><input id="bedTime" type="text" placeholder="Ex. 21:15"></div>
-<div class="metric"><label>Heure de lever prévue</label><input id="wakeTime" type="text" placeholder="Ex. 07:15"></div>
-<div class="metric"><label>Verres d’eau aujourd’hui</label><input id="waterToday" type="number" min="0"></div>
-<button class="primary" onclick="saveLifestyle()">Enregistrer</button>
-</div>
+<div class="hero"><h2>🔥 HYGIÈNE DE VIE</h2><p class="quote">Ton corps fait partie de ton jeu.</p></div>
+<div class="card"><h3>😴 Dormir fait grandir.</h3><p><b>10 heures minimum.</b> La nuit, ton corps grandit, récupère et consolide ce que tu as appris.</p></div>
+<div class="card"><h3>🥗 Bien manger construit le joueur de demain.</h3><p>Chaque repas prépare ta prochaine séance. Glucides, protéines, fruits, légumes et eau.</p></div>
+<div class="card"><h3>💧 Boire avant d'avoir soif garde ton jeu rapide.</h3><p>Quelques gorgées régulières valent mieux qu'attendre d'être déjà déshydraté.</p></div>
+<div class="card"><h3>💪 La rigueur rend meilleur.</h3><p>Préparer ton sac, arriver en avance et noter honnêtement tes scores finissent par se voir en match.</p></div>
+<div class="card"><h3>🚀 Récupérer, c'est progresser.</h3><p>Le travail devient un progrès quand ton corps a le temps de l'assimiler.</p></div>
 </section>
 
 <section id="mental" class="hidden">
-<div class="hero"><h2>🧠 PRÉPARATION MENTALE</h2><p class="quote">Le match est l'occasion de montrer ce que tu construis chaque jour. Joue avec énergie, prends les bonnes décisions et fais confiance à ton travail.</p></div>
-<div class="card mental-card"><h3>Avant une séance</h3><p class="quote">Choisis une seule mission. Un joueur qui veut tout travailler en même temps ne travaille rien à fond.</p><ol><li>Respire lentement trois fois.</li><li>Choisis ton objectif : premier pas, main faible, tir, défense, communication ou lecture.</li><li>Imagine une action réussie pendant dix secondes.</li><li>Commence la séance avec une intention claire.</li></ol></div><div class="card mental-card"><h3>Après un tir raté</h3><p class="quote">Le tir précédent est terminé. L’action suivante est la seule que tu peux encore gagner.</p><ol><li>Replace-toi immédiatement.</li><li>Parle ou défends.</li><li>Respire une fois.</li><li>Garde la même mécanique sur le prochain tir ouvert.</li></ol></div><div class="card mental-card"><h3>Après une erreur</h3><p class="quote">Une erreur ne devient grave que si tu la laisses voler l’action suivante.</p><ol><li>Pas de geste d’énervement.</li><li>Sprint retour.</li><li>Regarde le jeu.</li><li>Fais une action simple et utile.</li></ol></div><div class="card mental-card"><h3>Quand la confiance baisse</h3><p class="quote">La confiance ne tombe pas du ciel. Elle revient quand tu fais correctement les choses simples.</p><ol><li>Défends fort.</li><li>Fais une bonne passe.</li><li>Prends un rebond.</li><li>Coupe fort vers le cercle.</li><li>Prends le tir ouvert sans hésiter.</li></ol></div><div class="card mental-card"><h3>Quand tu es fatigué</h3><p class="quote">Être fort, ce n’est pas toujours en faire plus. C’est savoir faire exactement ce qu’il faut.</p><ol><li>Vérifie ta technique.</li><li>Ralentis entre les répétitions, pas pendant l’action.</li><li>Arrête si la vitesse chute vraiment.</li><li>Récupère pour que la prochaine répétition soit de qualité.</li></ol></div><div class="card mental-card"><h3>Avant le stage du 17 août</h3><p class="quote">Tu n’arrives pas pour inventer un nouveau joueur. Tu arrives pour montrer le travail que tu as déjà construit.</p><ol><li>Joue simple.</li><li>Parle en défense.</li><li>Sprinte au repli.</li><li>Prends les tirs ouverts.</li><li>Accepte le contact.</li><li>Reste positif après une erreur.</li></ol></div><div class="card mental-card"><h3>Après un bon entraînement</h3><p class="quote">Profite de la réussite, puis recommence demain. La régularité transforme un bon jour en vrai niveau.</p><ol><li>Note ce qui a bien fonctionné.</li><li>Garde une chose à reproduire.</li><li>Récupère sérieusement.</li><li>Ne rajoute pas une séance inutile.</li></ol></div><div class="card mental-card"><h3>Après un entraînement difficile</h3><p class="quote">Une séance difficile n’efface pas tes progrès. Elle te montre seulement ce que tu dois encore construire.</p><ol><li>Note une réussite, même petite.</li><li>Choisis un point précis à améliorer.</li><li>Ne te juge pas sur une seule journée.</li><li>Prépare correctement la séance suivante.</li></ol></div>
-
-<div class="card mental-card">
-<h3>🏀 Avant un match</h3>
-<p class="quote">Tu as travaillé pour ce moment. Maintenant, joue ton basket.</p>
-<ol>
-<li>Communique dès le premier ballon.</li>
-<li>Utilise ta vitesse pour créer des avantages.</li>
-<li>Prends les tirs ouverts avec confiance.</li>
-<li>Accepte le contact et termine tes actions.</li>
-<li>Chaque action est une nouvelle opportunité d'aider ton équipe.</li>
-</ol>
-</div>
-<div class="card"><h3>📖 Journal du compétiteur</h3>
-<div class="metric"><label>Confiance aujourd’hui /10</label><input id="confidence" type="number" min="0" max="10"></div>
-<label>Ma meilleure action aujourd’hui</label><textarea id="mentalWin" rows="2"></textarea>
-<label>Ce que j’améliore demain</label><textarea id="mentalNext" rows="2"></textarea>
-<label>Ma phrase pour demain</label><textarea id="mentalPhrase" rows="2"></textarea>
-<button class="primary" onclick="saveMental()">Enregistrer le journal</button>
-</div>
-</section>
-
-
-
-
-<section id="identity" class="hidden">
-<div class="hero" style="text-align:center">
-<h1 style="font-size:2rem;margin:.2rem 0">⭐ JE SUIS GABIN</h1>
-<p class="quote" style="display:inline-block;text-align:left;font-size:1.1rem">Aujourd'hui, je fais du Gabin.</p>
-</div>
-
-<div class="two">
-
-<div class="card">
-<h3>🧠 QI Basket</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">Je comprends vite le jeu.</div>
-<p>Je vois ce que les autres ne voient pas.<br>J'anticipe en attaque comme en défense.</p>
-</div>
-
-<div class="card">
-<h3>👀 Vision</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">Je trouve la bonne passe.</div>
-<p>Je crée des solutions pour l'équipe.</p>
-</div>
-
-<div class="card">
-<h3>🎯 Adresse</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">Mon tir est prêt.</div>
-<p>Je fais confiance à mon geste.</p>
-</div>
-
-<div class="card">
-<h3>💪 Costaud</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">Je suis solide.</div>
-<p>Le contact fait partie de mon jeu.</p>
-</div>
-
-<div class="card">
-<h3>🛡️ Défense</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">J'aime défendre.</div>
-<p>Je mets de la pression.<br>Je fais gagner des ballons à mon équipe.</p>
-</div>
-
-<div class="card">
-<h3>⚡ Énergie</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">Je suis partout.</div>
-<p>Je cours jusqu'au dernier ballon.<br>J'apporte du rythme.</p>
-</div>
-
-<div class="card">
-<h3>🤝 Collectif</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">Je fais jouer les autres.</div>
-<p>Je rends mon équipe meilleure.</p>
-</div>
-
-<div class="card">
-<h3>🗣️ Présence</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">Je parle.</div>
-<p>J'encourage.<br>Je donne de l'énergie à mon équipe.</p>
-</div>
-
-<div class="card">
-<h3>😤 Compétiteur</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">J'aime les gros matchs.</div>
-<p>J'aime les défis.<br>Le haut niveau me motive.</p>
-</div>
-
-<div class="card">
-<h3>❤️ Plaisir</h3>
-<div class="score" style="font-size:1.1rem;color:#fff">J'aime jouer.</div>
-<p>J'aime progresser.<br>J'aime gagner avec mon équipe.</p>
-</div>
-
-</div>
-
-<div class="hero" style="text-align:center">
-<div style="font-size:2rem;font-weight:800">🔥 C'EST MA SIGNATURE.</div>
-<div style="font-size:1.25rem;margin-top:10px">Je suis Gabin.<br>Aujourd'hui, je fais du Gabin.</div>
-</div>
-</section>
-
-<section id="rules"
-
-
- class="hidden">
-<div class="card danger"><h2>🚦 Règle numéro 1</h2><p>Douleur articulaire, boiterie, vertige ou grosse fatigue : tu arrêtes. Un compétiteur intelligent protège sa saison.</p></div>
-<div class="card"><h3>Qualité avant quantité</h3><ul>
-<li>Pas d’échec musculaire.</li>
-<li>Arrêt des sauts ou sprints si la vitesse baisse.</li>
-<li>Charges modérées et technique parfaite.</li>
-<li>Pas de troisième séance.</li>
-<li>😴 Dormir fait grandir..</li>
+<div class="hero"><h2>🧠 PRÉPARATION MENTALE</h2><p class="quote">Le match est l'occasion de montrer ce que tu construis chaque jour.</p></div>
+<div class="card"><h3>Avant le match</h3><p>Respire. Joue simple. Parle. Prends les tirs ouverts. Attaque les espaces. Aide ton équipe.</p></div>
+<div class="card"><h3>Après une erreur</h3><p>L'action suivante est une nouvelle opportunité. Replace-toi, communique et rejoue.</p></div>
+<div class="card"><h3>Quand le match devient dur</h3><p>Ton énergie, ta vision et ton QI basket restent tes forces. Reste dans ton jeu.</p></div>
+<div class="card"><h3>⭐ Ma signature</h3>
+<p><b>Je suis Gabin.</b><br>Aujourd'hui, je fais du Gabin.</p>
+<ul>
+<li>🧠 QI Basket : je comprends vite le jeu.</li>
+<li>👀 Vision : je trouve la bonne passe.</li>
+<li>🎯 Adresse : mon tir est prêt.</li>
+<li>💪 Costaud : je suis solide.</li>
+<li>🛡️ Défense : j'aime défendre.</li>
+<li>⚡ Énergie : je suis partout.</li>
+<li>🤝 Collectif : je fais jouer les autres.</li>
+<li>😤 Compétiteur : j'aime les gros matchs.</li>
 </ul></div>
 </section>
 </main>
 
+<div id="matchMode" class="fullscreen hidden">
+<div style="max-width:700px;margin:auto">
+<button onclick="closeMatchMode()">✕ Fermer</button>
+<div class="hero" style="text-align:center">
+<h1 style="font-size:2.2rem">JE SUIS GABIN</h1>
+<p class="quote" style="display:inline-block">Aujourd'hui, je fais du Gabin.</p>
+</div>
+<div class="two">
+<div class="match-card"><h3>🧠 QI Basket</h3><p>Je comprends vite. J'anticipe.</p></div>
+<div class="match-card"><h3>👀 Vision</h3><p>Je vois les espaces. Je trouve la passe.</p></div>
+<div class="match-card"><h3>🎯 Adresse</h3><p>Mon tir est prêt.</p></div>
+<div class="match-card"><h3>💪 Costaud</h3><p>Je suis solide au contact.</p></div>
+<div class="match-card"><h3>🛡️ Défense</h3><p>J'aime défendre. Je mets la pression.</p></div>
+<div class="match-card"><h3>⚡ Énergie</h3><p>Je suis partout. Je mets du rythme.</p></div>
+<div class="match-card"><h3>🤝 Collectif</h3><p>Je rends mon équipe meilleure.</p></div>
+<div class="match-card"><h3>😤 Compétiteur</h3><p>J'aime les défis.</p></div>
+</div>
+<div class="hero" style="text-align:center"><div class="score">C'EST MA SIGNATURE.</div></div>
+</div>
+</div>
+
 <script>
 const days=[{"date": "Dimanche 2 août", "theme": "Vitesse d’appuis et technique propre", "load": "Moyenne", "basket": [["Échauffement ballon", "12 min", "Dribble bas/haut, changements de main, 10 lay-ups de chaque côté."], ["Handles explosifs", "15 min", "6 exercices × 30 s, 30 s de repos : cross, between, behind, in-and-out, double cross, combo libre."], ["Finitions", "20 min", "10 main droite + 10 main gauche : lay-up, reverse, eurostep, flotteur. Refaire les ratés."], ["Tir en mouvement", "25 min", "5 spots : 8 tirs réussis catch-and-shoot + 6 réussites après 1 dribble par spot."], ["Lancers francs", "10 min", "5 séries de 10. Noter le total."]], "physical": [["Échauffement", "10 min", "Corde 2 × 60 s, mobilité chevilles/hanches, 3 accélérations progressives."], ["Échelle de rythme", "8 min", "Deux pieds par case 3 passages; latéral deux pieds 3 passages; in-out 3 passages. Retour en marchant."], ["Accélérations", "15 min", "4 × 5 m, 4 × 10 m, 3 × 15 m. Repos 60 à 90 s; chaque sprint doit être rapide."], ["Changements de direction", "15 min", "T-Drill 3 passages; 5-10-5 shuttle 3 passages; défense latérale 4 × 8 s."], ["Retour au calme", "8 min", "Marche, respiration, mobilité légère. Pas de sauts aujourd’hui : jambes déjà sollicitées la veille."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Domine les 5 premiers mètres.", "mindset": "Un joueur rapide n’est pas celui qui s’agite : c’est celui qui part au bon moment.", "life": "Hydrate-toi avant d’avoir soif."}, {"date": "Lundi 3 août", "theme": "Tir + haut du corps", "load": "Moyenne", "basket": [["Échauffement", "10 min", "Mobilité + 30 finitions faciles."], ["Mécanique de tir", "15 min", "50 tirs proches du cercle, équilibre et tenue de finition."], ["Catch-and-shoot", "25 min", "10 réussites sur 5 spots = 50 réussites."], ["Pull-up", "20 min", "5 réussites main droite + 5 main gauche sur 5 zones."], ["Lancers francs", "10 min", "50 tirs, objectif régularité."]], "physical": [["Échauffement", "8 min", "Élastiques, épaules, omoplates, poignets."], ["Tractions ou tirage", "4 × 5–8", "Garder 2 répétitions possibles; aucune répétition forcée."], ["Développé haltères au sol ou banc", "3 × 8", "Charge maîtrisée, mouvement fluide."], ["Rowing unilatéral", "3 × 10/côté", "Dos stable, coude vers la hanche."], ["Pompes explosives", "3 × 5", "Arrêter si la poussée ralentit."], ["Farmer carry", "4 × 20 m", "Buste grand, marche contrôlée."], ["Roue abdominale", "3 × 6–10", "Amplitude seulement si le dos reste neutre."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Mets du rythme sans perdre la technique.", "mindset": "Tu n’as pas besoin d’en faire plus. Tu dois faire mieux.", "life": "Le sommeil protège ta vitesse."}, {"date": "Mardi 4 août", "theme": "Finitions + coordination légère", "load": "Légère avant ostéo", "basket": [["Handles", "12 min", "Travail main faible et changements de rythme."], ["Finitions contact contrôlé", "25 min", "Avec coussin ou contact léger : 5 séries de 6 finitions variées."], ["Flotteurs", "15 min", "5 réussites depuis 4 zones."], ["Tir mi-distance", "20 min", "40 réussites après arrêt 1-2 et 40 après arrêt simultané."], ["Lancers francs", "8 min", "40 tirs."]], "physical": [["Mobilité dynamique", "12 min", "Chevilles, hanches, adducteurs, colonne thoracique."], ["Coordination échelle", "10 min", "3 exercices seulement, 3 passages chacun, sans chercher l’épuisement."], ["Réaction", "12 min", "8 départs de 5 m au signal + 6 réactions gauche/droite."], ["Gainage léger", "12 min", "Dead bug 3 × 8/côté; bird dog 3 × 8/côté; planche latérale 2 × 25 s."], ["Retour au calme", "8 min", "Respiration et étirements doux."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle et respiration."], ["Bird dog", "2 × 8/côté", "Bassin immobile."], ["Étirements doux", "8–10 min", "Sans forcer, surtout chevilles, hanches et dos."]], "mission": "Finis fort des deux mains.", "mindset": "Main faible, contact, équilibre : c’est là que tu progresses.", "life": "Un bon repas prépare la prochaine séance."}, {"date": "Mercredi 5 août", "theme": "Ostéo : journée allégée", "load": "Très légère", "basket": [["Tir facile", "35–45 min", "100 à 150 tirs proches et mi-distance, sans séries sous fatigue."], ["Mobilité", "10 min", "Chevilles, hanches, épaules."]], "physical": [["Après-midi", "—", "Rendez-vous ostéo."], ["Après le rendez-vous", "—", "Pas de musculation, pas de sprint, pas de pliométrie. Marche tranquille seulement si confortable."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle et respiration."], ["Bird dog", "2 × 8/côté", "Bassin immobile."], ["Étirements doux", "8–10 min", "Sans forcer, surtout chevilles, hanches et dos."]], "mission": "Récupère comme un joueur sérieux.", "mindset": "La récupération fait partie du travail.", "life": "Ce soir, récupération priorité."}, {"date": "Jeudi 6 août", "theme": "Repos complet", "load": "Repos", "basket": [["Repos", "—", "Aucune séance programmée."]], "physical": [["🚀 Récupérer, c'est progresser.", "—", "Sommeil, hydratation, repas complets. Pas d’abdos ni d’étirements forcés."]], "evening": [["Respiration calme", "5 min", "Allongé sur le dos, respiration lente. Aucun gainage ni étirement forcé."], ["Mobilité très douce", "5–8 min", "Chevilles, hanches, épaules, sans douleur."]], "mission": "Recharge les batteries.", "mindset": "Le repos d’aujourd’hui prépare la performance de demain.", "life": "Repos total = mission accomplie."}, {"date": "Vendredi 7 août", "theme": "Reprise progressive + réaction", "load": "Moyenne", "basket": [["Échauffement", "12 min", "Ballon + finitions faciles."], ["Handles en déplacement", "15 min", "Cross, retreat, changement de rythme."], ["1 contre 0", "20 min", "Attaquer un cône, changement de direction, finition."], ["Tir après dribble", "25 min", "50 réussites au total."], ["Lancers francs", "10 min", "5 × 10."]], "physical": [["Échauffement", "10 min", "Progressif; vérifier l’absence de gêne après l’ostéo."], ["Réaction courte", "12 min", "10 départs de 5 m au clap ou signal visuel."], ["Sprint", "12 min", "4 × 10 m + 3 × 15 m, repos complet."], ["Appuis", "12 min", "5-10-5 × 3; shuffle + sprint × 4."], ["Plyométrie basse", "8 min", "Pogo jumps 3 × 12; box jump 3 × 3. Pas de drop jump si raideur."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Réagis avant l’adversaire.", "mindset": "Le premier pas se gagne dans la tête avant de se gagner dans les jambes.", "life": "Après la séance, mange et bois rapidement."}, {"date": "Samedi 8 août", "theme": "Tir volume + force haut du corps", "load": "Moyenne", "basket": [["Échauffement", "10 min", "30 finitions."], ["Tir proche", "10 min", "40 réussites."], ["Catch-and-shoot", "25 min", "75 réussites."], ["Tir après dribble", "25 min", "50 réussites."], ["Lancers francs", "10 min", "50 tirs."]], "physical": [["Tractions/tirage", "3 × 6–8", "Technique parfaite."], ["Développé haltères", "3 × 8", "Sans aller à l’échec."], ["Rowing", "3 × 10", "Contrôle."], ["Pompes", "3 × 10", "Amplitude propre."], ["Lancer médecine-ball poitrine", "4 × 5", "Explosif, récupération 60 s."], ["Gainage anti-rotation", "3 × 10/côté", "Avec élastique si disponible."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Empile les tirs propres.", "mindset": "Chaque tir propre compte. Les tirs bâclés ne comptent pas.", "life": "Les muscles progressent aussi à table."}, {"date": "Dimanche 9 août", "theme": "Tests de référence + basket léger", "load": "Moyenne", "basket": [["Technique légère", "60 min", "Handles, finitions, 150 tirs. Pas de gros volume avant les tests."]], "physical": [["Échauffement test", "15 min", "Progressif, 2 essais sous-maximaux."], ["Tests", "25 min", "3 essais sur 10 m et 20 m; 2 essais 5-10-5; 3 essais détente. Garder le meilleur."], ["🚀 Récupérer, c'est progresser.", "10 min", "3 min entre essais de sprint; 4 min entre tests."], ["Note importante", "—", "Le chrono smartphone sert surtout à comparer ses propres résultats dans les mêmes conditions."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Mesure-toi, pas aux autres.", "mindset": "Ton chrono sert à battre ton ancien toi.", "life": "Une bonne nuit vaut une séance supplémentaire."}, {"date": "Lundi 10 août", "theme": "Lecture de jeu + haut du corps", "load": "Moyenne", "basket": [["Passe et lecture", "15 min", "Passe contre mur : 50 poitrine, 50 rebond, 30 main faible."], ["Closeout imaginaire", "20 min", "Recevoir, lire : tir / drive / extra-pass."], ["Tir décision", "25 min", "Signal vocal : tirer, attaquer droite ou gauche."], ["Lancers francs", "10 min", "50 tirs."]], "physical": [["Tractions/tirage", "4 × 6", "RIR 2 : garder 2 répétitions en réserve."], ["Développé haltères", "3 × 8", "Contrôlé."], ["Rowing", "3 × 8/côté", "Stable."], ["Développé épaules léger", "2 × 8", "Pas de compensation lombaire."], ["Lancer médecine-ball rotation", "3 × 5/côté", "Explosif."], ["Roue abdos", "3 × 8", "Propre."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Joue simple et juste.", "mindset": "Lis, décide, exécute.", "life": "Reste régulier dans les repas."}, {"date": "Mardi 11 août", "theme": "Puissance jambes", "load": "Élevée", "basket": [["Handles", "12 min", "Qualité, pas d’épuisement."], ["Finitions", "20 min", "Main faible prioritaire."], ["Tir", "30 min", "100 réussites variées."], ["Lancers francs", "8 min", "40 tirs."]], "physical": [["Échauffement", "12 min", "Mobilité + activation fessiers + 3 accélérations."], ["Goblet squat vers box", "3 × 6", "Charge modérée, profondeur confortable, vitesse à la remontée."], ["Step-up", "3 × 6/jambe", "Box pas trop haute; bassin stable."], ["Soulevé de terre roumain haltères", "3 × 8", "Dos neutre."], ["Box jump", "4 × 3", "Descendre de la box, ne pas sauter en bas."], ["Saut horizontal", "3 × 3", "Réception silencieuse et stable."], ["Sprint", "4 × 10 m", "Repos 90 s."]], "evening": [["Dead bug", "3 × 8/côté", "Dos plaqué, mouvement lent."], ["Planche latérale", "2 × 25–30 s/côté", "Bassin aligné."], ["Roue abdominale", "2 × 6–8", "Seulement si le dos reste neutre."], ["Étirements doux", "10–12 min", "Mollets, quadriceps, ischios, fessiers, hanches. 20–30 s par position."]], "mission": "Transforme la force en vitesse.", "mindset": "Puissant ne veut pas dire lourd. Puissant veut dire rapide.", "life": "Pas d’entraînement à jeun."}, {"date": "Mercredi 12 août", "theme": "Vitesse pure et défense", "load": "Moyenne", "basket": [["Déplacements défensifs ballon", "15 min", "Closeout, slide, contest sans contact."], ["Handle pression", "15 min", "Protection balle, retreat dribble."], ["Tir après effort court", "25 min", "Sprint 5 m puis 1 tir; 40 réussites."], ["Lancers francs", "10 min", "50 tirs."]], "physical": [["Échauffement", "12 min", "Course, mobilité, éducatifs."], ["Départs variés", "10 min", "2 debout, 2 assis, 2 dos au sens de course, tous sur 5–8 m."], ["Sprints", "15 min", "4 × 10 m + 3 × 20 m, repos 90–120 s."], ["Défense", "12 min", "Shuffle 4 × 6 s; closeout + recul × 4."], ["Pogo jumps", "3 × 10", "Contacts rapides, amplitude basse."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Défends avec les jambes.", "mindset": "Parle, glisse, conteste. Défendre, c’est imposer ton rythme.", "life": "Recharge après les sprints."}, {"date": "Jeudi 13 août", "theme": "Adresse + récupération musculaire", "load": "Légère", "basket": [["Échauffement ballon", "10 min", "Dribble fluide, finitions faciles."], ["Tir technique", "35 min", "120 réussites : proche, mi-distance, catch-and-shoot."], ["Lancers francs", "10 min", "5 séries de 10, routine identique à celle du match."], ["Lecture simple", "10 min", "Recevoir, lire, tirer ou attaquer sans précipitation."]], "physical": [["Mobilité", "15 min", "Chevilles, hanches, adducteurs, thorax."], ["Stabilité", "15 min", "Dead bug, bird dog, équilibre une jambe, mollets isométriques."], ["Marche ou vélo facile", "15–20 min", "Rythme facile, conversation possible."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle et respiration."], ["Bird dog", "2 × 8/côté", "Bassin immobile."], ["Étirements doux", "8–10 min", "Sans forcer, surtout chevilles, hanches et dos."]], "mission": "Reste propre, relâché et précis.", "mindset": "Aujourd’hui, tu construis de la fraîcheur sans perdre le rythme.", "life": "Hydrate-toi bien et couche-toi à heure régulière."}, {"date": "Vendredi 14 août", "theme": "Dernier rappel de puissance", "load": "Moyenne", "basket": [["Handles rapides", "10 min", "Qualité maximale, pas de fatigue inutile."], ["Finitions", "20 min", "Main faible, reverse, flotteur."], ["Tir match", "25 min", "80 réussites à haute qualité."], ["Lancers francs", "8 min", "40 tirs."]], "physical": [["Échauffement", "10 min", "Progressif."], ["Goblet squat léger", "2 × 5", "Remontée rapide, charge facile."], ["Step-up léger", "2 × 5/jambe", "Stable et dynamique."], ["Box jump", "3 × 3", "Hauteur modérée, réception silencieuse."], ["Sprint", "4 × 10 m", "Repos complet 90 s."], ["Réaction", "4 × 5 m", "Au signal."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle."], ["Planche latérale", "2 × 20 s/côté", "Facile."], ["Étirements doux", "8 min", "Sans forcer."]], "mission": "Explose sans te fatiguer.", "mindset": "Peu de répétitions, beaucoup de vitesse.", "life": "Dîner complet et sommeil prioritaire."}, {"date": "Samedi 15 août", "theme": "🚀 Récupérer, c'est progresser. active + confiance", "load": "Légère", "basket": [["Basket plaisir", "45–55 min", "Handles libres, finitions, concours de tirs."], ["Tir confiance", "20 min", "Zones préférées, 80 à 100 réussites."], ["Lancers francs", "20 tirs", "Routine calme."]], "physical": [["Mobilité", "15 min", "Douce."], ["Marche ou vélo facile", "20 min", "Très facile."], ["Respiration", "5 min", "Retour au calme."]], "evening": [["Respiration", "5 min", "Calme."], ["Mobilité douce", "8 min", "Chevilles, hanches, dos."]], "mission": "Recharge sans perdre les sensations.", "mindset": "Le travail est fait. Maintenant, laisse ton corps l’assimiler.", "life": "💧 Boire avant d'avoir soif garde ton jeu rapide., repas complets, écran réduit le soir."}, {"date": "Dimanche 16 août", "theme": "Activation pré-stage", "load": "Très légère", "basket": [["Échauffement", "8 min", "Ballon et mobilité."], ["Handles", "10 min", "Rapides mais relâchés."], ["Finitions", "10 min", "20 réussites faciles."], ["Tir confiance", "15 min", "50 à 70 réussites, pas de gros volume."], ["Lancers francs", "10 tirs", "Routine complète."]], "physical": [["Activation", "20–25 min", "3 accélérations à 85–90 %, 2 × 3 box jumps bas, mobilité."], ["Fin", "—", "Pas de musculation. Pas de test. Pas de fatigue."]], "evening": [["Préparation mentale", "5 min", "Visualiser 3 actions simples réussies."], ["Respiration", "5 min", "Lente et calme."], ["Coucher tôt", "—", "Objectif 9 à 10 h de sommeil."]], "mission": "Prépare tes jambes, garde ton énergie.", "mindset": "Demain, tu veux être vif dès la première minute.", "life": "Prépare ton sac, mange simple, couche-toi tôt."}, {"date": "Lundi 17 août", "theme": "Début du stage / reprise", "load": "Stage", "basket": [["Avant le stage", "—", "Petit-déjeuner habituel, hydratation, collation prête."], ["Échauffement personnel", "8–10 min", "Chevilles, hanches, activation, ballon."], ["Objectifs du jour", "—", "Parler en défense, sprinter au repli, attaquer les espaces, accepter le contact."], ["Après la séance", "—", "Note une réussite et un point à améliorer."]], "physical": [["Aucune séance supplémentaire", "—", "Le stage est la séance principale."], ["🚀 Récupérer, c'est progresser.", "—", "Eau, repas complet, douche, mobilité légère, sommeil."]], "evening": [["🚀 Récupérer, c'est progresser.", "10 min", "Mobilité très légère et respiration."], ["Bilan", "5 min", "Une réussite, un point à améliorer, une intention pour demain."]], "mission": "Impose ton énergie dès le début.", "mindset": "Joue simple, parle en défense, cours fort et reste positif.", "life": "Petit-déjeuner habituel, hydratation, arrivée en avance."}];
+const championQuotes=[{"text": "J’ai échoué encore et encore. C’est pour ça que je réussis.", "author": "Michael Jordan"}, {"text": "La pression et les défis sont des occasions de m’élever.", "author": "Kobe Bryant"}, {"text": "Il n’y a pas d’échec dans le sport : il y a des jours et des leçons.", "author": "Giannis Antetokounmpo"}, {"text": "Deviens la meilleure version de toi-même.", "author": "Simone Biles"}, {"text": "Mets-toi au travail. Encore et encore.", "author": "Frances Tiafoe"}, {"text": "La pression est un privilège. Elle peut devenir une force.", "author": "Kaysha Love"}, {"text": "Rêve aussi grand que possible.", "author": "Michael Phelps"}, {"text": "Sors de ta zone de confort pour progresser.", "author": "Allyson Felix"}];
 let idx=parseInt(localStorage.getItem('u15day')||'0');
 
 function show(id){
- ['home','days','scores','life','mental','identity','rules'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
- ['home','days','scores','life','mental','identity','rules'].forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===id));
- if(id==='scores')setTimeout(drawAll,50);
+ ['home','days','scores','journal','life','mental'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
+ ['home','days','scores','journal','life','mental'].forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===id));
+ if(id==='scores')setTimeout(drawAll,40);
+ if(id==='journal')renderJournal();
 }
 
 function key(i,p,j){return `u15_${i}_${p}_${j}`}
@@ -234,14 +177,10 @@ function pct(m,a){m=Number(m);a=Number(a);return a>0?Math.round(m/a*100):null}
 function count(i){
  const d=days[i];let done=0,total=d.basket.length+d.physical.length+d.evening.length;
  [['b','basket'],['p','physical'],['e','evening']].forEach(([p,k])=>d[k].forEach((_,j)=>{if(localStorage.getItem(key(i,p,j))==='1')done++}));
- return[done,total]
+ return [done,total]
 }
 
-function level(){
- let total=0,done=0;days.forEach((_,i)=>{const c=count(i);done+=c[0];total+=c[1]});
- const p=total?done/total:0;
- return p<.2?'ROOKIE':p<.5?'ROTATION':p<.8?'TITULAIRE':'LEADER'
-}
+function globalCount(){let d=0,t=0;days.forEach((_,i)=>{const c=count(i);d+=c[0];t+=c[1]});return[d,t]}
 
 function section(title,arr,p){
  return `<div class="card"><h2>${title}</h2>${arr.map((x,j)=>`<div class="exercise"><label class="check"><input type="checkbox" ${localStorage.getItem(key(idx,p,j))==='1'?'checked':''} onchange="toggle('${p}',${j},this.checked)"><span><b>${x[0]}</b> <span class="tag">${x[1]}</span><br><span class="small">${x[2]}</span></span></label></div>`).join('')}</div>`
@@ -249,91 +188,101 @@ function section(title,arr,p){
 
 function render(){
  const d=days[idx];localStorage.setItem('u15day',idx);
+ const qi=Math.floor(Date.now()/86400000)%championQuotes.length;const q=championQuotes[qi];document.getElementById('dailyQuote').textContent='“'+q.text+'”';document.getElementById('dailyAuthor').textContent='— '+q.author;
  document.getElementById('date').textContent=d.date;
  document.getElementById('mission').textContent=d.mission;
  document.getElementById('mindset').textContent=d.mindset;
  document.getElementById('load').textContent='Charge : '+d.load;
- document.getElementById('levelBadge').textContent='NIVEAU CAMP : '+level();
- const c=count(idx);document.getElementById('bar').style.width=Math.round(c[0]/c[1]*100)+'%';
- document.getElementById('prog').textContent=`${c[0]} / ${c[1]} blocs terminés`;
+ const c=count(idx);document.getElementById('bar').style.width=Math.round(c[0]/c[1]*100)+'%';document.getElementById('prog').textContent=`${c[0]} / ${c[1]} blocs terminés`;
+ const gc=globalCount();const gp=Math.round(gc[0]/gc[1]*100);document.getElementById('globalProgress').textContent=gp+' %';document.getElementById('globalBar').style.width=gp+'%';
+ const now=new Date();const target=new Date('2026-08-17T08:00:00');document.getElementById('countdown').textContent=Math.max(0,Math.ceil((target-now)/86400000))+' j';
 
- const scoreRows=d.basket.map((x,j)=>`<div class="exercise"><b>${x[0]}</b><div class="grid2" style="margin-top:8px"><div><label class="small">Réussis</label><input id="made_${j}" type="number" min="0" value="${localStorage.getItem('made_'+idx+'_'+j)||''}" oninput="updateTotals()"></div><div><label class="small">Tentés</label><input id="att_${j}" type="number" min="0" value="${localStorage.getItem('att_'+idx+'_'+j)||''}" oninput="updateTotals()"></div></div></div>`).join('');
+ const scores=d.basket.map((x,j)=>`<div class="exercise"><b>${x[0]}</b><div class="grid2" style="margin-top:8px"><input id="made_${j}" type="number" placeholder="Réussis" value="${localStorage.getItem('made_'+idx+'_'+j)||''}" oninput="updateTotals()"><input id="att_${j}" type="number" placeholder="Tentés" value="${localStorage.getItem('att_'+idx+'_'+j)||''}" oninput="updateTotals()"></div></div>`).join('');
 
  document.getElementById('homeContent').innerHTML=`
- <div class="card"><h3>⚡ Aujourd’hui</h3><p>${d.life}</p></div>
  <div class="two">${section('🏀 Matin – Basket',d.basket,'b')}${section('💪 Après-midi – Physique',d.physical,'p')}</div>
  ${section('🌙 Soir – Abdos / mobilité',d.evening,'e')}
- <div class="card"><h3>🎯 Scores par exercice</h3><p class="small">Entre les scores de chaque atelier. Le total se calcule automatiquement.</p>${scoreRows}
- <div class="hero"><div class="metric"><span>Total réussis</span><b id="totalMade">0</b></div><div class="metric"><span>Total tentés</span><b id="totalAtt">0</b></div><div class="metric"><span>Réussite globale</span><b id="totalPct">—</b></div></div></div>
- <div class="card"><h3>🧠 Ton bilan</h3>
+ <div class="card"><h3>🎯 Scores par exercice</h3>${scores}<div class="hero"><div class="metric"><span>Total réussis</span><b id="totalMade">0</b></div><div class="metric"><span>Total tentés</span><b id="totalAtt">0</b></div><div class="metric"><span>Réussite</span><b id="totalPct">—</b></div></div></div>
+ <div class="card"><h3>🧠 Bilan du jour</h3>
  <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}"></div>
- <div class="metric"><label>Douleur /10</label><input id="pain" type="number" min="0" max="10" value="${localStorage.getItem('pain'+idx)||''}"></div>
+ <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}"></div>
  <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}"></div>
- <label>Une réussite + un point à améliorer</label><textarea id="notes" rows="3">${localStorage.getItem('notes'+idx)||''}</textarea>
+ <label>Ma meilleure action</label><textarea id="win" rows="2">${localStorage.getItem('win'+idx)||''}</textarea>
+ <label>Ce que j'améliore demain</label><textarea id="next" rows="2">${localStorage.getItem('next'+idx)||''}</textarea>
  <button class="good" style="margin-top:8px" onclick="saveDay()">VALIDER LA JOURNÉE</button></div>`;
  updateTotals();
 }
 
-function updateTotals(){
- let tm=0,ta=0;days[idx].basket.forEach((_,j)=>{tm+=Number((document.getElementById('made_'+j)||{}).value||0);ta+=Number((document.getElementById('att_'+j)||{}).value||0)});
- document.getElementById('totalMade').textContent=tm;document.getElementById('totalAtt').textContent=ta;document.getElementById('totalPct').textContent=ta>0?Math.round(tm/ta*100)+' %':'—';
-}
+function updateTotals(){let m=0,a=0;days[idx].basket.forEach((_,j)=>{m+=Number((document.getElementById('made_'+j)||{}).value||0);a+=Number((document.getElementById('att_'+j)||{}).value||0)});document.getElementById('totalMade').textContent=m;document.getElementById('totalAtt').textContent=a;document.getElementById('totalPct').textContent=a?Math.round(m/a*100)+' %':'—'}
 
 function toggle(p,j,v){localStorage.setItem(key(idx,p,j),v?'1':'0');render();renderDays()}
 function move(n){idx=Math.max(0,Math.min(days.length-1,idx+n));render();scrollTo(0,0)}
 function openDay(i){idx=i;render();show('home');scrollTo(0,0)}
-
-function renderDays(){
- document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{const c=count(i);return `<button onclick="openDay(${i})"><b>${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`}).join('')
-}
+function renderDays(){document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{const c=count(i);return `<button onclick="openDay(${i})"><b>${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`}).join('')}
 
 function saveDay(){
  days[idx].basket.forEach((_,j)=>{localStorage.setItem('made_'+idx+'_'+j,document.getElementById('made_'+j).value);localStorage.setItem('att_'+idx+'_'+j,document.getElementById('att_'+j).value)});
- ['fat','pain','sleep','notes'].forEach(id=>localStorage.setItem(id+idx,document.getElementById(id).value));
- render();alert('Journée validée');
+ ['fat','confidence','sleep','win','next'].forEach(id=>localStorage.setItem(id+idx,document.getElementById(id).value));
+ localStorage.setItem('journalSaved'+idx,'1');render();alert('Journée enregistrée');
+}
+
+function renderJournal(){
+ const entries=days.map((d,i)=>{
+  if(localStorage.getItem('journalSaved'+i)!=='1')return '';
+  return `<div class="card"><h3>${d.date}</h3><p><b>Confiance :</b> ${localStorage.getItem('confidence'+i)||'—'}/10<br><b>Fatigue :</b> ${localStorage.getItem('fat'+i)||'—'}/10<br><b>Sommeil :</b> ${localStorage.getItem('sleep'+i)||'—'} h</p><p><b>Meilleure action :</b><br>${localStorage.getItem('win'+i)||'—'}</p><p><b>Demain :</b><br>${localStorage.getItem('next'+i)||'—'}</p></div>`
+ }).join('');
+ document.getElementById('journalEntries').innerHTML=entries||'<div class="card">Aucune entrée enregistrée pour le moment.</div>';
 }
 
 function saveTests(){['t9_10','t16_10','t9_20','t16_20','t9_jump','t16_jump'].forEach(id=>localStorage.setItem(id,document.getElementById(id).value));drawAll();alert('Tests enregistrés')}
 function loadTests(){['t9_10','t16_10','t9_20','t16_20','t9_jump','t16_jump'].forEach(id=>document.getElementById(id).value=localStorage.getItem(id)||'')}
 
-function saveLifestyle(){
- ['bedTime','wakeTime','waterToday'].forEach(id=>localStorage.setItem(id,document.getElementById(id).value));alert('Hygiène de vie enregistrée');
-}
-function loadLifestyle(){['bedTime','wakeTime','waterToday'].forEach(id=>document.getElementById(id).value=localStorage.getItem(id)||'')}
-
-function saveMental(){
- ['confidence','mentalWin','mentalNext','mentalPhrase'].forEach(id=>localStorage.setItem(id,document.getElementById(id).value));alert('Journal mental enregistré');
-}
-function loadMental(){['confidence','mentalWin','mentalNext','mentalPhrase'].forEach(id=>document.getElementById(id).value=localStorage.getItem(id)||'')}
-
-function draw(id,labels,values,invert=false){
- const c=document.getElementById(id),ctx=c.getContext('2d'),w=c.clientWidth,h=220,r=devicePixelRatio||1;c.width=w*r;c.height=h*r;ctx.scale(r,r);ctx.clearRect(0,0,w,h);ctx.strokeStyle='#334155';ctx.fillStyle='#cbd5e1';ctx.font='12px Arial';
+function draw(id,labels,values,invert=false,suffix=''){
+ const c=document.getElementById(id),ctx=c.getContext('2d'),w=c.clientWidth,h=220,r=devicePixelRatio||1;
+ c.width=w*r;c.height=h*r;ctx.scale(r,r);ctx.clearRect(0,0,w,h);
  const vals=values.map(v=>v==null||v===''?null:Number(v)),ok=vals.filter(v=>v!=null&&!isNaN(v));
- if(!ok.length){ctx.fillText('Aucune donnée',20,30);return}
- let min=Math.min(...ok),max=Math.max(...ok);if(min===max){min-=1;max+=1}const pad=32;
- ctx.beginPath();ctx.moveTo(pad,15);ctx.lineTo(pad,h-pad);ctx.lineTo(w-10,h-pad);ctx.stroke();ctx.strokeStyle='#f59e0b';ctx.lineWidth=3;ctx.beginPath();let started=false;
- vals.forEach((v,i)=>{if(v==null||isNaN(v))return;const x=pad+i*((w-pad-20)/Math.max(1,vals.length-1)),n=(v-min)/(max-min),y=invert?15+n*(h-pad-20):(h-pad)-n*(h-pad-20);started?ctx.lineTo(x,y):ctx.moveTo(x,y);started=true});ctx.stroke();ctx.fillStyle='#fff';
- vals.forEach((v,i)=>{if(v==null||isNaN(v))return;const x=pad+i*((w-pad-20)/Math.max(1,vals.length-1)),n=(v-min)/(max-min),y=invert?15+n*(h-pad-20):(h-pad)-n*(h-pad-20);ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();ctx.fillText(v,x-8,y-9)});
- labels.forEach((l,i)=>ctx.fillText(l,pad+i*((w-pad-20)/Math.max(1,labels.length-1))-12,h-8));
+ ctx.font='11px Arial';ctx.fillStyle='#94a3b8';
+ if(!ok.length){ctx.fillText('Aucune donnée enregistrée',18,30);return}
+ let min=Math.min(...ok),max=Math.max(...ok),gap=(max-min)||1;min-=gap*.15;max+=gap*.15;
+ const left=42,right=14,top=18,bottom=34;
+ ctx.strokeStyle='#29364c';
+ for(let g=0;g<4;g++){const y=top+g*(h-top-bottom)/3;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();const val=invert?min+(max-min)*g/3:max-(max-min)*g/3;ctx.fillText((Math.round(val*100)/100)+suffix,2,y+4)}
+ ctx.strokeStyle='#f59e0b';ctx.lineWidth=3;ctx.beginPath();let started=false;
+ vals.forEach((v,i)=>{if(v==null||isNaN(v))return;const x=left+i*((w-left-right)/Math.max(1,vals.length-1)),n=(v-min)/(max-min),y=invert?top+n*(h-top-bottom):(h-bottom)-n*(h-top-bottom);started?ctx.lineTo(x,y):ctx.moveTo(x,y);started=true});ctx.stroke();
+ vals.forEach((v,i)=>{if(v==null||isNaN(v))return;const x=left+i*((w-left-right)/Math.max(1,vals.length-1)),n=(v-min)/(max-min),y=invert?top+n*(h-top-bottom):(h-bottom)-n*(h-top-bottom);ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();ctx.fillStyle='#f59e0b';ctx.fillText((Math.round(v*100)/100)+suffix,x-10,y-9)});
+ ctx.fillStyle='#94a3b8';labels.forEach((l,i)=>{if(labels.length>8&&i%2===1)return;const x=left+i*((w-left-right)/Math.max(1,labels.length-1));ctx.fillText(l,x-8,h-10)});
 }
 
+function allShotData(){return days.map((d,i)=>{let m=0,a=0;d.basket.forEach((_,j)=>{m+=Number(localStorage.getItem('made_'+i+'_'+j)||0);a+=Number(localStorage.getItem('att_'+i+'_'+j)||0)});return pct(m,a)})}
 function drawAll(){
- draw('chartShot',days.map((_,i)=>i+2),days.map((d,i)=>{let m=0,a=0;d.basket.forEach((_,j)=>{m+=Number(localStorage.getItem('made_'+i+'_'+j)||0);a+=Number(localStorage.getItem('att_'+i+'_'+j)||0)});return pct(m,a)}));
- draw('chartFT',days.map((_,i)=>i+2),days.map((d,i)=>{let m=0,a=0;d.basket.forEach((x,j)=>{if((x[0]||'').toLowerCase().includes('lancer')){m+=Number(localStorage.getItem('made_'+i+'_'+j)||0);a+=Number(localStorage.getItem('att_'+i+'_'+j)||0)}});return pct(m,a)}));
- draw('chart10',['9/8','16/8'],[localStorage.getItem('t9_10'),localStorage.getItem('t16_10')],true);
- draw('chart20',['9/8','16/8'],[localStorage.getItem('t9_20'),localStorage.getItem('t16_20')],true);
- draw('chartJump',['9/8','16/8'],[localStorage.getItem('t9_jump'),localStorage.getItem('t16_jump')]);
- draw('chartSleep',days.map((_,i)=>i+2),days.map((_,i)=>localStorage.getItem('sleep'+i)));
+ draw('chartShot',days.map((_,i)=>i+2),allShotData(),false,'%');
+ draw('chartFT',days.map((_,i)=>i+2),days.map((d,i)=>{let m=0,a=0;d.basket.forEach((x,j)=>{if(x[0].toLowerCase().includes('lancer')){m+=Number(localStorage.getItem('made_'+i+'_'+j)||0);a+=Number(localStorage.getItem('att_'+i+'_'+j)||0)}});return pct(m,a)}),false,'%');
+ draw('chartSleep',days.map((_,i)=>i+2),days.map((_,i)=>localStorage.getItem('sleep'+i)),false,' h');
+ draw('chartConfidence',days.map((_,i)=>i+2),days.map((_,i)=>localStorage.getItem('confidence'+i)));
  draw('chartFat',days.map((_,i)=>i+2),days.map((_,i)=>localStorage.getItem('fat'+i)));
+ draw('chart10',['9/8','16/8'],[localStorage.getItem('t9_10'),localStorage.getItem('t16_10')],true,' s');
+ draw('chart20',['9/8','16/8'],[localStorage.getItem('t9_20'),localStorage.getItem('t16_20')],true,' s');
+ draw('chartJump',['9/8','16/8'],[localStorage.getItem('t9_jump'),localStorage.getItem('t16_jump')],false,' cm');
+ updateStats();
 }
 
-window.addEventListener('resize',()=>{if(!document.getElementById('scores').classList.contains('hidden'))drawAll()});
-render();renderDays();loadTests();loadLifestyle();loadMental();
+function updateStats(){
+ let m=0,a=0,s=0,sn=0,s10=0,conf=0,cn=0,best=null;
+ days.forEach((d,i)=>{let dm=0,da=0;d.basket.forEach((_,j)=>{const mm=Number(localStorage.getItem('made_'+i+'_'+j)||0),aa=Number(localStorage.getItem('att_'+i+'_'+j)||0);m+=mm;a+=aa;dm+=mm;da+=aa});if(da>0){const p=Math.round(dm/da*100);best=best===null?p:Math.max(best,p)}const sv=Number(localStorage.getItem('sleep'+i));if(sv){s+=sv;sn++;if(sv>=10)s10++}const cv=Number(localStorage.getItem('confidence'+i));if(cv){conf+=cv;cn++}});
+ const gc=globalCount(),completion=gc[1]?Math.round(gc[0]/gc[1]*100):0;
+ document.getElementById('statShots').textContent=a;document.getElementById('statMade').textContent=m;document.getElementById('statPct').textContent=a?Math.round(m/a*100)+' %':'—';document.getElementById('statBestPct').textContent=best===null?'—':best+' %';document.getElementById('statSleep').textContent=sn?(s/sn).toFixed(1)+' h':'—';document.getElementById('statSleep10').textContent=sn?s10+'/'+sn:'—';document.getElementById('statConfidence').textContent=cn?(conf/cn).toFixed(1)+'/10':'—';document.getElementById('statCompletion').textContent=completion+' %';
+ const pcts=allShotData().filter(v=>v!=null);let trend='Enregistre plusieurs séances pour voir une tendance.';if(pcts.length>=2){const diff=pcts[pcts.length-1]-pcts[pcts.length-2];trend=diff>2?'📈 Dernière séance en hausse de '+diff+' points.':diff<-2?'🎯 Dernière séance en baisse : regarde surtout la qualité des tirs.':'➡️ Réussite stable sur les deux dernières séances.'}document.getElementById('trendMessage').textContent=trend;
+}
+
+function openMatchMode(){document.getElementById('matchMode').classList.remove('hidden')} function closeMatchMode(){document.getElementById('matchMode').classList.add('hidden')}
+
+function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data[k]=localStorage.getItem(k)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='basket-gabin-sauvegarde.json';a.click()}
+function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
+
+render();renderDays();loadTests();
 </script>
 <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));
-}
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
 </script>
 </body>
 </html>
