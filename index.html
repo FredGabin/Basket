@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V11</title>
+<title>Basket Elite Gabin V12.0.1 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -31,6 +31,14 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .fullscreen{position:fixed;inset:0;background:linear-gradient(180deg,#020409,#111827);z-index:100;padding:18px;overflow:auto}
 .match-card{background:#101827;border:1px solid #334155;border-radius:16px;padding:14px;margin:10px 0}.event-card{border-left:5px solid var(--blue)}.elite-card{border-left-color:var(--blue)}.region-card{border-left-color:var(--gold)}.done-card{border-left-color:var(--green)}.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#243044;font-size:.75rem;margin:2px}.tabs2{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}.match-form{margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}.three{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.muted-box{background:#08101d;border-radius:10px;padding:10px;color:var(--muted)}
 .stat{text-align:center;background:#09111f;border-radius:12px;padding:12px} .stat b{font-size:1.5rem;color:var(--gold);display:block}.badge-card{background:#09111f;border:1px solid #29364c;border-radius:12px;padding:12px;text-align:center}.badge-card.locked{opacity:.38}.badge-icon{font-size:1.8rem}.badge-name{font-weight:800;margin-top:4px}
+
+.cloud-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid #334155;border-radius:999px;padding:6px 10px;font-size:.72rem;background:#08101d;color:#e2e8f0;cursor:pointer}
+.cloud-dot{width:8px;height:8px;border-radius:50%;background:#94a3b8}.cloud-dot.ok{background:#22c55e}.cloud-dot.sync{background:#f59e0b}.cloud-dot.err{background:#ef4444}
+.cloud-modal{position:fixed;inset:0;background:rgba(2,4,9,.92);z-index:250;padding:18px;overflow:auto}
+.cloud-box{max-width:520px;margin:6vh auto;background:#101827;border:1px solid #334155;border-radius:18px;padding:18px}
+.cloud-box input{margin:6px 0 12px}.cloud-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cloud-note{background:#08101d;border-left:4px solid #38bdf8;border-radius:10px;padding:10px;margin:10px 0}
+
 </style>
 </head>
 <body>
@@ -50,7 +58,10 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 </div>
 
 <header><div class="wrap">
-<h1>BASKET ELITE • GABIN</h1><div class="small">Objectif stage du 17 août</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027</div></div>
+<button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
+</div>
 <div class="menu">
 <button id="m-home" class="active" onclick="show('home')">Accueil</button>
 <button id="m-training" onclick="show('training')">🏀 Entraînements</button>
@@ -75,6 +86,12 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 <button class="primary" style="width:100%;padding:15px;font-size:1.08rem;margin:8px 0" onclick="openMatchMode()">🏆 MODE MATCH</button>
 <div id="homeAgenda" class="card"></div>
+<div class="card">
+  <h3>💾 Protection des données</h3>
+  <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
+  <b>Cloud :</b> synchronisation Firebase dès que le compte familial est connecté.</p>
+  <p class="small">Sauvegarder conserve un brouillon. Valider marque une journée ou un match comme terminé.</p>
+</div>
 
 <div class="hero">
 <h2 id="date"></h2>
@@ -178,6 +195,44 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 </ul></div>
 </section>
 </main>
+
+
+<div id="cloudPanel" class="cloud-modal hidden">
+  <div class="cloud-box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2>☁️ Synchronisation Firebase</h2>
+      <button onclick="closeCloudPanel()">✕</button>
+    </div>
+    <div id="cloudSignedOut">
+      <p>Utilisez le <b>même compte familial</b> sur les deux téléphones. L’adresse est préremplie ; le mot de passe reste privé.</p>
+      <label>Adresse e-mail</label>
+      <input id="cloudEmail" type="email" autocomplete="username" value="Gbnbeteille@gmail.com" placeholder="adresse familiale">
+      <label>Mot de passe</label>
+      <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="6 caractères minimum">
+      <div class="cloud-actions">
+        <button onclick="cloudLogin()">Se connecter</button>
+        <button class="primary" onclick="cloudCreateAccount()">Créer le compte</button>
+      </div>
+      <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
+    </div>
+    <div id="cloudSignedIn" class="hidden">
+      <div class="cloud-note"><b>V12.0 active</b><br>Sauvegarde locale immédiate + copie Firebase partagée.</div>
+      <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
+      <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
+      <div class="cloud-actions">
+        <button onclick="cloudSyncNow()">🔄 Synchroniser</button>
+        <button onclick="cloudLogout()">Déconnexion</button>
+      </div>
+      <div class="cloud-note">
+        <b>Fonctionnement :</b><br>
+        • chaque saisie reste enregistrée localement ;<br>
+        • une copie est envoyée dans Firestore ;<br>
+        • l’autre téléphone reçoit les changements automatiquement.
+      </div>
+    </div>
+    <p id="cloudMessage" class="small"></p>
+  </div>
+</div>
 
 <div id="matchMode" class="fullscreen hidden">
 <div style="max-width:700px;margin:auto">
@@ -377,13 +432,19 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v11';
+const STATE_KEY='basket_gabin_state_v12';
 
+function isAppStorageKey(k){
+  if(!k || k===STATE_KEY)return false;
+  if(k.startsWith('firebase:') || k.startsWith('firebaseLocalStorage'))return false;
+  if(k.startsWith('cloud_'))return false;
+  return true;
+}
 function collectState(){
-  const state={version:'11',savedAt:new Date().toISOString(),values:{}};
+  const state={version:'12.0',savedAt:new Date().toISOString(),values:{}};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
-    if(k && k!==STATE_KEY) state.values[k]=localStorage.getItem(k);
+    if(isAppStorageKey(k))state.values[k]=localStorage.getItem(k);
   }
   return state;
 }
@@ -391,6 +452,7 @@ function collectState(){
 function writeSnapshot(){
   try{
     localStorage.setItem(STATE_KEY,JSON.stringify(collectState()));
+    if(window.queueCloudSync)window.queueCloudSync();
     updateSaveStatus('Brouillon sauvegardé');
   }catch(e){
     updateSaveStatus('Erreur de sauvegarde');
@@ -572,6 +634,14 @@ function renderBadges(){
   el.innerHTML=computeBadges().map(b=>`<div class="badge-card ${b[2]?'':'locked'}"><div class="badge-icon">${b[0]}</div><div class="badge-name">${b[1]}</div><div class="small">${b[2]?'Débloqué':b[3]}</div></div>`).join('');
 }
 
+
+function openCloudPanel(){document.getElementById('cloudPanel').classList.remove('hidden');if(window.refreshCloudPanel)window.refreshCloudPanel()}
+function closeCloudPanel(){document.getElementById('cloudPanel').classList.add('hidden')}
+function cloudLogin(){if(window.firebaseFamilyLogin)window.firebaseFamilyLogin()}
+function cloudCreateAccount(){if(window.firebaseFamilyCreate)window.firebaseFamilyCreate()}
+function cloudLogout(){if(window.firebaseFamilyLogout)window.firebaseFamilyLogout()}
+function cloudSyncNow(){if(window.firebaseSyncNow)window.firebaseSyncNow()}
+
 function openMatchMode(){document.getElementById('matchMode').classList.remove('hidden')} function closeMatchMode(){document.getElementById('matchMode').classList.add('hidden')}
 
 function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data[k]=localStorage.getItem(k)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='basket-gabin-sauvegarde.json';a.click()}
@@ -586,6 +656,205 @@ document.addEventListener('visibilitychange',()=>{
 });
 
 </script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import {
+  getAuth, setPersistence, browserLocalPersistence,
+  signInWithEmailAndPassword, createUserWithEmailAndPassword,
+  signOut, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import {
+  initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  doc, getDoc, setDoc, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAWu2R1vMymUxp5a1lTNcnehNAqCivEGs4",
+  authDomain: "basketgab-d294a.firebaseapp.com",
+  projectId: "basketgab-d294a",
+  storageBucket: "basketgab-d294a.firebasestorage.app",
+  messagingSenderId: "889579218198",
+  appId: "1:889579218198:web:49a7a654553b07afad1c37"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+await setPersistence(auth, browserLocalPersistence);
+
+let db;
+try {
+  db = initializeFirestore(app, {
+    localCache: persistentLocalCache({tabManager: persistentMultipleTabManager()})
+  });
+} catch (e) {
+  db = initializeFirestore(app, {});
+}
+
+let currentUser = null;
+let unsubscribeCloud = null;
+let cloudTimer = null;
+let applyingRemote = false;
+let firstSnapshot = true;
+let lastCloudSavedAt = null;
+
+function cloudDocRef(uid){
+  return doc(db, "users", uid, "apps", "basket-gabin");
+}
+function setCloudUI(state, text){
+  const dot=document.getElementById('cloudDot');
+  const label=document.getElementById('cloudLabel');
+  if(dot){dot.className='cloud-dot '+(state||'')}
+  if(label)label.textContent=text;
+}
+function cloudMessage(text, error=false){
+  const el=document.getElementById('cloudMessage');
+  if(el){el.textContent=text||'';el.style.color=error?'#fca5a5':'#94a3b8'}
+}
+function showAccountState(){
+  const out=document.getElementById('cloudSignedOut');
+  const inn=document.getElementById('cloudSignedIn');
+  if(!out||!inn)return;
+  out.classList.toggle('hidden',!!currentUser);
+  inn.classList.toggle('hidden',!currentUser);
+  const email=document.getElementById('cloudUserEmail');
+  if(email&&currentUser)email.textContent=currentUser.email||currentUser.uid;
+  const sync=document.getElementById('cloudLastSync');
+  if(sync)sync.textContent=lastCloudSavedAt?'Dernière synchro : '+lastCloudSavedAt:'Synchronisation prête.';
+}
+window.refreshCloudPanel=showAccountState;
+
+function applyRemoteState(remote){
+  if(!remote || !remote.values)return;
+  applyingRemote=true;
+  try{
+    Object.entries(remote.values).forEach(([k,v])=>{
+      if(isAppStorageKey(k))localStorage.setItem(k,String(v));
+    });
+    localStorage.setItem(STATE_KEY,JSON.stringify(remote));
+  }finally{
+    applyingRemote=false;
+  }
+  restoreSnapshot();
+  render();
+  renderDays();
+  loadTests();
+  if(!document.getElementById('matches').classList.contains('hidden'))renderMatches();
+  if(!document.getElementById('training').classList.contains('hidden'))renderTraining();
+}
+
+async function uploadLocalState(force=false){
+  if(!currentUser || applyingRemote)return;
+  setCloudUI('sync','Synchronisation…');
+  const state=collectState();
+  await setDoc(cloudDocRef(currentUser.uid),{
+    ownerUid:currentUser.uid,
+    ownerEmail:currentUser.email||'',
+    app:"Basket Gabin",
+    updatedAt:serverTimestamp(),
+    clientSavedAt:state.savedAt,
+    state
+  },{merge:true});
+  lastCloudSavedAt=new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  setCloudUI('ok','Cloud synchronisé');
+  showAccountState();
+}
+
+window.queueCloudSync=function(){
+  if(!currentUser || applyingRemote)return;
+  clearTimeout(cloudTimer);
+  setCloudUI('sync','À synchroniser…');
+  cloudTimer=setTimeout(()=>uploadLocalState().catch(e=>{
+    console.error(e);setCloudUI('err','Cloud en attente');cloudMessage('Synchronisation reportée : '+e.message,true);
+  }),700);
+};
+window.firebaseSyncNow=()=>uploadLocalState(true).then(()=>cloudMessage('Synchronisation terminée.')).catch(e=>cloudMessage(e.message,true));
+
+async function startCloud(uid){
+  if(unsubscribeCloud)unsubscribeCloud();
+  const ref=cloudDocRef(uid);
+  const initial=await getDoc(ref);
+  if(!initial.exists()){
+    await uploadLocalState(true);
+  }else{
+    const cloud=initial.data()?.state;
+    const local=collectState();
+    const cloudTime=Date.parse(cloud?.savedAt||0);
+    const localTime=Date.parse(local?.savedAt||0);
+    if(cloud && cloudTime>=localTime)applyRemoteState(cloud);
+    else await uploadLocalState(true);
+  }
+  firstSnapshot=true;
+  unsubscribeCloud=onSnapshot(ref,{includeMetadataChanges:true},snap=>{
+    if(!snap.exists())return;
+    const data=snap.data();
+    const remote=data?.state;
+    if(!remote)return;
+    if(snap.metadata.hasPendingWrites)return;
+    if(firstSnapshot){firstSnapshot=false;return}
+    const remoteTime=Date.parse(remote.savedAt||0);
+    const localTime=Date.parse(collectState().savedAt||0);
+    if(remoteTime>localTime){
+      applyRemoteState(remote);
+      setCloudUI('ok','Cloud reçu');
+      cloudMessage('Données mises à jour depuis l’autre appareil.');
+    }
+  },err=>{
+    console.error(err);setCloudUI('err','Erreur cloud');cloudMessage(err.message,true);
+  });
+}
+
+window.firebaseFamilyLogin=async function(){
+  const email=document.getElementById('cloudEmail').value.trim();
+  const password=document.getElementById('cloudPassword').value;
+  cloudMessage('Connexion…');
+  try{await signInWithEmailAndPassword(auth,email,password);cloudMessage('Connexion réussie.')}
+  catch(e){
+      const msg=e.code==='auth/invalid-credential'?'E-mail ou mot de passe incorrect.':
+                e.code==='auth/too-many-requests'?'Trop de tentatives. Attends quelques minutes.':
+                e.message;
+      cloudMessage("Connexion impossible : "+msg,true)
+    }
+};
+window.firebaseFamilyCreate=async function(){
+  const email=document.getElementById('cloudEmail').value.trim();
+  const password=document.getElementById('cloudPassword').value;
+  if(password.length<6){cloudMessage('Le mot de passe doit contenir au moins 6 caractères.',true);return}
+  cloudMessage('Création du compte…');
+  try{await createUserWithEmailAndPassword(auth,email,password);cloudMessage('Compte familial créé.')}
+  catch(e){
+      const msg=e.code==='auth/email-already-in-use'?'Ce compte existe déjà : utilise Se connecter.':
+                e.code==='auth/weak-password'?'Choisis un mot de passe d’au moins 6 caractères.':
+                e.message;
+      cloudMessage("Création impossible : "+msg,true)
+    }
+};
+window.firebaseFamilyLogout=async function(){
+  if(unsubscribeCloud){unsubscribeCloud();unsubscribeCloud=null}
+  await signOut(auth);
+  cloudMessage('Déconnecté.');
+};
+
+onAuthStateChanged(auth,async user=>{
+  currentUser=user;
+  if(user){
+    setCloudUI('sync','Connexion cloud…');
+    showAccountState();
+    try{
+      await startCloud(user.uid);
+      setCloudUI('ok','Cloud synchronisé');
+    }catch(e){
+      console.error(e);setCloudUI('err','Cloud bloqué');cloudMessage(
+        "Firebase refuse l’accès. Vérifie que l’authentification E-mail/Mot de passe et les règles Firestore sont activées. "+e.message,true
+      );
+    }
+  }else{
+    setCloudUI('','Cloud non connecté');
+    showAccountState();
+  }
+});
+</script>
+
 <script>
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
 </script>
