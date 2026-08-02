@@ -245,6 +245,27 @@ function move(n){idx=Math.max(0,Math.min(days.length-1,idx+n));render();scrollTo
 function openDay(i){idx=i;render();show('home');scrollTo(0,0)}
 function renderDays(){document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{const c=count(i);return `<button onclick="openDay(${i})"><b>${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`}).join('')}
 
+
+function persistVisibleForm(){
+ const d=days[idx];
+ d.score_groups.forEach((g,gi)=>g.items.forEach((_,ii)=>{
+   const m=document.getElementById('m_'+gi+'_'+ii),a=document.getElementById('a_'+gi+'_'+ii);
+   if(m)localStorage.setItem('v10m_'+idx+'_'+gi+'_'+ii,m.value);
+   if(a)localStorage.setItem('v10a_'+idx+'_'+gi+'_'+ii,a.value);
+ }));
+ [['fat','fat'],['conf','conf'],['sleep','sleep'],['note','note']].forEach(([id,k])=>{
+   const el=document.getElementById(id);if(el)localStorage.setItem('v10'+k+'_'+idx,el.value);
+ });
+}
+function saveScoreField(gi,ii,type,value){
+ localStorage.setItem('v10'+type+'_'+idx+'_'+gi+'_'+ii,value);
+ localStorage.setItem('v10draft_'+idx,'1');
+}
+function saveDailyField(field,value){
+ localStorage.setItem('v10'+field+'_'+idx,value);
+ localStorage.setItem('v10draft_'+idx,'1');
+}
+
 function saveDay(){
  days[idx].scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,document.getElementById('made_'+gi+'_'+ii).value);localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,document.getElementById('att_'+gi+'_'+ii).value)}));
  ['fat','confidence','sleep','win','next'].forEach(id=>localStorage.setItem(id+idx,document.getElementById(id).value));
