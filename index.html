@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.0.1 Firebase</title>
+<title>Basket Elite Gabin V12.1.1 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -216,7 +216,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
       <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V12.0 active</b><br>Sauvegarde locale immédiate + copie Firebase partagée.</div>
+      <div class="cloud-note"><b>V12.1 active</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -432,7 +432,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v12';
+const STATE_KEY='basket_gabin_state_v121';
 
 function isAppStorageKey(k){
   if(!k || k===STATE_KEY)return false;
@@ -440,18 +440,27 @@ function isAppStorageKey(k){
   if(k.startsWith('cloud_'))return false;
   return true;
 }
+function readSnapshot(){
+  try{return JSON.parse(localStorage.getItem(STATE_KEY)||'null')}catch(e){return null}
+}
 function collectState(){
-  const state={version:'12.0',savedAt:new Date().toISOString(),values:{}};
+  const previous=readSnapshot()||{values:{},updated:{}};
+  const now=Date.now();
+  const values={},updated={...(previous.updated||{})};
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
-    if(isAppStorageKey(k))state.values[k]=localStorage.getItem(k);
+    if(!isAppStorageKey(k))continue;
+    const value=localStorage.getItem(k);
+    values[k]=value;
+    if(previous.values?.[k]!==value || !updated[k])updated[k]=now;
   }
-  return state;
+  return {version:'12.1',savedAt:new Date(now).toISOString(),values,updated};
 }
 
 function writeSnapshot(){
   try{
-    localStorage.setItem(STATE_KEY,JSON.stringify(collectState()));
+    const state=collectState();
+    localStorage.setItem(STATE_KEY,JSON.stringify(state));
     if(window.queueCloudSync)window.queueCloudSync();
     updateSaveStatus('Brouillon sauvegardé');
   }catch(e){
@@ -461,13 +470,27 @@ function writeSnapshot(){
 
 function restoreSnapshot(){
   try{
-    const raw=localStorage.getItem(STATE_KEY);
-    if(!raw)return;
-    const state=JSON.parse(raw);
+    const state=readSnapshot();
+    if(!state)return;
     Object.entries(state.values||{}).forEach(([k,v])=>{
       if(localStorage.getItem(k)===null)localStorage.setItem(k,v);
     });
   }catch(e){}
+}
+
+function mergeStates(localState,remoteState){
+  const local=localState||{values:{},updated:{}};
+  const remote=remoteState||{values:{},updated:{}};
+  const keys=new Set([...Object.keys(local.values||{}),...Object.keys(remote.values||{})]);
+  const values={},updated={};
+  for(const k of keys){
+    const lt=Number(local.updated?.[k]||0),rt=Number(remote.updated?.[k]||0);
+    if(rt>lt){values[k]=remote.values[k];updated[k]=rt;}
+    else if(lt>0 || local.values?.[k]!==undefined){values[k]=local.values[k];updated[k]=lt||Date.now();}
+    else {values[k]=remote.values[k];updated[k]=rt||Date.now();}
+  }
+  const latest=Math.max(0,...Object.values(updated));
+  return {version:'12.1',savedAt:new Date(latest||Date.now()).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -728,17 +751,14 @@ function applyRemoteState(remote){
   if(!remote || !remote.values)return;
   applyingRemote=true;
   try{
-    Object.entries(remote.values).forEach(([k,v])=>{
+    const local=collectState();
+    const merged=mergeStates(local,remote);
+    Object.entries(merged.values||{}).forEach(([k,v])=>{
       if(isAppStorageKey(k))localStorage.setItem(k,String(v));
     });
-    localStorage.setItem(STATE_KEY,JSON.stringify(remote));
-  }finally{
-    applyingRemote=false;
-  }
-  restoreSnapshot();
-  render();
-  renderDays();
-  loadTests();
+    localStorage.setItem(STATE_KEY,JSON.stringify(merged));
+  }finally{applyingRemote=false;}
+  render();renderDays();loadTests();
   if(!document.getElementById('matches').classList.contains('hidden'))renderMatches();
   if(!document.getElementById('training').classList.contains('hidden'))renderTraining();
 }
@@ -746,7 +766,12 @@ function applyRemoteState(remote){
 async function uploadLocalState(force=false){
   if(!currentUser || applyingRemote)return;
   setCloudUI('sync','Synchronisation…');
-  const state=collectState();
+  const local=collectState();
+  const existing=await getDoc(cloudDocRef(currentUser.uid));
+  const remote=existing.exists()?existing.data()?.state:null;
+  const state=mergeStates(local,remote);
+  localStorage.setItem(STATE_KEY,JSON.stringify(state));
+  Object.entries(state.values||{}).forEach(([k,v])=>{if(isAppStorageKey(k))localStorage.setItem(k,String(v));});
   await setDoc(cloudDocRef(currentUser.uid),{
     ownerUid:currentUser.uid,
     ownerEmail:currentUser.email||'',
@@ -777,12 +802,9 @@ async function startCloud(uid){
   if(!initial.exists()){
     await uploadLocalState(true);
   }else{
-    const cloud=initial.data()?.state;
-    const local=collectState();
-    const cloudTime=Date.parse(cloud?.savedAt||0);
-    const localTime=Date.parse(local?.savedAt||0);
-    if(cloud && cloudTime>=localTime)applyRemoteState(cloud);
-    else await uploadLocalState(true);
+    const merged=mergeStates(collectState(),initial.data()?.state);
+    applyRemoteState(merged);
+    await setDoc(ref,{ownerUid:currentUser.uid,ownerEmail:currentUser.email||'',app:'Basket Gabin',updatedAt:serverTimestamp(),clientSavedAt:merged.savedAt,state:merged},{merge:true});
   }
   firstSnapshot=true;
   unsubscribeCloud=onSnapshot(ref,{includeMetadataChanges:true},snap=>{
@@ -792,12 +814,12 @@ async function startCloud(uid){
     if(!remote)return;
     if(snap.metadata.hasPendingWrites)return;
     if(firstSnapshot){firstSnapshot=false;return}
-    const remoteTime=Date.parse(remote.savedAt||0);
-    const localTime=Date.parse(collectState().savedAt||0);
-    if(remoteTime>localTime){
-      applyRemoteState(remote);
+    const before=JSON.stringify(collectState().values||{});
+    applyRemoteState(remote);
+    const after=JSON.stringify(collectState().values||{});
+    if(before!==after){
       setCloudUI('ok','Cloud reçu');
-      cloudMessage('Données mises à jour depuis l’autre appareil.');
+      cloudMessage('Données fusionnées depuis l’autre appareil.');
     }
   },err=>{
     console.error(err);setCloudUI('err','Erreur cloud');cloudMessage(err.message,true);
