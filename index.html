@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.4.1 Firebase</title>
+<title>Basket Elite Gabin V12.5 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -72,7 +72,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027</div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.5</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -492,7 +492,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v1241';
+const STATE_KEY='basket_gabin_state_v1251';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -547,7 +547,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.4',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.5',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function writeSnapshot(){
@@ -607,7 +607,7 @@ function mergeStates(localState,remoteState){
     }
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.4',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.5',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -1215,8 +1215,26 @@ onAuthStateChanged(auth,async user=>{
 });
 </script>
 
+
 <script>
-if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
+(async()=>{
+  try{
+    if('caches' in window){
+      const keys=await caches.keys();
+      await Promise.all(keys.filter(k=>!k.includes('basket-gabin-v12-5')).map(k=>caches.delete(k)));
+    }
+    if('serviceWorker' in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      for(const reg of regs){
+        try{await reg.update()}catch(e){}
+      }
+    }
+  }catch(e){console.warn('Nettoyage cache',e)}
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js',{updateViaCache:'none'}));
 </script>
 </body>
 </html>
