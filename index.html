@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V12.9 Firebase</title>
+<title>Basket Elite Gabin V12.10 Firebase</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -52,6 +52,12 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .stat-table th:first-child,.stat-table td:first-child{text-align:left}
 .stat-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
 
+
+.day-validated{opacity:.48;filter:grayscale(.55)}
+.day-validated::before{content:"✅ JOURNÉE VALIDÉE";display:block;background:#14532d;color:#dcfce7;border:1px solid #22c55e;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:900;text-align:center}
+.day-button-validated{opacity:.5;filter:grayscale(.7);border-color:#22c55e!important}
+.day-button-current{outline:2px solid #f59e0b;outline-offset:2px}
+
 </style>
 </head>
 <body>
@@ -72,7 +78,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.9</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V12.10</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -83,7 +89,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <button id="m-scores" onclick="show('scores')">Stats</button>
 <button id="m-journal" onclick="show('journal')">Journal</button>
 <button id="m-life" onclick="show('life')">Hygiène</button>
-<button id="m-mental" onclick="show('mental')">Identité</button>
+<button id="m-mental" onclick="show('mental')">Mental</button>
 </div></div></header>
 
 <main class="wrap">
@@ -97,7 +103,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 </div>
 
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
-<button class="primary" style="width:100%;padding:15px;font-size:1.08rem;margin:8px 0" onclick="openMatchMode()">🏆 MODE MATCH</button>
+
 <div id="homeAgenda" class="card"></div>
 <div class="card">
   <h3>💾 Protection des données</h3>
@@ -132,6 +138,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <section id="matches" class="hidden">
 <div class="hero"><h2>🏆 Matchs</h2><p class="quote">Région ou Élite : je prépare, je joue, je note.</p></div>
+<button class="primary" style="width:100%;padding:15px;font-size:1.08rem;margin:8px 0" onclick="openMatchMode()">🏆 MODE MATCH</button>
 <div id="nextMatch"></div>
 <div class="tabs2"><button id="regionBtn" class="active" onclick="showMatchTab('region')">U15 M2 / Région</button><button id="eliteBtn" onclick="showMatchTab('elite')">U15 Élite</button></div>
 <div id="regionMatches"></div>
@@ -269,7 +276,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
       <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V12.9 envoi protégé par code</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
+      <div class="cloud-note"><b>V12.10 navigation quotidienne</b><br>Sauvegarde locale immédiate + fusion Firebase champ par champ.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -327,7 +334,34 @@ const summerEvents=[{"date": "2026-08-17", "label": "Lundi 17 août", "time": "1
 const weeklyTraining=[{"day": 2, "dayLabel": "Mardi", "time": "18h00–19h30", "team": "U15 M2 / Région", "place": "Maison du Basket", "note": "Créneau annuel"}, {"day": 3, "dayLabel": "Mercredi", "time": "19h15–20h30", "team": "U15 M2 / Région", "place": "Salle bleue – Bruguières", "note": "Créneau annuel"}, {"day": 4, "dayLabel": "Jeudi", "time": "18h00", "team": "Entraînement avec Ousmane", "place": "Maison du Basket", "note": "Horaire communiqué"}, {"day": 5, "dayLabel": "Vendredi", "time": "17h30–19h00", "team": "U15 Élite", "place": "Maison du Basket", "note": "Créneau annuel"}];
 const seasonMatches=[{"id": "r01", "date": "2026-09-27", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "La Croix d’Argent Montpellier 2", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r02", "date": "2026-10-04", "time": "13h00", "home": "Stade Toulousain Basketball 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r03", "date": "2026-10-11", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Exempt", "type": "Région / U15 M2", "status": "bye", "place": "Repos"}, {"id": "r04", "date": "2026-11-08", "time": "13h00", "home": "CTC Cévennes Basket-Ball 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r05", "date": "2026-11-15", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "CTC Avenir Toulouse Basket – TOAC 2", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r06", "date": "2026-11-29", "time": "13h00", "home": "Castelnau Basket 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r07", "date": "2026-12-06", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "CTC Élan Aveyron Basket 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r08", "date": "2026-12-13", "time": "13h00", "home": "Montpellier Basket Mosson 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r09", "date": "2027-01-10", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Toulouges BA 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r10", "date": "2027-01-17", "time": "13h00", "home": "La Croix d’Argent Montpellier 2", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r11", "date": "2027-01-31", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Stade Toulousain Basketball 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r12", "date": "2027-02-28", "time": "13h00", "home": "Exempt", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "bye", "place": "Repos"}, {"id": "r13", "date": "2027-03-07", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "CTC Cévennes Basket-Ball 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r14", "date": "2027-03-14", "time": "13h00", "home": "CTC Avenir Toulouse Basket – TOAC 2", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r15", "date": "2027-03-21", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Castelnau Basket 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r16", "date": "2027-04-18", "time": "13h00", "home": "CTC Élan Aveyron Basket 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r17", "date": "2027-04-25", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Montpellier Basket Mosson 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r18", "date": "2027-05-02", "time": "13h00", "home": "Toulouges BA 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}];
 const championQuotes=[{"text": "J’ai échoué encore et encore. C’est pour ça que je réussis.", "author": "Michael Jordan"}, {"text": "La pression et les défis sont des occasions de m’élever.", "author": "Kobe Bryant"}, {"text": "Il n’y a pas d’échec dans le sport : il y a des jours et des leçons.", "author": "Giannis Antetokounmpo"}, {"text": "Deviens la meilleure version de toi-même.", "author": "Simone Biles"}, {"text": "Mets-toi au travail. Encore et encore.", "author": "Frances Tiafoe"}, {"text": "La pression est un privilège. Elle peut devenir une force.", "author": "Kaysha Love"}, {"text": "Rêve aussi grand que possible.", "author": "Michael Phelps"}, {"text": "Sors de ta zone de confort pour progresser.", "author": "Allyson Felix"}];
-let idx=parseInt(localStorage.getItem('u15day')||'0');
+
+function programDateFromLabel(label){
+  const months={janvier:0,février:1,mars:2,avril:3,mai:4,juin:5,juillet:6,août:7,septembre:8,octobre:9,novembre:10,décembre:11};
+  const match=String(label||'').toLowerCase().match(/(\d{1,2})\s+(janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre)/);
+  if(!match)return null;
+  return new Date(2026,months[match[2]],Number(match[1]),12,0,0);
+}
+function currentProgramDayIndex(){
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate(),12,0,0).getTime();
+  const exact=days.findIndex(d=>{
+    const dt=programDateFromLabel(d.date);
+    return dt && dt.getTime()===today;
+  });
+  if(exact>=0)return exact;
+
+  // Outside the exact programme date: show the nearest programme day.
+  let nearest=0,best=Infinity;
+  days.forEach((d,i)=>{
+    const dt=programDateFromLabel(d.date);
+    if(!dt)return;
+    const diff=Math.abs(dt.getTime()-today);
+    if(diff<best){best=diff;nearest=i;}
+  });
+  return nearest;
+}
+let idx=currentProgramDayIndex();
+
 
 function show(id){saveAllVisibleInputs();
  const sections=['home','training','matches','days','scores','journal','life','mental'];
@@ -493,12 +527,20 @@ function render(){
 <button class="good" onclick="validateDay()">✅ VALIDER LA JOURNÉE</button>
 </div>
 <p class="small">Sauvegarder = brouillon modifiable. Valider = journée terminée et ajoutée au journal.</p></div>`;
+ const validated=localStorage.getItem('validatedAt'+idx)!==null;
+ const hc=document.getElementById('homeContent');
+ hc.classList.toggle('day-validated',validated);
+ if(validated){
+   hc.querySelectorAll('input,textarea,select,button').forEach(el=>el.disabled=true);
+   const status=document.getElementById('saveStatus');
+   if(status)status.textContent='✅ Journée validée — saisie verrouillée.';
+ }
  updateTotals();renderHomeAgenda();
 }
 
 
 
-const STATE_KEY='basket_gabin_state_v1291';
+const STATE_KEY='basket_gabin_state_v1210';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -553,27 +595,44 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.9',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.10',savedAt:new Date(latest).toISOString(),values,updated};
 }
+
 
 function writeSnapshot(){
   try{
-    const state=collectState();
+    // Every field is already stored directly in localStorage by setAppValue().
+    // Store only compact metadata here to avoid quota errors from duplicating the whole database.
+    const meta={version:'12.10',savedAt:new Date().toISOString()};
     suppressFieldClock=true;
-    try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
-    finally{suppressFieldClock=false;}
-    if(window.queueCloudSync)window.queueCloudSync();
+    try{
+      localStorage.setItem(STATE_KEY,JSON.stringify(meta));
+      localStorage.setItem('basket_gabin_last_local_save',meta.savedAt);
+    }finally{suppressFieldClock=false;}
     updateSaveStatus('Brouillon sauvegardé');
   }catch(e){
-    console.error(e);
-    updateSaveStatus('Erreur de sauvegarde');
+    console.error('Local save error',e);
+    // Remove obsolete duplicated snapshots, then retry compact metadata once.
+    try{
+      const stale=[];
+      for(let i=0;i<localStorage.length;i++){
+        const k=localStorage.key(i);
+        if(k && k.startsWith('basket_gabin_state_v') && k!==STATE_KEY)stale.push(k);
+      }
+      stale.forEach(k=>localStorage.removeItem(k));
+      localStorage.setItem(STATE_KEY,JSON.stringify({version:'12.10',savedAt:new Date().toISOString()}));
+      updateSaveStatus('Brouillon sauvegardé');
+    }catch(finalError){
+      console.error(finalError);
+      updateSaveStatus('Erreur de sauvegarde locale');
+    }
   }
 }
 
 function restoreSnapshot(){
   try{
     const state=readSnapshot();
-    if(!state)return;
+    if(!state || !state.values)return;
     Object.entries(state.values||{}).forEach(([k,v])=>{
       if(localStorage.getItem(k)===null)applyAppValue(k,v,Number(state.updated?.[k]||1));
     });
@@ -613,7 +672,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'12.9',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'12.10',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -670,11 +729,23 @@ function updateTotals(){let m=0,a=0;days[idx].scoreDetails.forEach((g,gi)=>g.ite
 function toggle(p,j,v){saveAllVisibleInputs();setAppValue(key(idx,p,j),v?'1':'0');render();renderDays()}
 function move(n){saveAllVisibleInputs();idx=Math.max(0,Math.min(days.length-1,idx+n));render();scrollTo(0,0)}
 function openDay(i){saveAllVisibleInputs();idx=i;render();show('home');scrollTo(0,0)}
-function renderDays(){document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{const c=count(i);return `<button onclick="openDay(${i})"><b>${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`}).join('')}
+function renderDays(){
+ const current=currentProgramDayIndex();
+ document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{
+   const c=count(i);
+   const validated=localStorage.getItem('validatedAt'+i)!==null;
+   const classes=[validated?'day-button-validated':'',i===current?'day-button-current':''].filter(Boolean).join(' ');
+   return `<button class="${classes}" onclick="openDay(${i})"><b>${validated?'✅ ':''}${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`;
+ }).join('');
+}
 
 
 
 function validateDay(){
+ if(localStorage.getItem('validatedAt'+idx)){
+   alert('Cette journée est déjà validée.');
+   return;
+ }
  saveAllVisibleInputs();
  setAppValue('journalSaved'+idx,'1');
  setAppValue('validatedAt'+idx,new Date().toISOString());
@@ -1302,7 +1373,20 @@ window.firebaseRestoreBackup=async()=>{
     }finally{
       applyingRemote=false;
     }
-    restoreSnapshot(); render(); renderDays(); loadTests();
+    
+let lastCalendarDay=new Date().toDateString();
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState!=='visible')return;
+  const nowKey=new Date().toDateString();
+  if(nowKey!==lastCalendarDay){
+    lastCalendarDay=nowKey;
+    idx=currentProgramDayIndex();
+    render();
+    renderDays();
+  }
+});
+
+restoreSnapshot(); render(); renderDays(); loadTests();
     setCloudUI('ok','Sauvegarde restaurée');
     cloudMessage('La sauvegarde cloud précédente a été restaurée sur ce téléphone.');
   }catch(e){
