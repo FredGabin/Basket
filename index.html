@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V13.1 Stable</title>
+<title>Basket Elite Gabin V14.0 Performance</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -44,7 +44,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .stat-kpi{background:#08101d;border:1px solid #334155;border-radius:14px;padding:12px}
 .stat-kpi .value{font-size:1.55rem;font-weight:900;color:#f59e0b}
 .stat-kpi .label{font-size:.76rem;color:#94a3b8;margin-top:3px}
-.stats-switch{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:10px 0}
+.stats-switch{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0}
 .stats-filter{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
 .stats-filter button{white-space:nowrap;flex:0 0 auto}
 .stat-table{width:100%;border-collapse:collapse;font-size:.78rem}
@@ -64,6 +64,22 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .manual-entry-list{display:grid;gap:8px;margin-top:12px}
 .manual-entry-item{background:#08101d;border:1px solid #334155;border-radius:12px;padding:10px}
 .manual-entry-item b{color:#f59e0b}
+
+
+.perf-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.perf-card{background:#08101d;border:1px solid #334155;border-radius:14px;padding:12px}
+.perf-card .big{font-size:1.55rem;font-weight:900;color:#f59e0b}
+.record-list{display:grid;gap:8px}
+.record-item{display:flex;justify-content:space-between;gap:12px;align-items:center;background:#08101d;border:1px solid #334155;border-radius:12px;padding:11px}
+.record-item b{color:#f59e0b}
+.coach-card{background:linear-gradient(135deg,#172554,#0f172a);border:1px solid #3b82f6;border-radius:16px;padding:14px;margin-top:12px}
+.coach-card h4{margin:8px 0 4px;color:#f59e0b}
+.score-ring{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;margin:auto;background:conic-gradient(#22c55e var(--score),#263244 0)}
+.score-ring::after{content:"";width:82px;height:82px;border-radius:50%;background:#08101d;position:absolute}
+.score-ring span{position:relative;z-index:1;font-size:1.3rem;font-weight:900}
+.chart-tabs{display:flex;gap:6px;overflow-x:auto;margin:10px 0}
+.chart-tabs button{white-space:nowrap;flex:0 0 auto}
+canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radius:12px}
 
 </style>
 </head>
@@ -85,7 +101,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V13.1</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V14.0</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -112,7 +128,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 
 <div id="homeAgenda" class="card"></div>
-<div class="card"><b>🛡️ V13.1 Stable</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
+<div class="card"><b>🚀 V14.0 Performance</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
 <div class="card">
   <h3>💾 Protection des données</h3>
   <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
@@ -167,6 +183,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
   <div class="stats-switch">
     <button id="statsSummerBtn" class="active" onclick="showStatsView('summer')">☀️ Prépa été</button>
     <button id="statsMatchesBtn" onclick="showStatsView('matches')">🏆 Matchs</button>
+    <button id="statsEvolutionBtn" onclick="showStatsView('evolution')">📈 Évolution</button>
   </div>
 
   <div id="statsSummerView">
@@ -227,6 +244,37 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
       </table></div>
     </div>
   </div>
+
+  <div id="statsEvolutionView" class="hidden">
+    <div class="card">
+      <h3>📈 Graphiques de progression</h3>
+      <div class="chart-tabs">
+        <button class="active" onclick="setEvolutionMetric('shoot',this)">Tirs</button>
+        <button onclick="setEvolutionMetric('volume',this)">Volume</button>
+        <button onclick="setEvolutionMetric('sleep',this)">Sommeil</button>
+        <button onclick="setEvolutionMetric('fatigue',this)">Fatigue</button>
+        <button onclick="setEvolutionMetric('confidence',this)">Confiance</button>
+        <button onclick="setEvolutionMetric('blocks',this)">Blocs</button>
+      </div>
+      <canvas id="evolutionChart" class="performance-chart" height="210"></canvas>
+    </div>
+
+    <div class="card">
+      <h3>🏆 Records personnels</h3>
+      <div id="personalRecords" class="record-list"></div>
+    </div>
+
+    <div class="card">
+      <h3>🔥 Séries</h3>
+      <div id="streakStats" class="perf-grid"></div>
+    </div>
+
+    <div class="card">
+      <h3>🎖 Indice Basket Elite</h3>
+      <div id="eliteIndex"></div>
+      <p class="small">Indicateur interne de régularité et de progression, pas une évaluation officielle du niveau.</p>
+    </div>
+  </div>
 </section>
 
 <section id="journal" class="hidden">
@@ -284,7 +332,7 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
       <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V13.1 stable</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V14.0 Performance & Coach</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -389,7 +437,7 @@ function show(id){saveAllVisibleInputs();
  sections.forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===id));
  if(id==='training')renderTraining();
  if(id==='matches')renderMatches();
- if(id==='scores')setTimeout(()=>{renderSummerStats();renderMatchStats();},40);
+ if(id==='scores')setTimeout(()=>{renderSummerStats();renderMatchStats();renderEvolutionDashboard();},40);
  if(id==='journal')renderJournal();
 }
 
@@ -695,7 +743,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v131';
+const STATE_KEY='basket_gabin_state_v140';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -750,7 +798,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'13.1',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'14.0',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 
@@ -760,7 +808,7 @@ function writeSnapshot(){
   try{
     localStorage.setItem('basket_gabin_last_local_save',savedAt);
     try{
-      localStorage.setItem(STATE_KEY,JSON.stringify({version:'13.1',savedAt}));
+      localStorage.setItem(STATE_KEY,JSON.stringify({version:'14.0',savedAt}));
     }catch(metaError){
       // The actual fields are already saved individually; metadata failure is non-blocking.
       console.warn('Snapshot metadata skipped',metaError);
@@ -816,7 +864,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'13.1',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'14.0',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -913,10 +961,274 @@ function validateDay(){
  alert('Journée validée et ajoutée au journal.');
 }
 
+
+let activeEvolutionMetric='shoot';
+
+function dayPerformance(i){
+  const shot=readDayShotTotals(i);
+  const blocks=countCompletedBlocks(i);
+  const sleep=numVal('sleep'+i);
+  const fatigue=numVal('fat'+i);
+  const confidence=numVal('confidence'+i);
+  const validated=localStorage.getItem('journalSaved'+i)==='1' && Boolean(localStorage.getItem('validatedAt'+i));
+  const strength=readJsonList('strengthEntries'+i);
+  const runs=readJsonList('runEntries'+i);
+
+  const shootPct=shot.att?pct(shot.made,shot.att):0;
+  const blockPct=blocks.total?Math.round(blocks.done*100/blocks.total):0;
+  const technique=Math.min(100,Math.round(shootPct*.65+Math.min(100,shot.att/3)*.35));
+  const physical=Math.min(100,Math.round(
+    Math.min(100,blockPct*.6)+
+    Math.min(20,strength.length*10)+
+    Math.min(20,runs.length*10)
+  ));
+  const mental=Math.round(((confidence||5)/10)*100);
+  const recovery=Math.round(
+    Math.min(100,(sleep?Math.min(10,sleep)/10*75:45)+(fatigue?Math.max(0,10-fatigue)*2.5:12.5))
+  );
+  const score=Math.round(technique*.35+physical*.25+mental*.20+recovery*.20);
+
+  return {i,shot,blocks,sleep,fatigue,confidence,validated,strength,runs,shootPct,blockPct,technique,physical,mental,recovery,score};
+}
+
+function scoreLabel(score){
+  if(score>=90)return '🟢 Excellent';
+  if(score>=80)return '🔵 Très bon';
+  if(score>=70)return '🟡 Bon';
+  if(score>=55)return '🟠 Moyen';
+  return '🔴 À améliorer';
+}
+
+function coachText(i){
+  const p=dayPerformance(i);
+  const win=(localStorage.getItem('win'+i)||'').trim();
+  const next=(localStorage.getItem('next'+i)||'').trim();
+  const journal=(win+' '+next).toLowerCase();
+
+  let analysis='Journée enregistrée avec une progression régulière.';
+  let strength='La régularité et la qualité de la saisie.';
+  let watch='Continuer à écouter les sensations du corps.';
+  let mission='Revenir demain avec une consigne simple et une exécution propre.';
+
+  if(p.shot.att>=150 && p.shootPct>=75){
+    analysis=`Gros volume de travail : ${p.shot.made}/${p.shot.att} tirs, soit ${p.shootPct} %. La qualité reste solide malgré le volume.`;
+    strength='Volume et adresse combinés.';
+  }else if(p.shot.att>=100 && p.shootPct<60){
+    analysis=`Le volume est présent (${p.shot.att} tirs), mais la réussite de ${p.shootPct} % montre qu'il faut ralentir et stabiliser le geste.`;
+    watch='Qualité des appuis et équilibre avant le tir.';
+    mission='Faire moins de tirs, mais exiger une mécanique propre sur chaque répétition.';
+  }else if(p.shot.att>0){
+    analysis=`Séance de ${p.shot.att} tirs avec ${p.shootPct} % de réussite.`;
+    strength=p.shootPct>=70?'Bonne efficacité technique.':'Le travail a été réalisé jusqu’au bout.';
+  }
+
+  if(p.sleep && p.sleep<9){
+    watch='Sommeil insuffisant pour un joueur en croissance.';
+    mission='Priorité à la récupération et à une nuit longue.';
+  }
+  if(p.fatigue>=8){
+    watch='Fatigue élevée : éviter d’ajouter une séance intense.';
+    mission='Mobilité douce, hydratation et récupération.';
+  }
+  if(p.confidence && p.confidence<=4){
+    strength='Le fait d’avoir travaillé malgré une confiance basse.';
+    mission='Chercher une réussite simple dès le début de la prochaine séance.';
+  }
+  if(journal.includes('douleur') || journal.includes('genou') || journal.includes('cheville')){
+    watch='Une douleur est mentionnée dans le journal.';
+    mission='Réduire la charge et prévenir un adulte ou le coach si la douleur persiste.';
+  }
+  if(next){
+    mission=next;
+  }
+
+  return {analysis,strength,watch,mission};
+}
+
+function coachCard(i){
+  const p=dayPerformance(i);
+  const c=coachText(i);
+  return `<div class="coach-card">
+    <div class="grid2" style="align-items:center">
+      <div><h3>⭐ Coach</h3><p class="small">Analyse locale automatique</p></div>
+      <div class="score-ring" style="--score:${p.score}%"><span>${p.score}/100</span></div>
+    </div>
+    <p><b>${scoreLabel(p.score)}</b></p>
+    <h4>Analyse du jour</h4><p>${c.analysis}</p>
+    <h4>✅ Point fort</h4><p>${c.strength}</p>
+    <h4>⚠️ Point de vigilance</h4><p>${c.watch}</p>
+    <h4>🎯 Mission demain</h4><p>${c.mission}</p>
+  </div>`;
+}
+
+function validatedDayIndexes(){
+  return days.map((_,i)=>i).filter(i=>
+    localStorage.getItem('journalSaved'+i)==='1' &&
+    Boolean(localStorage.getItem('validatedAt'+i))
+  );
+}
+
+function streakSummary(){
+  const indexes=validatedDayIndexes();
+  if(!indexes.length)return {current:0,best:0,total:0};
+  let best=1,current=1,run=1;
+  for(let n=1;n<indexes.length;n++){
+    if(indexes[n]===indexes[n-1]+1){
+      run++;
+      best=Math.max(best,run);
+    }else run=1;
+  }
+  const last=indexes[indexes.length-1];
+  current=1;
+  for(let n=indexes.length-1;n>0;n--){
+    if(indexes[n]===indexes[n-1]+1)current++;
+    else break;
+  }
+  return {current,best,total:indexes.length};
+}
+
+function computeRecords(){
+  let bestPct={v:0,label:'—'},bestVolume={v:0,label:'—'},bestScore={v:0,label:'—'};
+  let bestSleep={v:0,label:'—'},bestStrength={v:0,label:'—'},bestRun={v:0,label:'—'};
+  let bestPoints={v:0,label:'—'},bestRebounds={v:0,label:'—'},bestAssists={v:0,label:'—'};
+
+  days.forEach((d,i)=>{
+    const p=dayPerformance(i);
+    if(p.shot.att && p.shootPct>bestPct.v)bestPct={v:p.shootPct,label:d.date};
+    if(p.shot.att>bestVolume.v)bestVolume={v:p.shot.att,label:d.date};
+    if(p.score>bestScore.v)bestScore={v:p.score,label:d.date};
+    if(p.sleep>bestSleep.v)bestSleep={v:p.sleep,label:d.date};
+    const strengthCount=p.strength.length;
+    if(strengthCount>bestStrength.v)bestStrength={v:strengthCount,label:d.date};
+    const runDistance=p.runs.reduce((s,r)=>s+Number(r.distance||0),0);
+    if(runDistance>bestRun.v)bestRun={v:runDistance,label:d.date};
+  });
+
+  getValidatedMatchStats().forEach(m=>{
+    if(m.points>bestPoints.v)bestPoints={v:m.points,label:m.opponent};
+    if(m.rebounds>bestRebounds.v)bestRebounds={v:m.rebounds,label:m.opponent};
+    if(m.assists>bestAssists.v)bestAssists={v:m.assists,label:m.opponent};
+  });
+
+  return {bestPct,bestVolume,bestScore,bestSleep,bestStrength,bestRun,bestPoints,bestRebounds,bestAssists};
+}
+
+function recordItem(label,value,detail){
+  return `<div class="record-item"><span>${label}<br><span class="small">${detail}</span></span><b>${value}</b></div>`;
+}
+
+function renderRecords(){
+  const r=computeRecords();
+  document.getElementById('personalRecords').innerHTML=
+    recordItem('Meilleure adresse',r.bestPct.v+' %',r.bestPct.label)+
+    recordItem('Plus gros volume',r.bestVolume.v+' tirs',r.bestVolume.label)+
+    recordItem('Meilleur score du jour',r.bestScore.v+'/100',r.bestScore.label)+
+    recordItem('Plus longue nuit',r.bestSleep.v+' h',r.bestSleep.label)+
+    recordItem('Plus grosse séance muscu',r.bestStrength.v+' exercices',r.bestStrength.label)+
+    recordItem('Plus longue course',r.bestRun.v+' km',r.bestRun.label)+
+    recordItem('Record points',r.bestPoints.v,r.bestPoints.label)+
+    recordItem('Record rebonds',r.bestRebounds.v,r.bestRebounds.label)+
+    recordItem('Record passes',r.bestAssists.v,r.bestAssists.label);
+}
+
+function eliteIndexValue(){
+  const validated=validatedDayIndexes();
+  if(!validated.length)return 0;
+  const perfs=validated.map(dayPerformance);
+  const avgField=f=>perfs.reduce((s,p)=>s+p[f],0)/perfs.length;
+  const matches=getValidatedMatchStats();
+  const matchScore=matches.length?Math.min(100,50+matches.reduce((s,m)=>s+m.points+m.rebounds+m.assists,0)/matches.length*2):40;
+  const streak=streakSummary();
+  const regularity=Math.min(100,(validated.length/days.length)*75+Math.min(25,streak.best*4));
+  return Math.round(
+    avgField('technique')*.35+
+    avgField('physical')*.25+
+    regularity*.20+
+    matchScore*.10+
+    avgField('mental')*.10
+  );
+}
+
+function renderEliteIndex(){
+  const value=eliteIndexValue();
+  document.getElementById('eliteIndex').innerHTML=`
+    <div class="score-ring" style="--score:${value}%"><span>${value}/100</span></div>
+    <div class="progress" style="margin-top:12px"><div class="bar" style="width:${value}%"></div></div>`;
+}
+
+function evolutionData(metric){
+  return days.map((d,i)=>{
+    const p=dayPerformance(i);
+    let value=0;
+    if(metric==='shoot')value=p.shootPct;
+    if(metric==='volume')value=p.shot.att;
+    if(metric==='sleep')value=p.sleep;
+    if(metric==='fatigue')value=p.fatigue;
+    if(metric==='confidence')value=p.confidence;
+    if(metric==='blocks')value=p.blockPct;
+    return {label:d.date.replace(/^\w+\s+/,'').replace(' août','/08'),value};
+  });
+}
+
+function setEvolutionMetric(metric,button){
+  activeEvolutionMetric=metric;
+  document.querySelectorAll('.chart-tabs button').forEach(b=>b.classList.remove('active'));
+  if(button)button.classList.add('active');
+  drawEvolutionChart();
+}
+
+function drawEvolutionChart(){
+  const c=document.getElementById('evolutionChart');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const w=Math.max(300,c.clientWidth||320),h=210;
+  c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+
+  const data=evolutionData(activeEvolutionMetric);
+  const values=data.map(x=>Number(x.value||0));
+  const max=Math.max(10,...values);
+  const min=0;
+
+  ctx.strokeStyle='#334155';ctx.lineWidth=1;
+  for(let j=0;j<=4;j++){
+    const y=18+j*(h-48)/4;
+    ctx.beginPath();ctx.moveTo(32,y);ctx.lineTo(w-12,y);ctx.stroke();
+  }
+
+  const step=(w-52)/Math.max(1,data.length-1);
+  ctx.strokeStyle='#f59e0b';ctx.lineWidth=3;ctx.beginPath();
+  data.forEach((p,i)=>{
+    const x=34+i*step;
+    const y=18+(max-p.value)*(h-48)/(max-min||1);
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  });
+  ctx.stroke();
+
+  ctx.fillStyle='#f59e0b';
+  data.forEach((p,i)=>{
+    const x=34+i*step;
+    const y=18+(max-p.value)*(h-48)/(max-min||1);
+    ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+  });
+}
+
+function renderEvolutionDashboard(){
+  drawEvolutionChart();
+  renderRecords();
+  const s=streakSummary();
+  document.getElementById('streakStats').innerHTML=
+    statKpi(s.current,'Série actuelle')+
+    statKpi(s.best,'Meilleure série')+
+    statKpi(s.total,'Journées validées');
+  renderEliteIndex();
+}
+
+
 function renderJournal(){
  const entries=days.map((d,i)=>{
   if(localStorage.getItem('journalSaved'+i)!=='1')return '';
-  return `<div class="card"><h3>${d.date}</h3><p><b>Confiance :</b> ${localStorage.getItem('confidence'+i)||'—'}/10<br><b>Fatigue :</b> ${localStorage.getItem('fat'+i)||'—'}/10<br><b>Sommeil :</b> ${localStorage.getItem('sleep'+i)||'—'} h</p><p><b>Meilleure action :</b><br>${localStorage.getItem('win'+i)||'—'}</p><p><b>Demain :</b><br>${localStorage.getItem('next'+i)||'—'}</p></div>`
+  return `<div class="card"><h3>${d.date}</h3><p><b>Confiance :</b> ${localStorage.getItem('confidence'+i)||'—'}/10<br><b>Fatigue :</b> ${localStorage.getItem('fat'+i)||'—'}/10<br><b>Sommeil :</b> ${localStorage.getItem('sleep'+i)||'—'} h</p><p><b>Meilleure action :</b><br>${localStorage.getItem('win'+i)||'—'}</p><p><b>Demain :</b><br>${localStorage.getItem('next'+i)||'—'}</p>${coachCard(i)}</div>`
  }).join('');
  document.getElementById('journalEntries').innerHTML=entries||'<div class="card">Aucune entrée enregistrée pour le moment.</div>';
 }
@@ -947,10 +1259,13 @@ let activeMatchStatsFilter='all';
 function showStatsView(view){
   document.getElementById('statsSummerView').classList.toggle('hidden',view!=='summer');
   document.getElementById('statsMatchesView').classList.toggle('hidden',view!=='matches');
+  document.getElementById('statsEvolutionView').classList.toggle('hidden',view!=='evolution');
   document.getElementById('statsSummerBtn').classList.toggle('active',view==='summer');
   document.getElementById('statsMatchesBtn').classList.toggle('active',view==='matches');
+  document.getElementById('statsEvolutionBtn').classList.toggle('active',view==='evolution');
   if(view==='summer')renderSummerStats();
-  else renderMatchStats();
+  else if(view==='matches')renderMatchStats();
+  else renderEvolutionDashboard();
 }
 
 function numVal(key){
@@ -1360,7 +1675,7 @@ function applyRemoteState(remote){
   render();renderDays();loadTests();
   if(!document.getElementById('matches').classList.contains('hidden'))renderMatches();
   if(!document.getElementById('training').classList.contains('hidden'))renderTraining();
-  if(!document.getElementById('scores').classList.contains('hidden')){renderSummerStats();renderMatchStats();}
+  if(!document.getElementById('scores')?.classList.contains('hidden')){renderSummerStats();renderMatchStats();renderEvolutionDashboard();}
 }
 
 
