@@ -189,7 +189,7 @@ const days=[{"date": "Dimanche 2 août", "theme": "Vitesse d’appuis et techniq
 const championQuotes=[{"text": "J’ai échoué encore et encore. C’est pour ça que je réussis.", "author": "Michael Jordan"}, {"text": "La pression et les défis sont des occasions de m’élever.", "author": "Kobe Bryant"}, {"text": "Il n’y a pas d’échec dans le sport : il y a des jours et des leçons.", "author": "Giannis Antetokounmpo"}, {"text": "Deviens la meilleure version de toi-même.", "author": "Simone Biles"}, {"text": "Mets-toi au travail. Encore et encore.", "author": "Frances Tiafoe"}, {"text": "La pression est un privilège. Elle peut devenir une force.", "author": "Kaysha Love"}, {"text": "Rêve aussi grand que possible.", "author": "Michael Phelps"}, {"text": "Sors de ta zone de confort pour progresser.", "author": "Allyson Felix"}];
 let idx=parseInt(localStorage.getItem('u15day')||'0');
 
-function show(id){
+function show(id){saveAllVisibleInputs();
  ['home','days','scores','journal','life','mental'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
  ['home','days','scores','journal','life','mental'].forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===id));
  if(id==='scores')setTimeout(drawAll,40);
@@ -222,27 +222,48 @@ function render(){
  const gc=globalCount();const gp=Math.round(gc[0]/gc[1]*100);document.getElementById('globalProgress').textContent=gp+' %';document.getElementById('globalBar').style.width=gp+'%';
  const now=new Date();const target=new Date('2026-08-17T08:00:00');document.getElementById('countdown').textContent=Math.max(0,Math.ceil((target-now)/86400000))+' j';
 
- const scores=d.scoreDetails.map((g,gi)=>`<div class="card"><h3>${g.name}</h3>${g.items.map((it,ii)=>`<div class="exercise"><b>${it}</b><div class="grid2" style="margin-top:8px"><input id="made_${gi}_${ii}" type="number" placeholder="Réussis" value="${localStorage.getItem('v10made_'+idx+'_'+gi+'_'+ii)||''}" oninput="updateTotals()"><input id="att_${gi}_${ii}" type="number" placeholder="Tentés" value="${localStorage.getItem('v10att_'+idx+'_'+gi+'_'+ii)||''}" oninput="updateTotals()"></div></div>`).join('')}</div>`).join('');
+ const scores=d.scoreDetails.map((g,gi)=>`<div class="card"><h3>${g.name}</h3>${g.items.map((it,ii)=>`<div class="exercise"><b>${it}</b><div class="grid2" style="margin-top:8px"><input id="made_${gi}_${ii}" type="number" placeholder="Réussis" value="${localStorage.getItem('v10made_'+idx+'_'+gi+'_'+ii)||''}" oninput="saveMadeField(${gi},${ii},this.value);updateTotals()"><input id="att_${gi}_${ii}" type="number" placeholder="Tentés" value="${localStorage.getItem('v10att_'+idx+'_'+gi+'_'+ii)||''}" oninput="saveAttField(${gi},${ii},this.value);updateTotals()"></div></div>`).join('')}</div>`).join('');
 
  document.getElementById('homeContent').innerHTML=`
  <div class="two">${section('🏀 Matin – Basket',d.basket,'b')}${section('💪 Après-midi – Physique',d.physical,'p')}</div>
  ${section('🌙 Soir – Abdos / mobilité',d.evening,'e')}
  <div class="card"><h3>🎯 Scores par exercice</h3>${scores}<div class="hero"><div class="metric"><span>Total réussis</span><b id="totalMade">0</b></div><div class="metric"><span>Total tentés</span><b id="totalAtt">0</b></div><div class="metric"><span>Réussite</span><b id="totalPct">—</b></div></div></div>
  <div class="card"><h3>🧠 Bilan du jour</h3>
- <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}"></div>
- <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}"></div>
- <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}"></div>
- <label>Ma meilleure action</label><textarea id="win" rows="2">${localStorage.getItem('win'+idx)||''}</textarea>
- <label>Ce que j'améliore demain</label><textarea id="next" rows="2">${localStorage.getItem('next'+idx)||''}</textarea>
- <button class="good" style="margin-top:8px" onclick="saveDay()">VALIDER LA JOURNÉE</button></div>`;
+ <div class="metric"><label>Fatigue /10</label><input id="fat" type="number" min="0" max="10" value="${localStorage.getItem('fat'+idx)||''}" oninput="localStorage.setItem('fat'+idx,this.value)"></div>
+ <div class="metric"><label>Confiance /10</label><input id="confidence" type="number" min="0" max="10" value="${localStorage.getItem('confidence'+idx)||''}" oninput="localStorage.setItem('confidence'+idx,this.value)"></div>
+ <div class="metric"><label>Sommeil</label><input id="sleep" type="number" step=".5" value="${localStorage.getItem('sleep'+idx)||''}" oninput="localStorage.setItem('sleep'+idx,this.value)"></div>
+ <label>Ma meilleure action</label><textarea id="win" rows="2" oninput="localStorage.setItem('win'+idx,this.value)">${localStorage.getItem('win'+idx)||''}</textarea>
+ <label>Ce que j'améliore demain</label><textarea id="next" rows="2" oninput="localStorage.setItem('next'+idx,this.value)">${localStorage.getItem('next'+idx)||''}</textarea>
+ <p class="small">✅ Chaque saisie est enregistrée immédiatement.</p><button class="good" style="margin-top:8px" onclick="saveDay()">VALIDER LA JOURNÉE</button></div>`;
  updateTotals();
+}
+
+
+function saveMadeField(gi,ii,value){
+  localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,value);
+}
+function saveAttField(gi,ii,value){
+  localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,value);
+}
+function saveAllVisibleInputs(){
+  const d=days[idx];
+  d.scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{
+    const made=document.getElementById('made_'+gi+'_'+ii);
+    const att=document.getElementById('att_'+gi+'_'+ii);
+    if(made) localStorage.setItem('v10made_'+idx+'_'+gi+'_'+ii,made.value);
+    if(att) localStorage.setItem('v10att_'+idx+'_'+gi+'_'+ii,att.value);
+  }));
+  ['fat','confidence','sleep','win','next'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) localStorage.setItem(id+idx,el.value);
+  });
 }
 
 function updateTotals(){let m=0,a=0;days[idx].scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{m+=Number((document.getElementById('made_'+gi+'_'+ii)||{}).value||0);a+=Number((document.getElementById('att_'+gi+'_'+ii)||{}).value||0)}));document.getElementById('totalMade').textContent=m;document.getElementById('totalAtt').textContent=a;document.getElementById('totalPct').textContent=a?Math.round(m/a*100)+' %':'—'}
 
-function toggle(p,j,v){localStorage.setItem(key(idx,p,j),v?'1':'0');render();renderDays()}
-function move(n){idx=Math.max(0,Math.min(days.length-1,idx+n));render();scrollTo(0,0)}
-function openDay(i){idx=i;render();show('home');scrollTo(0,0)}
+function toggle(p,j,v){saveAllVisibleInputs();localStorage.setItem(key(idx,p,j),v?'1':'0');render();renderDays()}
+function move(n){saveAllVisibleInputs();idx=Math.max(0,Math.min(days.length-1,idx+n));render();scrollTo(0,0)}
+function openDay(i){saveAllVisibleInputs();idx=i;render();show('home');scrollTo(0,0)}
 function renderDays(){document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{const c=count(i);return `<button onclick="openDay(${i})"><b>${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`}).join('')}
 
 
@@ -375,6 +396,13 @@ function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
 
 render();renderDays();loadTests();showStartup();
+
+window.addEventListener('pagehide',saveAllVisibleInputs);
+window.addEventListener('beforeunload',saveAllVisibleInputs);
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden') saveAllVisibleInputs();
+});
+
 </script>
 <script>
 if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'));
