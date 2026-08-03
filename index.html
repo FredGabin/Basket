@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V15.0</title>
+<title>Basket Elite Gabin V15.1</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -101,7 +101,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.0</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.1</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -128,7 +128,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 
 <div id="homeAgenda" class="card"></div>
-<div class="card"><b>🚀 V15.0</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
+<div class="card"><b>🚀 V15.1</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
 <div class="card">
   <h3>💾 Protection des données</h3>
   <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
@@ -336,7 +336,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V15.0</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V15.1</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -743,7 +743,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v150';
+const STATE_KEY='basket_gabin_state_v151';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -751,6 +751,9 @@ let suppressFieldClock=false;
 
 function isAppStorageKey(k){
   if(!k || k===STATE_KEY || k===FIELD_CLOCK_KEY)return false;
+  if(k.startsWith('basket_gabin_state_v'))return false;
+  if(k.startsWith('basket_gabin_field_clock_'))return false;
+  if(k==='basket_gabin_last_local_save')return false;
   if(k.startsWith('firebase:') || k.startsWith('firebaseLocalStorage'))return false;
   if(k.startsWith('cloud_'))return false;
   return true;
@@ -798,7 +801,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'15.0',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.1',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 
@@ -808,7 +811,7 @@ function writeSnapshot(){
   try{
     localStorage.setItem('basket_gabin_last_local_save',savedAt);
     try{
-      localStorage.setItem(STATE_KEY,JSON.stringify({version:'15.0',savedAt}));
+      localStorage.setItem(STATE_KEY,JSON.stringify({version:'15.1',savedAt}));
     }catch(metaError){
       // The actual fields are already saved individually; metadata failure is non-blocking.
       console.warn('Snapshot metadata skipped',metaError);
@@ -864,7 +867,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'15.0',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.1',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -1598,6 +1601,7 @@ function openMatchMode(){document.getElementById('matchMode').classList.remove('
 function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data[k]=localStorage.getItem(k)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='basket-gabin-sauvegarde.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
 
+removeRedundantLocalCopies();
 restoreSnapshot();render();renderDays();loadTests();showStartup();requestPersistentStorage();
 
 window.addEventListener('pagehide',saveAllVisibleInputs);
@@ -1688,8 +1692,12 @@ function applyRemoteState(remote){
       if(isAppStorageKey(k))applyAppValue(k,v,Number(merged.updated?.[k]||1));
     });
     suppressFieldClock=true;
-    try{localStorage.setItem(STATE_KEY,JSON.stringify(merged));}
-    finally{suppressFieldClock=false;}
+    try{
+      localStorage.setItem(STATE_KEY,JSON.stringify({
+        version:'15.1',
+        savedAt:merged.savedAt||new Date().toISOString()
+      }));
+    }finally{suppressFieldClock=false;}
   }finally{applyingRemote=false;}
   render();renderDays();loadTests();
   if(!document.getElementById('matches').classList.contains('hidden'))renderMatches();
@@ -1718,8 +1726,13 @@ async function uploadLocalState(force=false){
   }
 
   suppressFieldClock=true;
-  try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
-  finally{suppressFieldClock=false;}
+  try{
+    removeRedundantLocalCopies();
+    localStorage.setItem(STATE_KEY,JSON.stringify({
+      version:'15.1',
+      savedAt:state.savedAt||new Date().toISOString()
+    }));
+  }finally{suppressFieldClock=false;}
 
   Object.entries(state.values||{}).forEach(([k,v])=>{
     if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
@@ -1742,6 +1755,99 @@ async function uploadLocalState(force=false){
 window.queueCloudSync=function(){
   // V12.8: sauvegarde cloud uniquement sur action manuelle.
 };
+
+
+function removeRedundantLocalCopies(){
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(!k)continue;
+    if(k.startsWith('basket_gabin_state_v') ||
+       k.startsWith('basket_gabin_field_clock_')){
+      keys.push(k);
+    }
+  }
+  keys.forEach(k=>localStorage.removeItem(k));
+}
+
+function clearLocalAppDataForCloudRestore(){
+  const keys=[];
+  for(let i=0;i<localStorage.length;i++){
+    const k=localStorage.key(i);
+    if(!k)continue;
+    if(isAppStorageKey(k) ||
+       k.startsWith('basket_gabin_state_v') ||
+       k.startsWith('basket_gabin_field_clock_') ||
+       k==='basket_gabin_last_local_save'){
+      keys.push(k);
+    }
+  }
+  keys.forEach(k=>localStorage.removeItem(k));
+}
+
+function storeCloudStateLocally(state){
+  if(!state || !state.values)throw new Error('Sauvegarde Cloud invalide.');
+
+  // The Cloud has already been fetched successfully.
+  // Clear only Basket Gabin data, never Firebase authentication data.
+  clearLocalAppDataForCloudRestore();
+
+  let stored=0;
+  try{
+    for(const [k,v] of Object.entries(state.values||{})){
+      if(!isAppStorageKey(k))continue;
+      localStorage.setItem(k,String(v));
+      stored++;
+    }
+
+    // Do not duplicate the full state in localStorage.
+    localStorage.setItem(
+      STATE_KEY,
+      JSON.stringify({version:'15.1',savedAt:state.savedAt||new Date().toISOString()})
+    );
+    localStorage.setItem(
+      'basket_gabin_last_local_save',
+      state.savedAt||new Date().toISOString()
+    );
+    localStorage.setItem(FIELD_CLOCK_KEY,'{}');
+    return stored;
+  }catch(e){
+    removeRedundantLocalCopies();
+    throw new Error(
+      e && e.name==='QuotaExceededError'
+        ? 'Mémoire du téléphone insuffisante même après nettoyage.'
+        : (e.message||String(e))
+    );
+  }
+}
+
+function refreshAfterCloudLoad(){
+  const errors=[];
+  const safe=(name,fn)=>{
+    try{if(typeof fn==='function')fn()}
+    catch(e){console.warn(name,e);errors.push(name)}
+  };
+  safe('render',typeof render==='function'?render:null);
+  safe('renderDays',typeof renderDays==='function'?renderDays:null);
+  safe('loadTests',typeof loadTests==='function'?loadTests:null);
+
+  const matches=document.getElementById('matches');
+  if(matches && !matches.classList.contains('hidden')){
+    safe('renderMatches',typeof renderMatches==='function'?renderMatches:null);
+  }
+  const training=document.getElementById('training');
+  if(training && !training.classList.contains('hidden')){
+    safe('renderTraining',typeof renderTraining==='function'?renderTraining:null);
+  }
+  const scores=document.getElementById('scores');
+  if(scores && !scores.classList.contains('hidden')){
+    safe('renderSummerStats',typeof renderSummerStats==='function'?renderSummerStats:null);
+    safe('renderMatchStats',typeof renderMatchStats==='function'?renderMatchStats:null);
+    safe('renderEvolutionDashboard',typeof renderEvolutionDashboard==='function'?renderEvolutionDashboard:null);
+  }
+  return errors;
+}
+
 
 window.firebaseUploadNow=async()=>{
   if(!currentUser)return;
@@ -1781,44 +1887,44 @@ window.firebaseUploadNow=async()=>{
   }
 };
 
+
 window.firebaseDownloadNow=async()=>{
   if(!currentUser)return;
-  if(!confirm('Récupérer les données du cloud sur ce téléphone ? Les données locales seront remplacées.'))return;
+  if(!confirm('Récupérer la sauvegarde Cloud sur ce téléphone ? Les données Basket Gabin présentes sur ce téléphone seront remplacées.'))return;
+
   try{
-    setCloudUI('sync','Récupération du cloud…');
+    setCloudUI('sync','Téléchargement de la sauvegarde…');
+    cloudMessage('Téléchargement en cours…');
+
     const snap=await getDoc(cloudDocRef(currentUser.uid));
-    if(!snap.exists() || !snap.data()?.state){
-      cloudMessage('Aucune donnée disponible dans le cloud.',true);
+    const state=snap.exists()?snap.data()?.state:null;
+
+    if(!state || !state.values){
       setCloudUI('err','Cloud vide');
+      cloudMessage('Aucune sauvegarde disponible dans le Cloud.',true);
       return;
     }
 
-    const state=snap.data().state;
     applyingRemote=true;
+    let stored=0;
     try{
-      Object.entries(state.values||{}).forEach(([k,v])=>{
-        if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
-      });
-      suppressFieldClock=true;
-      try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
-      finally{suppressFieldClock=false;}
+      stored=storeCloudStateLocally(state);
     }finally{
       applyingRemote=false;
     }
 
-    restoreSnapshot();
-    render();
-    renderDays();
-    loadTests();
-    if(!document.getElementById('matches')?.classList.contains('hidden'))renderMatches();
-    if(!document.getElementById('training')?.classList.contains('hidden'))renderTraining();
-    if(!document.getElementById('scores')?.classList.contains('hidden')){renderSummerStats();renderMatchStats();}
+    const refreshErrors=refreshAfterCloudLoad();
 
-    setCloudUI('ok','Cloud récupéré');
-    cloudMessage('✅ Sauvegarde récupérée avec succès.');
+    setCloudUI('ok','Sauvegarde récupérée');
+    if(refreshErrors.length){
+      cloudMessage(`✅ ${stored} données récupérées. Fermez puis rouvrez l’application pour actualiser complètement l’écran.`);
+    }else{
+      cloudMessage(`✅ Sauvegarde récupérée avec succès (${stored} données).`);
+    }
   }catch(e){
+    console.error('Cloud download error',e);
     setCloudUI('err','Erreur récupération');
-    cloudMessage('Impossible de charger les données : '+e.message,true);
+    cloudMessage('Impossible de récupérer la sauvegarde : '+(e.message||String(e)),true);
   }
 };
 
@@ -1870,7 +1976,7 @@ async function startCloud(uid){
   const snap=await getDoc(cloudDocRef(uid));
   if(snap.exists()){
     setCloudUI('ok','Cloud disponible');
-    cloudMessage('Cloud disponible. Choisis Envoyer ou Récupérer.');
+    cloudMessage('Cloud disponible. Choisissez Envoyer ou Récupérer.');
   }else{
     setCloudUI('','Cloud vide');
     cloudMessage('Aucune sauvegarde cloud pour le moment.');
