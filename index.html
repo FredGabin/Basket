@@ -111,6 +111,21 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 .chat-unread{display:none;min-width:20px;height:20px;border-radius:10px;background:#ef4444;color:white;font-size:.72rem;align-items:center;justify-content:center;padding:0 5px}
 .chat-unread.visible{display:inline-flex}
 
+
+.evo-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
+.evo-kpi{background:#08101d;border:1px solid #334155;border-radius:13px;padding:11px}
+.evo-kpi .value{font-size:1.35rem;font-weight:900;color:#f59e0b;margin-top:3px}
+.evo-bars{display:grid;gap:9px;margin-top:12px}
+.evo-bar-row{display:grid;grid-template-columns:52px 1fr 72px;gap:8px;align-items:center}
+.evo-bar-label{font-size:.78rem;color:#cbd5e1;text-align:right}
+.evo-bar-track{height:18px;background:#111827;border:1px solid #334155;border-radius:9px;overflow:hidden;position:relative}
+.evo-bar-fill{height:100%;background:#f59e0b;border-radius:8px;min-width:0}
+.evo-bar-value{font-size:.78rem;font-weight:800;color:#f8fafc;text-align:right}
+.evo-scale{display:grid;grid-template-columns:52px 1fr 72px;gap:8px;align-items:center;margin-top:5px}
+.evo-scale-values{display:flex;justify-content:space-between;color:#64748b;font-size:.68rem}
+.evo-explain{background:#08101d;border:1px solid #334155;border-radius:12px;padding:10px;margin-top:10px}
+@media(min-width:700px){.evo-summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
+
 </style>
 </head>
 <body>
@@ -276,16 +291,24 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
   <div id="statsEvolutionView" class="hidden">
     <div class="card">
-      <h3>📈 Graphiques de progression</h3>
+      <h3>📊 Évolution</h3>
+      <p class="small">Les 10 dernières journées. Les valeurs sont affichées directement, avec une échelle adaptée à chaque indicateur.</p>
+
       <div class="chart-tabs">
-        <button class="active" onclick="setEvolutionMetric('shoot',this)">Tirs</button>
-        <button onclick="setEvolutionMetric('volume',this)">Volume</button>
+        <button class="active" onclick="setEvolutionMetric('shoot',this)">Adresse</button>
+        <button onclick="setEvolutionMetric('volume',this)">Tirs</button>
         <button onclick="setEvolutionMetric('sleep',this)">Sommeil</button>
         <button onclick="setEvolutionMetric('fatigue',this)">Fatigue</button>
         <button onclick="setEvolutionMetric('confidence',this)">Confiance</button>
         <button onclick="setEvolutionMetric('blocks',this)">Blocs</button>
+        <button onclick="setEvolutionMetric('strength',this)">Musculation</button>
+        <button onclick="setEvolutionMetric('run',this)">Course / cardio</button>
       </div>
-      <canvas id="evolutionChart" class="performance-chart" height="210"></canvas>
+
+      <div id="evolutionMetricTitle" class="evo-explain"></div>
+      <div id="evolutionSummary" class="evo-summary"></div>
+      <div id="evolutionBars" class="evo-bars"></div>
+      <div id="evolutionScale" class="evo-scale"></div>
     </div>
 
     <div class="card">
@@ -1261,6 +1284,21 @@ function renderEliteIndex(){
     <div class="progress" style="margin-top:12px"><div class="bar" style="width:${value}%"></div></div>`;
 }
 
+
+function evolutionMetricConfig(metric){
+  const configs={
+    shoot:{title:'🎯 Adresse aux tirs',unit:' %',max:100,description:'Pourcentage de tirs réussis chaque jour.'},
+    volume:{title:'🏀 Volume de tirs',unit:' tirs',max:null,description:'Nombre total de tirs tentés chaque jour.'},
+    sleep:{title:'😴 Sommeil',unit:' h',max:12,description:'Durée de sommeil enregistrée.'},
+    fatigue:{title:'⚡ Fatigue',unit:' /10',max:10,description:'Plus la barre est haute, plus la fatigue déclarée est forte.'},
+    confidence:{title:'🧠 Confiance',unit:' /10',max:10,description:'Niveau de confiance déclaré dans le journal.'},
+    blocks:{title:'✅ Blocs réalisés',unit:' %',max:100,description:'Part des blocs terminés pour chaque journée.'},
+    strength:{title:'💪 Volume de musculation',unit:' kg',max:null,description:'Volume quotidien : séries × répétitions × charge.'},
+    run:{title:'🏃 Course / cardio',unit:' min',max:null,description:'Durée totale saisie dans les entrées course et cardio.'}
+  };
+  return configs[metric]||configs.shoot;
+}
+
 function evolutionData(metric){
   return days.map((d,i)=>{
     const p=dayPerformance(i);
@@ -1271,55 +1309,111 @@ function evolutionData(metric){
     if(metric==='fatigue')value=p.fatigue;
     if(metric==='confidence')value=p.confidence;
     if(metric==='blocks')value=p.blockPct;
-    return {label:d.date.replace(/^\w+\s+/,'').replace(' août','/08'),value};
+    if(metric==='strength'){
+      value=readJsonList('strengthEntries'+i).reduce((sum,e)=>
+        sum+
+        Math.max(0,Number(e.sets||0))*
+        Math.max(0,Number(e.reps||0))*
+        Math.max(0,Number(e.load||0)),0);
+    }
+    if(metric==='run'){
+      value=readJsonList('runEntries'+i).reduce((sum,e)=>sum+Math.max(0,Number(e.duration||0)),0);
+    }
+    return {
+      label:'J'+(i+1),
+      date:d.date,
+      value:Number(value||0)
+    };
   });
+}
+
+function formatEvolutionValue(value,metric){
+  const config=evolutionMetricConfig(metric);
+  const decimals=['sleep','fatigue','confidence'].includes(metric)?1:0;
+  return Number(value||0).toLocaleString('fr-FR',{
+    minimumFractionDigits:decimals,
+    maximumFractionDigits:decimals
+  })+config.unit;
+}
+
+function evolutionMeaning(metric,average,best,latest){
+  if(metric==='fatigue'){
+    if(latest>=8)return 'Fatigue élevée : récupération prioritaire.';
+    if(latest<=4)return 'Fatigue maîtrisée sur la dernière journée.';
+    return 'Fatigue modérée sur la dernière journée.';
+  }
+  if(metric==='sleep'){
+    if(latest>=9.5)return 'Dernière nuit adaptée à la récupération.';
+    if(latest>0&&latest<9)return 'Dernière nuit courte pour un sportif en croissance.';
+  }
+  if(metric==='confidence'){
+    if(latest>=8)return 'Confiance élevée sur la dernière journée.';
+    if(latest>0&&latest<=4)return 'Confiance basse : rechercher des réussites simples.';
+  }
+  if(metric==='shoot'){
+    if(latest>=75)return 'Très bonne adresse sur la dernière journée.';
+    if(latest>0&&latest<60)return 'Priorité à la qualité et à l’équilibre du tir.';
+  }
+  if(metric==='blocks'){
+    if(latest>=90)return 'Journée presque entièrement réalisée.';
+  }
+  return best>0?`Meilleure valeur : ${formatEvolutionValue(best,metric)}.`:'Les valeurs apparaîtront après les premières saisies.';
 }
 
 function setEvolutionMetric(metric,button){
   activeEvolutionMetric=metric;
   document.querySelectorAll('.chart-tabs button').forEach(b=>b.classList.remove('active'));
   if(button)button.classList.add('active');
-  drawEvolutionChart();
+  renderEvolutionBars();
 }
 
-function drawEvolutionChart(){
-  const c=document.getElementById('evolutionChart');
-  if(!c)return;
-  const ctx=c.getContext('2d');
-  const dpr=window.devicePixelRatio||1;
-  const w=Math.max(300,c.clientWidth||320),h=210;
-  c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+function renderEvolutionBars(){
+  const title=document.getElementById('evolutionMetricTitle');
+  const summary=document.getElementById('evolutionSummary');
+  const bars=document.getElementById('evolutionBars');
+  const scale=document.getElementById('evolutionScale');
+  if(!title||!summary||!bars||!scale)return;
 
-  const data=evolutionData(activeEvolutionMetric);
-  const values=data.map(x=>Number(x.value||0));
-  const max=Math.max(10,...values);
-  const min=0;
+  const metric=activeEvolutionMetric;
+  const config=evolutionMetricConfig(metric);
+  const all=evolutionData(metric);
+  const visible=all.slice(-10);
+  const nonZero=all.filter(x=>x.value>0);
+  const values=nonZero.map(x=>x.value);
+  const latest=nonZero.length?nonZero[nonZero.length-1].value:0;
+  const average=values.length?values.reduce((a,b)=>a+b,0)/values.length:0;
+  const best=values.length?Math.max(...values):0;
+  const previous=nonZero.length>1?nonZero[nonZero.length-2].value:0;
+  const change=previous?((latest-previous)/previous)*100:0;
 
-  ctx.strokeStyle='#334155';ctx.lineWidth=1;
-  for(let j=0;j<=4;j++){
-    const y=18+j*(h-48)/4;
-    ctx.beginPath();ctx.moveTo(32,y);ctx.lineTo(w-12,y);ctx.stroke();
+  let axisMax=config.max||Math.max(1,...visible.map(x=>x.value));
+  if(!config.max){
+    const magnitude=Math.pow(10,Math.max(0,Math.floor(Math.log10(axisMax||1))));
+    axisMax=Math.ceil(axisMax/magnitude)*magnitude;
   }
 
-  const step=(w-52)/Math.max(1,data.length-1);
-  ctx.strokeStyle='#f59e0b';ctx.lineWidth=3;ctx.beginPath();
-  data.forEach((p,i)=>{
-    const x=34+i*step;
-    const y=18+(max-p.value)*(h-48)/(max-min||1);
-    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
-  });
-  ctx.stroke();
+  title.innerHTML=`<b>${config.title}</b><br><span class="small">${config.description}<br>${evolutionMeaning(metric,average,best,latest)}</span>`;
 
-  ctx.fillStyle='#f59e0b';
-  data.forEach((p,i)=>{
-    const x=34+i*step;
-    const y=18+(max-p.value)*(h-48)/(max-min||1);
-    ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
-  });
+  summary.innerHTML=`
+    <div class="evo-kpi"><div class="small">Dernière valeur</div><div class="value">${formatEvolutionValue(latest,metric)}</div></div>
+    <div class="evo-kpi"><div class="small">Moyenne</div><div class="value">${formatEvolutionValue(average,metric)}</div></div>
+    <div class="evo-kpi"><div class="small">Record</div><div class="value">${formatEvolutionValue(best,metric)}</div></div>
+    <div class="evo-kpi"><div class="small">Écart dernière séance</div><div class="value">${previous?(change>=0?'+':'')+Math.round(change)+' %':'—'}</div></div>`;
+
+  bars.innerHTML=visible.map(point=>{
+    const width=axisMax?Math.min(100,point.value/axisMax*100):0;
+    return `<div class="evo-bar-row" title="${point.date}">
+      <div class="evo-bar-label">${point.label}</div>
+      <div class="evo-bar-track"><div class="evo-bar-fill" style="width:${width}%"></div></div>
+      <div class="evo-bar-value">${formatEvolutionValue(point.value,metric)}</div>
+    </div>`;
+  }).join('');
+
+  scale.innerHTML=`<span></span><div class="evo-scale-values"><span>0</span><span>${formatEvolutionValue(axisMax/2,metric)}</span><span>${formatEvolutionValue(axisMax,metric)}</span></div><span></span>`;
 }
 
 function renderEvolutionDashboard(){
-  drawEvolutionChart();
+  renderEvolutionBars();
   renderRecords();
   const s=streakSummary();
   document.getElementById('streakStats').innerHTML=
