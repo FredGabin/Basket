@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V15.2</title>
+<title>Basket Elite Gabin V15.3</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -110,7 +110,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.2</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.3</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -137,7 +137,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 
 <div id="homeAgenda" class="card"></div>
-<div class="card"><b>🚀 V15.2</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage protégé par code parent.</p></div>
+<div class="card"><b>🚀 V15.3</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage protégé par code parent.</p></div>
 <div class="card">
   <h3>💾 Protection des données</h3>
   <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
@@ -382,7 +382,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V15.2</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V15.3</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -789,7 +789,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v152';
+const STATE_KEY='basket_gabin_state_v153';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -847,7 +847,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'15.2',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.3',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 
@@ -857,7 +857,7 @@ function writeSnapshot(){
   try{
     localStorage.setItem('basket_gabin_last_local_save',savedAt);
     try{
-      localStorage.setItem(STATE_KEY,JSON.stringify({version:'15.2',savedAt}));
+      localStorage.setItem(STATE_KEY,JSON.stringify({version:'15.3',savedAt}));
     }catch(metaError){
       // The actual fields are already saved individually; metadata failure is non-blocking.
       console.warn('Snapshot metadata skipped',metaError);
@@ -913,7 +913,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'15.2',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.3',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -1708,8 +1708,28 @@ function openMatchMode(){document.getElementById('matchMode').classList.remove('
 function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);data[k]=localStorage.getItem(k)}const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='basket-gabin-sauvegarde.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
 
-removeRedundantLocalCopies();
-restoreSnapshot();render();renderDays();loadTests();showStartup();requestPersistentStorage();
+function cleanupLegacySnapshotsAtStartup(){
+  try{
+    const keys=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(!k)continue;
+      if(k.startsWith('basket_gabin_state_v') && k!==STATE_KEY)keys.push(k);
+      if(k.startsWith('basket_gabin_field_clock_') && k!==FIELD_CLOCK_KEY)keys.push(k);
+    }
+    keys.forEach(k=>localStorage.removeItem(k));
+  }catch(e){
+    console.warn('Nettoyage local ignoré',e);
+  }
+}
+
+cleanupLegacySnapshotsAtStartup();
+try{restoreSnapshot()}catch(e){console.warn('restoreSnapshot',e)}
+try{render()}catch(e){console.error('render startup',e)}
+try{renderDays()}catch(e){console.warn('renderDays',e)}
+try{loadTests()}catch(e){console.warn('loadTests',e)}
+try{showStartup()}catch(e){console.warn('showStartup',e)}
+try{requestPersistentStorage()}catch(e){console.warn('persistent storage',e)}
 
 window.addEventListener('pagehide',saveAllVisibleInputs);
 window.addEventListener('beforeunload',saveAllVisibleInputs);
@@ -1801,7 +1821,7 @@ function applyRemoteState(remote){
     suppressFieldClock=true;
     try{
       localStorage.setItem(STATE_KEY,JSON.stringify({
-        version:'15.2',
+        version:'15.3',
         savedAt:merged.savedAt||new Date().toISOString()
       }));
     }finally{suppressFieldClock=false;}
@@ -1836,7 +1856,7 @@ async function uploadLocalState(force=false){
   try{
     removeRedundantLocalCopies();
     localStorage.setItem(STATE_KEY,JSON.stringify({
-      version:'15.2',
+      version:'15.3',
       savedAt:state.savedAt||new Date().toISOString()
     }));
   }finally{suppressFieldClock=false;}
@@ -1910,7 +1930,7 @@ function storeCloudStateLocally(state){
     // Do not duplicate the full state in localStorage.
     localStorage.setItem(
       STATE_KEY,
-      JSON.stringify({version:'15.2',savedAt:state.savedAt||new Date().toISOString()})
+      JSON.stringify({version:'15.3',savedAt:state.savedAt||new Date().toISOString()})
     );
     localStorage.setItem(
       'basket_gabin_last_local_save',
