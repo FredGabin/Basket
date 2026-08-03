@@ -206,7 +206,13 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
     <div class="card">
       <h3>💪 Charge et régularité</h3>
-      <div id="summerTrainingStats"></div>
+      <div id="summerTrainingStats"></div><div class="card">
+<h3>🏋️ Statistiques musculation</h3>
+<div id="strengthStatsSummary" class="stat-kpis"></div>
+<div id="strengthStatsExercises" class="record-list" style="margin-top:12px"></div>
+<canvas id="strengthProgressChart" class="performance-chart" height="210" style="margin-top:12px"></canvas>
+<p class="small">Le volume correspond à séries × répétitions × charge. Il sert à suivre la régularité, pas à rechercher des charges maximales.</p>
+</div>
     </div>
 
     <div class="card">
@@ -1139,8 +1145,8 @@ function computeRecords(){
     if(p.shot.att>bestVolume.v)bestVolume={v:p.shot.att,label:d.date};
     if(p.score>bestScore.v)bestScore={v:p.score,label:d.date};
     if(p.sleep>bestSleep.v)bestSleep={v:p.sleep,label:d.date};
-    const strengthCount=p.strength.length;
-    if(strengthCount>bestStrength.v)bestStrength={v:strengthCount,label:d.date};
+    const strengthVolume=p.strength.reduce((sum,e)=>sum+Math.max(0,Number(e.sets||0))*Math.max(0,Number(e.reps||0))*Math.max(0,Number(e.load||0)),0);
+    if(strengthVolume>bestStrength.v)bestStrength={v:strengthVolume,label:d.date};
     const runDistance=p.runs.reduce((s,r)=>s+Number(r.distance||0),0);
     if(runDistance>bestRun.v)bestRun={v:runDistance,label:d.date};
   });
@@ -1165,7 +1171,7 @@ function renderRecords(){
     recordItem('Plus gros volume',r.bestVolume.v+' tirs',r.bestVolume.label)+
     recordItem('Meilleur score du jour',r.bestScore.v+'/100',r.bestScore.label)+
     recordItem('Plus longue nuit',r.bestSleep.v+' h',r.bestSleep.label)+
-    recordItem('Plus grosse séance muscu',r.bestStrength.v+' exercices',r.bestStrength.label)+
+    recordItem('Plus grosse séance muscu',fmtStrength(r.bestStrength.v)+' kg',r.bestStrength.label)+
     recordItem('Plus longue course',r.bestRun.v+' km',r.bestRun.label)+
     recordItem('Record points',r.bestPoints.v,r.bestPoints.label)+
     recordItem('Record rebonds',r.bestRebounds.v,r.bestRebounds.label)+
@@ -1403,6 +1409,75 @@ function completedPhysicalCategoryCount(i,patterns){
   return count;
 }
 
+
+function collectStrengthStatistics(){
+  const all=[],byExercise=new Map(),daily=[];
+  summerDayIndexes().forEach(({i})=>{
+    const entries=readJsonList('strengthEntries'+i);
+    let dayVolume=0;
+    entries.forEach(e=>{
+      const sets=Math.max(0,Number(e.sets||0)),reps=Math.max(0,Number(e.reps||0));
+      const load=Math.max(0,Number(e.load||0)),rpe=Math.max(0,Number(e.rpe||0));
+      const totalReps=sets*reps,volume=totalReps*load;
+      const raw=String(e.exercise||'Exercice non nommé').trim();
+      const keyName=raw.toLowerCase();
+      const item={dayIndex:i,date:days[i]?.date||('J'+(i+1)),exercise:raw||'Exercice non nommé',sets,reps,load,rpe,totalReps,volume};
+      all.push(item);dayVolume+=volume;
+      if(!byExercise.has(keyName))byExercise.set(keyName,{name:item.exercise,entries:0,sessions:new Set(),totalVolume:0,totalReps:0,maxLoad:0,bestVolume:0,rpeTotal:0,rpeCount:0});
+      const s=byExercise.get(keyName);s.entries++;s.sessions.add(i);s.totalVolume+=volume;s.totalReps+=totalReps;
+      s.maxLoad=Math.max(s.maxLoad,load);s.bestVolume=Math.max(s.bestVolume,volume);
+      if(rpe>0){s.rpeTotal+=rpe;s.rpeCount++}
+    });
+    daily.push({label:'J'+(i+1),value:Math.round(dayVolume)});
+  });
+  const exercises=[...byExercise.values()].map(s=>({...s,sessions:s.sessions.size,avgRpe:s.rpeCount?s.rpeTotal/s.rpeCount:0}))
+    .sort((a,b)=>b.totalVolume-a.totalVolume||b.entries-a.entries);
+  const loads=all.filter(x=>x.load>0),rpes=all.filter(x=>x.rpe>0);
+  return {
+    all,exercises,daily,
+    sessions:new Set(all.map(x=>x.dayIndex)).size,
+    entries:all.length,
+    totalVolume:all.reduce((s,x)=>s+x.volume,0),
+    totalReps:all.reduce((s,x)=>s+x.totalReps,0),
+    avgLoad:loads.length?loads.reduce((s,x)=>s+x.load,0)/loads.length:0,
+    avgRpe:rpes.length?rpes.reduce((s,x)=>s+x.rpe,0)/rpes.length:0,
+    mostFrequent:exercises.slice().sort((a,b)=>b.entries-a.entries)[0]||null
+  };
+}
+function fmtStrength(v,d=0){return Number(v||0).toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function drawStrengthProgressChart(data){
+  const c=document.getElementById('strengthProgressChart');if(!c)return;
+  const ctx=c.getContext('2d'),dpr=window.devicePixelRatio||1,w=Math.max(300,c.clientWidth||320),h=210;
+  c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
+  const vals=data.map(x=>Number(x.value||0)),max=Math.max(100,...vals),left=38,right=12,top=18,bottom=32,uw=w-left-right,uh=h-top-bottom;
+  ctx.strokeStyle='#334155';ctx.lineWidth=1;
+  for(let i=0;i<=4;i++){const y=top+i*uh/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke()}
+  if(!data.length)return;
+  const step=uw/Math.max(1,data.length),bw=Math.max(5,step*.58);ctx.fillStyle='#f59e0b';
+  data.forEach((p,i)=>{const bh=Number(p.value||0)/max*uh,x=left+i*step+(step-bw)/2,y=top+uh-bh;ctx.fillRect(x,y,bw,bh)});
+  ctx.fillStyle='#94a3b8';ctx.font='11px sans-serif';ctx.textAlign='center';
+  data.forEach((p,i)=>{if(data.length>10&&i%2)return;ctx.fillText(p.label,left+i*step+step/2,h-10)});
+}
+function renderStrengthStatistics(){
+  const summary=document.getElementById('strengthStatsSummary'),details=document.getElementById('strengthStatsExercises');
+  if(!summary||!details)return;
+  const s=collectStrengthStatistics();
+  summary.innerHTML=
+    statKpi(s.sessions,'Séances avec musculation')+
+    statKpi(s.entries,'Exercices enregistrés')+
+    statKpi(fmtStrength(s.totalReps),'Répétitions totales')+
+    statKpi(fmtStrength(s.totalVolume)+' kg','Volume total')+
+    statKpi(fmtStrength(s.avgLoad,1)+' kg','Charge moyenne')+
+    statKpi(fmtStrength(s.avgRpe,1)+' /10','Intensité moyenne')+
+    statKpi(s.mostFrequent?s.mostFrequent.name:'—','Exercice le plus fréquent');
+  details.innerHTML=s.exercises.length?s.exercises.map(x=>`<div class="record-item" style="display:block">
+    <div style="display:flex;justify-content:space-between;gap:12px"><b>${x.name}</b><span>${x.sessions} séance${x.sessions>1?'s':''}</span></div>
+    <div class="small" style="margin-top:7px">${fmtStrength(x.totalReps)} répétitions • ${fmtStrength(x.totalVolume)} kg de volume<br>
+    Meilleure charge : ${fmtStrength(x.maxLoad,1)} kg • Meilleur volume : ${fmtStrength(x.bestVolume)} kg${x.avgRpe?` • Intensité moyenne : ${fmtStrength(x.avgRpe,1)}/10`:''}</div>
+  </div>`).join(''):'<div class="small">Aucune donnée de musculation enregistrée.</div>';
+  drawStrengthProgressChart(s.daily);
+}
+
 function renderSummerStats(){
 
   const list=summerDayIndexes();
@@ -1457,6 +1532,7 @@ function renderSummerStats(){
     </div>`;
 
   drawSimpleProgressChart('summerProgressChart',daily);
+  renderStrengthStatistics();
 }
 
 function drawSimpleProgressChart(canvasId,data){
