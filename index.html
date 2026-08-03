@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V14.0 Performance</title>
+<title>Basket Elite Gabin V15.0</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -101,7 +101,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V14.0</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.0</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -128,11 +128,11 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 
 <div id="homeAgenda" class="card"></div>
-<div class="card"><b>🚀 V14.0 Performance</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
+<div class="card"><b>🚀 V15.0</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
 <div class="card">
   <h3>💾 Protection des données</h3>
   <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
-  <b>Cloud :</b> envoi et récupération manuels pour éviter tout écrasement.</p>
+  <b>Cloud :</b> envoi et récupération manuels.</p>
   <p class="small">Sauvegarder conserve un brouillon. Valider marque une journée ou un match comme terminé.</p>
 </div>
 
@@ -320,36 +320,36 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <button onclick="closeCloudPanel()">✕</button>
     </div>
     <div id="cloudSignedOut">
-      <p>Utilisez le <b>même compte familial</b> sur les deux téléphones. L’adresse est préremplie ; le mot de passe reste privé.</p>
+      <div class="cloud-note">
+        <b>Première connexion</b><br>
+        Sur le premier téléphone, créez le compte familial.<br>
+        Sur les autres téléphones, utilisez simplement <b>Se connecter</b>.
+      </div>
       <label>Adresse e-mail</label>
       <input id="cloudEmail" type="email" autocomplete="username" value="Gbnbeteille@gmail.com" placeholder="adresse familiale">
       <label>Mot de passe</label>
       <input id="cloudPassword" type="password" autocomplete="current-password" placeholder="6 caractères minimum">
       <div class="cloud-actions">
-        <button onclick="cloudLogin()">Se connecter</button>
-        <button class="primary" onclick="cloudCreateAccount()">Créer le compte</button>
+        <button class="primary" onclick="cloudLogin()">🔐 Se connecter</button>
+        <button onclick="cloudCreateAccount()">✨ Première connexion</button>
       </div>
-      <div class="cloud-note small">Le mot de passe n’est jamais enregistré dans le code de l’application. Firebase gère la connexion.</div>
+      <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V14.0 Performance & Coach</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V15.0</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
-        <button class="primary" onclick="cloudUploadNow()">🔐 Envoyer vers le cloud</button>
-        <button onclick="cloudDownloadNow()">⬇️ Récupérer du cloud</button>
+        <button class="primary" onclick="cloudUploadNow()">💾 Envoyer ma sauvegarde</button>
+        <button onclick="cloudDownloadNow()">📥 Récupérer la sauvegarde</button>
       </div>
-      <div class="cloud-actions" style="margin-top:8px">
-        <button onclick="cloudRestoreBackup()">🛟 Restaurer sauvegarde</button>
-        <button onclick="cloudLogout()">Déconnexion</button>
-      </div>
+      <button style="width:100%;margin-top:10px" onclick="cloudLogout()">🔐 Déconnexion</button>
       <div class="cloud-note">
-        <b>Mode manuel V12.8 :</b><br>
-        • chaque saisie reste enregistrée automatiquement sur le téléphone ;<br>
-        • <b>Envoyer vers le cloud</b> demande le code parent puis copie ce téléphone vers Firebase ;<br>
-        • <b>Récupérer du cloud</b> copie Firebase vers ce téléphone ;<br>
-        • aucune synchronisation automatique ne peut écraser les données.<br><br>
-        <b>Conseil :</b> après une séance, envoyer depuis le téléphone utilisé. Sur l’autre téléphone, récupérer ensuite.
+        <b>Fonctionnement :</b><br>
+        • les données restent enregistrées automatiquement sur ce téléphone ;<br>
+        • <b>Envoyer ma sauvegarde</b> copie les données vers le Cloud et demande le code parent <b>2013</b> ;<br>
+        • <b>Récupérer la sauvegarde</b> télécharge la dernière copie du Cloud ;<br>
+        • aucune synchronisation automatique n’est effectuée.
       </div>
     </div>
     <p id="cloudMessage" class="small"></p>
@@ -743,7 +743,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v140';
+const STATE_KEY='basket_gabin_state_v150';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -798,7 +798,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'14.0',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.0',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 
@@ -808,7 +808,7 @@ function writeSnapshot(){
   try{
     localStorage.setItem('basket_gabin_last_local_save',savedAt);
     try{
-      localStorage.setItem(STATE_KEY,JSON.stringify({version:'14.0',savedAt}));
+      localStorage.setItem(STATE_KEY,JSON.stringify({version:'15.0',savedAt}));
     }catch(metaError){
       // The actual fields are already saved individually; metadata failure is non-blocking.
       console.warn('Snapshot metadata skipped',metaError);
@@ -864,7 +864,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'14.0',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.0',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -1233,8 +1233,20 @@ function renderJournal(){
  document.getElementById('journalEntries').innerHTML=entries||'<div class="card">Aucune entrée enregistrée pour le moment.</div>';
 }
 
-function saveTests(){['t9_10','t16_10','t9_20','t16_20','t9_jump','t16_jump'].forEach(id=>localStorage.setItem(id,document.getElementById(id).value));drawAll();alert('Tests enregistrés')}
-function loadTests(){['t9_10','t16_10','t9_20','t16_20','t9_jump','t16_jump'].forEach(id=>document.getElementById(id).value=localStorage.getItem(id)||'')}
+function saveTests(){
+  ['t9_10','t16_10','t9_20','t16_20','t9_jump','t16_jump'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)localStorage.setItem(id,el.value);
+  });
+  drawAll();
+  alert('Tests enregistrés');
+}
+function loadTests(){
+  ['t9_10','t16_10','t9_20','t16_20','t9_jump','t16_jump'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value=localStorage.getItem(id)||'';
+  });
+}
 
 function draw(id,labels,values,invert=false,suffix=''){
  const c=document.getElementById(id),ctx=c.getContext('2d'),w=c.clientWidth,h=220,r=devicePixelRatio||1;
@@ -1573,6 +1585,13 @@ function cloudUploadNow(){
 }
 function cloudDownloadNow(){if(window.firebaseDownloadNow)window.firebaseDownloadNow()}
 function cloudRestoreBackup(){if(window.firebaseRestoreBackup)window.firebaseRestoreBackup()}
+function cloudLogoutAndShowLogin(){
+  if(window.firebaseFamilyLogout){
+    Promise.resolve(window.firebaseFamilyLogout()).finally(()=>{
+      setTimeout(()=>openCloudPanel(),250);
+    });
+  }
+}
 
 function openMatchMode(){document.getElementById('matchMode').classList.remove('hidden')} function closeMatchMode(){document.getElementById('matchMode').classList.add('hidden')}
 
@@ -1655,7 +1674,7 @@ function showAccountState(){
   const email=document.getElementById('cloudUserEmail');
   if(email&&currentUser)email.textContent=currentUser.email||currentUser.uid;
   const sync=document.getElementById('cloudLastSync');
-  if(sync)sync.textContent=lastCloudSavedAt?'Dernière synchro : '+lastCloudSavedAt:'Synchronisation prête.';
+  if(sync)sync.textContent=lastCloudSavedAt?'Dernière synchro : '+lastCloudSavedAt:'Compte connecté.';
 }
 window.refreshCloudPanel=showAccountState;
 
@@ -1754,8 +1773,8 @@ window.firebaseUploadNow=async()=>{
       state:local
     },{merge:false});
 
-    setCloudUI('ok','Cloud sauvegardé');
-    cloudMessage('Les données de ce téléphone ont été envoyées vers le cloud.');
+    setCloudUI('ok','Sauvegarde envoyée');
+    cloudMessage('✅ Sauvegarde envoyée sur le Cloud.');
   }catch(e){
     setCloudUI('err','Erreur envoi');
     cloudMessage('Envoi impossible : '+e.message,true);
@@ -1796,10 +1815,10 @@ window.firebaseDownloadNow=async()=>{
     if(!document.getElementById('scores')?.classList.contains('hidden')){renderSummerStats();renderMatchStats();}
 
     setCloudUI('ok','Cloud récupéré');
-    cloudMessage('Les données du cloud ont été copiées sur ce téléphone.');
+    cloudMessage('✅ Sauvegarde récupérée avec succès.');
   }catch(e){
     setCloudUI('err','Erreur récupération');
-    cloudMessage('Récupération impossible : '+e.message,true);
+    cloudMessage('Impossible de charger les données : '+e.message,true);
   }
 };
 
@@ -1875,7 +1894,7 @@ window.firebaseFamilyCreate=async function(){
   const password=(document.getElementById('cloudPassword')?.value||'');
   if(password.length<6){cloudMessage('Le mot de passe doit contenir au moins 6 caractères.',true);return}
   cloudMessage('Création du compte…');
-  try{await createUserWithEmailAndPassword(auth,email,password);cloudMessage('Compte familial créé.')}
+  try{await createUserWithEmailAndPassword(auth,email,password);cloudMessage('Compte familial créé. Vous êtes maintenant connecté.')}
   catch(e){
       const msg=e.code==='auth/email-already-in-use'?'Ce compte existe déjà : utilise Se connecter.':
                 e.code==='auth/weak-password'?'Choisis un mot de passe d’au moins 6 caractères.':
