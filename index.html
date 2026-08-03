@@ -666,9 +666,23 @@ function key(i,p,j){return `u15_${i}_${p}_${j}`}
 function pct(m,a){m=Number(m);a=Number(a);return a>0?Math.round(m/a*100):null}
 
 function count(i){
- const d=days[i];let done=0,total=d.basket.length+d.physical.length+d.evening.length;
- [['b','basket'],['p','physical'],['e','evening']].forEach(([p,k])=>d[k].forEach((_,j)=>{if(localStorage.getItem(key(i,p,j))==='1')done++}));
- return [done,total]
+ const d=days[i]||{};
+ let done=0;
+ const basket=Array.isArray(d.basket)?d.basket:[];
+ const physical=Array.isArray(d.physical)?d.physical:[];
+
+ basket.forEach((_,j)=>{
+   if(localStorage.getItem(key(i,'b',j))==='1')done++;
+ });
+ physical.forEach((_,j)=>{
+   if(localStorage.getItem(key(i,'p',j))==='1')done++;
+ });
+
+ // The interface displays exactly two evening blocks.
+ if(localStorage.getItem('freeStretch'+i)==='1')done++;
+ if(localStorage.getItem('freeAbs'+i)==='1')done++;
+
+ return [done,basket.length+physical.length+2];
 }
 
 function globalCount(){let d=0,t=0;days.forEach((_,i)=>{const c=count(i);d+=c[0];t+=c[1]});return[d,t]}
@@ -1499,20 +1513,8 @@ function readDayShotTotals(i){
 
 
 function countCompletedBlocks(i){
-  let done=0,total=0;
-  const d=days[i]||{};
-  const groups=[
-    ['b',Array.isArray(d.basket)?d.basket:[]],
-    ['p',Array.isArray(d.physical)?d.physical:[]],
-    ['e',Array.isArray(d.evening)?d.evening:[]]
-  ];
-  groups.forEach(([prefix,items])=>{
-    items.forEach((_,j)=>{
-      total++;
-      if(localStorage.getItem(key(i,prefix,j))==='1')done++;
-    });
-  });
-  return {done,total};
+  const result=count(i);
+  return {done:result[0],total:result[1]};
 }
 
 
