@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V15.1</title>
+<title>Basket Elite Gabin V15.2</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -81,6 +81,15 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .chart-tabs button{white-space:nowrap;flex:0 0 auto}
 canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radius:12px}
 
+
+.pin-modal{position:fixed;inset:0;background:rgba(2,4,9,.94);z-index:400;padding:18px;display:flex;align-items:center;justify-content:center}
+.pin-box{width:min(420px,100%);background:#101827;border:1px solid #334155;border-radius:18px;padding:18px}
+.pin-dots{display:flex;justify-content:center;gap:12px;margin:18px 0}
+.pin-dot{width:18px;height:18px;border-radius:50%;border:2px solid #64748b;background:transparent}
+.pin-dot.filled{background:#f59e0b;border-color:#f59e0b}
+.pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.pin-keypad button{font-size:1.2rem;padding:14px}
+
 </style>
 </head>
 <body>
@@ -101,7 +110,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.1</b></div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.2</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -128,7 +137,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 
 <div id="homeAgenda" class="card"></div>
-<div class="card"><b>🚀 V15.1</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage parent : code 2013.</p></div>
+<div class="card"><b>🚀 V15.2</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage protégé par code parent.</p></div>
 <div class="card">
   <h3>💾 Protection des données</h3>
   <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
@@ -313,6 +322,43 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 </main>
 
 
+
+<div id="parentPinModal" class="pin-modal hidden">
+  <div class="pin-box">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2>🔐 Code parent</h2>
+      <button onclick="closeParentPin()">✕</button>
+    </div>
+    <p class="small">Saisissez le code à 4 chiffres pour envoyer la sauvegarde.</p>
+
+    <div class="pin-dots" aria-hidden="true">
+      <span class="pin-dot" id="pinDot0"></span>
+      <span class="pin-dot" id="pinDot1"></span>
+      <span class="pin-dot" id="pinDot2"></span>
+      <span class="pin-dot" id="pinDot3"></span>
+    </div>
+
+    <p id="parentPinMessage" class="small" style="text-align:center"></p>
+
+    <div class="pin-keypad">
+      <button onclick="pinDigit('1')">1</button>
+      <button onclick="pinDigit('2')">2</button>
+      <button onclick="pinDigit('3')">3</button>
+      <button onclick="pinDigit('4')">4</button>
+      <button onclick="pinDigit('5')">5</button>
+      <button onclick="pinDigit('6')">6</button>
+      <button onclick="pinDigit('7')">7</button>
+      <button onclick="pinDigit('8')">8</button>
+      <button onclick="pinDigit('9')">9</button>
+      <button onclick="closeParentPin()">Annuler</button>
+      <button onclick="pinDigit('0')">0</button>
+      <button onclick="pinBackspace()">⌫</button>
+    </div>
+
+    <button class="primary" style="width:100%;margin-top:12px" onclick="validateParentPin()">Valider</button>
+  </div>
+</div>
+
 <div id="cloudPanel" class="cloud-modal hidden">
   <div class="cloud-box">
     <div style="display:flex;justify-content:space-between;align-items:center">
@@ -336,7 +382,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V15.1</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V15.2</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -347,9 +393,9 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <div class="cloud-note">
         <b>Fonctionnement :</b><br>
         • les données restent enregistrées automatiquement sur ce téléphone ;<br>
-        • <b>Envoyer ma sauvegarde</b> copie les données vers le Cloud et demande le code parent <b>2013</b> ;<br>
-        • <b>Récupérer la sauvegarde</b> télécharge la dernière copie du Cloud ;<br>
-        • aucune synchronisation automatique n’est effectuée.
+        • <b>Envoyer ma sauvegarde</b> crée une copie dans le Cloud ;<br>
+        • <b>Récupérer la sauvegarde</b> charge la dernière copie disponible ;<br>
+        • les deux actions restent manuelles.
       </div>
     </div>
     <p id="cloudMessage" class="small"></p>
@@ -743,7 +789,7 @@ function render(){
 
 
 
-const STATE_KEY='basket_gabin_state_v151';
+const STATE_KEY='basket_gabin_state_v152';
 
 
 const FIELD_CLOCK_KEY='basket_gabin_field_clock_v122';
@@ -801,7 +847,7 @@ function collectState(){
     updated[k]=Number(clock[k]||1);
   }
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'15.1',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.2',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 
@@ -811,7 +857,7 @@ function writeSnapshot(){
   try{
     localStorage.setItem('basket_gabin_last_local_save',savedAt);
     try{
-      localStorage.setItem(STATE_KEY,JSON.stringify({version:'15.1',savedAt}));
+      localStorage.setItem(STATE_KEY,JSON.stringify({version:'15.2',savedAt}));
     }catch(metaError){
       // The actual fields are already saved individually; metadata failure is non-blocking.
       console.warn('Snapshot metadata skipped',metaError);
@@ -867,7 +913,7 @@ function mergeStates(localState,remoteState){
   }
 
   const latest=Math.max(1,...Object.values(updated));
-  return {version:'15.1',savedAt:new Date(latest).toISOString(),values,updated};
+  return {version:'15.2',savedAt:new Date(latest).toISOString(),values,updated};
 }
 
 function updateSaveStatus(text){
@@ -1563,7 +1609,12 @@ function renderBadges(){
 }
 
 
-function openCloudPanel(){document.getElementById('cloudPanel').classList.remove('hidden');if(window.refreshCloudPanel)window.refreshCloudPanel()}
+function openCloudPanel(){
+  document.getElementById('cloudPanel').classList.remove('hidden');
+  const msg=document.getElementById('cloudMessage');
+  if(msg){msg.textContent='';msg.style.color='#94a3b8';}
+  if(window.refreshCloudPanel)window.refreshCloudPanel();
+}
 function closeCloudPanel(){document.getElementById('cloudPanel').classList.add('hidden')}
 function cloudLogin(){
   if(window.firebaseFamilyLogin)return window.firebaseFamilyLogin();
@@ -1576,16 +1627,72 @@ function cloudCreateAccount(){
   if(el){el.textContent='Firebase est encore en cours de chargement. Réessaie dans quelques secondes.';el.style.color='#fbbf24';}
 }
 function cloudLogout(){if(window.firebaseFamilyLogout)window.firebaseFamilyLogout()}
-function cloudUploadNow(){
-  const code=prompt('Code requis pour envoyer vers le cloud :');
-  if(code===null)return;
-  if(code!=='2013'){
-    const el=document.getElementById('cloudMessage');
-    if(el){el.textContent='Code incorrect. Envoi annulé.';el.style.color='#fca5a5';}
+
+let pendingParentAction=null;
+let parentPinValue='';
+
+function updateParentPinDots(){
+  for(let i=0;i<4;i++){
+    const dot=document.getElementById('pinDot'+i);
+    if(dot)dot.classList.toggle('filled',i<parentPinValue.length);
+  }
+}
+
+function openParentPin(action){
+  pendingParentAction=action;
+  parentPinValue='';
+  const message=document.getElementById('parentPinMessage');
+  if(message){message.textContent='';message.style.color='#94a3b8';}
+  updateParentPinDots();
+  document.getElementById('parentPinModal')?.classList.remove('hidden');
+}
+
+function closeParentPin(){
+  pendingParentAction=null;
+  parentPinValue='';
+  updateParentPinDots();
+  document.getElementById('parentPinModal')?.classList.add('hidden');
+}
+
+function pinDigit(digit){
+  if(parentPinValue.length>=4)return;
+  parentPinValue+=String(digit).replace(/\D/g,'').slice(0,1);
+  updateParentPinDots();
+  if(parentPinValue.length===4)setTimeout(validateParentPin,120);
+}
+
+function pinBackspace(){
+  parentPinValue=parentPinValue.slice(0,-1);
+  updateParentPinDots();
+  const message=document.getElementById('parentPinMessage');
+  if(message)message.textContent='';
+}
+
+function validateParentPin(){
+  const message=document.getElementById('parentPinMessage');
+  if(parentPinValue.length!==4){
+    if(message){message.textContent='Saisissez 4 chiffres.';message.style.color='#fbbf24';}
     return;
   }
-  if(window.firebaseUploadNow)window.firebaseUploadNow();
+  if(parentPinValue!=='2013'){
+    parentPinValue='';
+    updateParentPinDots();
+    if(message){message.textContent='Code incorrect.';message.style.color='#fca5a5';}
+    return;
+  }
+
+  const action=pendingParentAction;
+  closeParentPin();
+
+  if(action==='cloud-upload' && window.firebaseUploadNow){
+    window.firebaseUploadNow();
+  }
 }
+
+function cloudUploadNow(){
+  openParentPin('cloud-upload');
+}
+
 function cloudDownloadNow(){if(window.firebaseDownloadNow)window.firebaseDownloadNow()}
 function cloudRestoreBackup(){if(window.firebaseRestoreBackup)window.firebaseRestoreBackup()}
 function cloudLogoutAndShowLogin(){
@@ -1694,7 +1801,7 @@ function applyRemoteState(remote){
     suppressFieldClock=true;
     try{
       localStorage.setItem(STATE_KEY,JSON.stringify({
-        version:'15.1',
+        version:'15.2',
         savedAt:merged.savedAt||new Date().toISOString()
       }));
     }finally{suppressFieldClock=false;}
@@ -1729,7 +1836,7 @@ async function uploadLocalState(force=false){
   try{
     removeRedundantLocalCopies();
     localStorage.setItem(STATE_KEY,JSON.stringify({
-      version:'15.1',
+      version:'15.2',
       savedAt:state.savedAt||new Date().toISOString()
     }));
   }finally{suppressFieldClock=false;}
@@ -1803,7 +1910,7 @@ function storeCloudStateLocally(state){
     // Do not duplicate the full state in localStorage.
     localStorage.setItem(
       STATE_KEY,
-      JSON.stringify({version:'15.1',savedAt:state.savedAt||new Date().toISOString()})
+      JSON.stringify({version:'15.2',savedAt:state.savedAt||new Date().toISOString()})
     );
     localStorage.setItem(
       'basket_gabin_last_local_save',
@@ -1851,7 +1958,7 @@ function refreshAfterCloudLoad(){
 
 window.firebaseUploadNow=async()=>{
   if(!currentUser)return;
-  if(!confirm('Envoyer les données de ce téléphone vers le cloud ?'))return;
+  if(!confirm('Envoyer la sauvegarde de ce téléphone vers le Cloud ?'))return;
   try{
     saveAllVisibleInputs();
     setCloudUI('sync','Envoi vers le cloud…');
@@ -1880,7 +1987,7 @@ window.firebaseUploadNow=async()=>{
     },{merge:false});
 
     setCloudUI('ok','Sauvegarde envoyée');
-    cloudMessage('✅ Sauvegarde envoyée sur le Cloud.');
+    cloudMessage('✅ Sauvegarde envoyée avec succès.');
   }catch(e){
     setCloudUI('err','Erreur envoi');
     cloudMessage('Envoi impossible : '+e.message,true);
@@ -1919,7 +2026,7 @@ window.firebaseDownloadNow=async()=>{
     if(refreshErrors.length){
       cloudMessage(`✅ ${stored} données récupérées. Fermez puis rouvrez l’application pour actualiser complètement l’écran.`);
     }else{
-      cloudMessage(`✅ Sauvegarde récupérée avec succès (${stored} données).`);
+      cloudMessage('✅ Sauvegarde récupérée avec succès.');
     }
   }catch(e){
     console.error('Cloud download error',e);
