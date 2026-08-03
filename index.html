@@ -90,6 +90,27 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 .pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .pin-keypad button{font-size:1.2rem;padding:14px}
 
+
+.chat-shell{display:flex;flex-direction:column;min-height:62vh}
+.chat-status{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.chat-status-dot{width:9px;height:9px;border-radius:50%;background:#64748b}
+.chat-status-dot.ok{background:#22c55e}
+.chat-messages{display:flex;flex-direction:column;gap:10px;min-height:280px;max-height:58vh;overflow-y:auto;padding:8px 2px 16px}
+.chat-empty{text-align:center;color:#94a3b8;padding:45px 12px}
+.chat-row{display:flex;justify-content:flex-start}
+.chat-row.mine{justify-content:flex-end}
+.chat-bubble{max-width:86%;background:#172236;border:1px solid #334155;border-radius:16px 16px 16px 5px;padding:10px 12px}
+.chat-row.mine .chat-bubble{background:#26364e;border-color:#f59e0b;border-radius:16px 16px 5px 16px}
+.chat-author{font-size:.78rem;font-weight:800;color:#f59e0b;margin-bottom:4px}
+.chat-text{white-space:pre-wrap;overflow-wrap:anywhere}
+.chat-time{font-size:.7rem;color:#94a3b8;text-align:right;margin-top:5px}
+.chat-compose{position:sticky;bottom:0;background:#0f172a;border:1px solid #334155;border-radius:16px;padding:10px}
+.chat-compose textarea{min-height:66px;resize:none}
+.chat-compose-actions{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
+.chat-name-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px}
+.chat-unread{display:none;min-width:20px;height:20px;border-radius:10px;background:#ef4444;color:white;font-size:.72rem;align-items:center;justify-content:center;padding:0 5px}
+.chat-unread.visible{display:inline-flex}
+
 </style>
 </head>
 <body>
@@ -122,6 +143,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <button id="m-journal" onclick="show('journal')">Journal</button>
 <button id="m-life" onclick="show('life')">Hygiène</button>
 <button id="m-mental" onclick="show('mental')">Mental</button>
+<button id="m-chat" onclick="show('chat')">💬 Chat <span id="chatUnread" class="chat-unread"></span></button>
 </div></div></header>
 
 <main class="wrap">
@@ -317,6 +339,37 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <li>😤 Compétiteur : j'aime les gros matchs.</li>
 </ul></div>
 </section>
+
+<section id="chat" class="hidden">
+  <div class="hero">
+    <h2>💬 Chat familial</h2>
+    <p class="quote">Un espace commun pour Gabin et sa famille.</p>
+  </div>
+
+  <div class="card chat-shell">
+    <div class="chat-status">
+      <span id="chatStatusDot" class="chat-status-dot"></span>
+      <span id="chatStatusText" class="small">Connexion au chat…</span>
+    </div>
+
+    <div id="chatMessages" class="chat-messages">
+      <div class="chat-empty">Chargement des messages…</div>
+    </div>
+
+    <div class="chat-compose">
+      <div class="chat-name-row">
+        <input id="chatAuthor" maxlength="30" placeholder="Votre prénom (ex. Gabin, Papa, Maman)">
+        <button onclick="saveChatAuthor()">Enregistrer</button>
+      </div>
+      <div class="chat-compose-actions">
+        <textarea id="chatInput" maxlength="600" placeholder="Écrire un message…"></textarea>
+        <button id="chatSendButton" class="primary" onclick="sendFamilyChatMessage()">Envoyer</button>
+      </div>
+      <div id="chatMessageInfo" class="small" style="margin-top:7px"></div>
+    </div>
+  </div>
+</section>
+
 </main>
 
 
@@ -476,13 +529,18 @@ let idx=currentProgramDayIndex();
 
 
 function show(id){saveAllVisibleInputs();
- const sections=['home','training','matches','days','scores','journal','life','mental'];
+ const sections=['home','training','matches','days','scores','journal','life','mental','chat'];
  sections.forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
  sections.forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===id));
  if(id==='training')renderTraining();
  if(id==='matches')renderMatches();
  if(id==='scores')setTimeout(()=>{renderSummerStats();renderMatchStats();renderEvolutionDashboard();},40);
  if(id==='journal')renderJournal();
+ if(id==='chat'){
+   markChatRead();
+   if(window.firebaseStartFamilyChat)window.firebaseStartFamilyChat();
+   setTimeout(scrollChatToBottom,60);
+ }
 }
 
 
@@ -1715,6 +1773,172 @@ function renderBadges(){
 }
 
 
+
+let familyChatMessages=[];
+let familyChatLastRead=Number(localStorage.getItem('cloud_chat_last_read')||0);
+
+function escapeChatHtml(value){
+  return String(value??'')
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#039;');
+}
+
+function chatDateValue(message){
+  if(message?.createdAt?.toMillis)return message.createdAt.toMillis();
+  if(message?.createdAt?.seconds)return Number(message.createdAt.seconds)*1000;
+  return Number(message?.clientCreatedAt||0);
+}
+
+function formatChatTime(message){
+  const timestamp=chatDateValue(message);
+  if(!timestamp)return '';
+  const date=new Date(timestamp);
+  const today=new Date();
+  const sameDay=date.toDateString()===today.toDateString();
+  return date.toLocaleString('fr-FR',sameDay
+    ?{hour:'2-digit',minute:'2-digit'}
+    :{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+}
+
+function scrollChatToBottom(){
+  const box=document.getElementById('chatMessages');
+  if(box)box.scrollTop=box.scrollHeight;
+}
+
+function renderFamilyChat(){
+  const box=document.getElementById('chatMessages');
+  if(!box)return;
+  const myAuthor=(localStorage.getItem('cloud_chat_author')||'').trim().toLowerCase();
+
+  if(!familyChatMessages.length){
+    box.innerHTML='<div class="chat-empty">Aucun message pour le moment.<br>Écrivez le premier message familial.</div>';
+    return;
+  }
+
+  box.innerHTML=familyChatMessages.map(message=>{
+    const author=String(message.author||'Famille').trim();
+    const mine=myAuthor && author.toLowerCase()===myAuthor;
+    return `<div class="chat-row ${mine?'mine':''}">
+      <div class="chat-bubble">
+        <div class="chat-author">${escapeChatHtml(author)}</div>
+        <div class="chat-text">${escapeChatHtml(message.text||'')}</div>
+        <div class="chat-time">${formatChatTime(message)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function updateChatUnread(){
+  const badge=document.getElementById('chatUnread');
+  if(!badge)return;
+  const section=document.getElementById('chat');
+  const chatOpen=section && !section.classList.contains('hidden');
+  const unread=chatOpen?0:familyChatMessages.filter(m=>chatDateValue(m)>familyChatLastRead).length;
+  badge.textContent=unread>99?'99+':String(unread);
+  badge.classList.toggle('visible',unread>0);
+}
+
+function markChatRead(){
+  const latest=familyChatMessages.reduce((max,m)=>Math.max(max,chatDateValue(m)),Date.now());
+  familyChatLastRead=latest;
+  localStorage.setItem('cloud_chat_last_read',String(latest));
+  updateChatUnread();
+}
+
+function setFamilyChatMessages(messages){
+  const wasNearBottom=(()=>{
+    const box=document.getElementById('chatMessages');
+    return !box || box.scrollHeight-box.scrollTop-box.clientHeight<90;
+  })();
+  familyChatMessages=Array.isArray(messages)?messages:[];
+  renderFamilyChat();
+  updateChatUnread();
+  const section=document.getElementById('chat');
+  if(section && !section.classList.contains('hidden')){
+    markChatRead();
+    if(wasNearBottom)setTimeout(scrollChatToBottom,30);
+  }
+}
+
+function setChatConnectionState(connected,text){
+  const dot=document.getElementById('chatStatusDot');
+  const label=document.getElementById('chatStatusText');
+  if(dot)dot.classList.toggle('ok',!!connected);
+  if(label)label.textContent=text||'';
+  const send=document.getElementById('chatSendButton');
+  if(send)send.disabled=!connected;
+}
+
+function saveChatAuthor(){
+  const input=document.getElementById('chatAuthor');
+  const name=(input?.value||'').trim().slice(0,30);
+  const info=document.getElementById('chatMessageInfo');
+  if(!name){
+    if(info){info.textContent='Indiquez un prénom avant d’envoyer.';info.style.color='#fca5a5';}
+    return false;
+  }
+  localStorage.setItem('cloud_chat_author',name);
+  if(info){info.textContent='Prénom enregistré sur ce téléphone.';info.style.color='#94a3b8';}
+  renderFamilyChat();
+  return true;
+}
+
+function sendFamilyChatMessage(){
+  const authorInput=document.getElementById('chatAuthor');
+  const textInput=document.getElementById('chatInput');
+  const info=document.getElementById('chatMessageInfo');
+  const author=(authorInput?.value||'').trim().slice(0,30);
+  const text=(textInput?.value||'').trim().slice(0,600);
+
+  if(!author){
+    if(info){info.textContent='Indiquez votre prénom.';info.style.color='#fca5a5';}
+    authorInput?.focus();
+    return;
+  }
+  if(!text){
+    if(info){info.textContent='Écrivez un message.';info.style.color='#fca5a5';}
+    textInput?.focus();
+    return;
+  }
+
+  localStorage.setItem('cloud_chat_author',author);
+  if(info){info.textContent='Envoi…';info.style.color='#94a3b8';}
+  const button=document.getElementById('chatSendButton');
+  if(button)button.disabled=true;
+
+  if(window.firebaseSendFamilyChat){
+    Promise.resolve(window.firebaseSendFamilyChat(author,text))
+      .then(()=>{
+        if(textInput)textInput.value='';
+        if(info){info.textContent='Message envoyé.';info.style.color='#94a3b8';}
+        setTimeout(scrollChatToBottom,80);
+      })
+      .catch(error=>{
+        if(info){info.textContent='Envoi impossible : '+(error?.message||error);info.style.color='#fca5a5';}
+      })
+      .finally(()=>{if(button)button.disabled=false;});
+  }else{
+    if(info){info.textContent='Firebase est encore en cours de chargement.';info.style.color='#fbbf24';}
+    if(button)button.disabled=false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const author=document.getElementById('chatAuthor');
+  if(author)author.value=localStorage.getItem('cloud_chat_author')||'';
+  const input=document.getElementById('chatInput');
+  if(input)input.addEventListener('keydown',event=>{
+    if(event.key==='Enter' && !event.shiftKey){
+      event.preventDefault();
+      sendFamilyChatMessage();
+    }
+  });
+});
+
+
 function openCloudPanel(){
   document.getElementById('cloudPanel').classList.remove('hidden');
   const msg=document.getElementById('cloudMessage');
@@ -1885,6 +2109,9 @@ let cloudTimer = null;
 let applyingRemote = false;
 let firstSnapshot = true;
 let lastCloudSavedAt = null;
+let unsubscribeFamilyChat = null;
+let familyChatStartedUid = null;
+
 
 function cloudDocRef(uid){
   return doc(db, "users", uid, "apps", "basket-gabin");
@@ -1892,6 +2119,11 @@ function cloudDocRef(uid){
 function cloudBackupRef(uid){
   return doc(db, "users", uid, "apps", "basket-gabin-backup");
 }
+function familyChatDocRef(uid){
+  // Separate document: manual app backups cannot overwrite the chat.
+  return doc(db, "users", uid, "apps", "basket-gabin-family-chat");
+}
+
 function setCloudUI(state, text){
   const dot=document.getElementById('cloudDot');
   const label=document.getElementById('cloudLabel');
@@ -2204,6 +2436,87 @@ restoreSnapshot(); render(); renderDays(); loadTests();
 };
 
 
+
+function normaliseFamilyChatMessages(messages){
+  return (Array.isArray(messages)?messages:[])
+    .filter(m=>m && typeof m.text==='string' && m.text.trim())
+    .map(m=>({
+      id:String(m.id||''),
+      author:String(m.author||'Famille').slice(0,30),
+      text:String(m.text||'').slice(0,600),
+      clientCreatedAt:Number(m.clientCreatedAt||0),
+      createdAt:m.createdAt||null
+    }))
+    .sort((a,b)=>{
+      const ta=Number(a.createdAt?.seconds||0)*1000||a.clientCreatedAt;
+      const tb=Number(b.createdAt?.seconds||0)*1000||b.clientCreatedAt;
+      return ta-tb;
+    })
+    .slice(-150);
+}
+
+function stopFamilyChat(){
+  if(unsubscribeFamilyChat){
+    unsubscribeFamilyChat();
+    unsubscribeFamilyChat=null;
+  }
+  familyChatStartedUid=null;
+  window.setChatConnectionState?.(false,'Chat non connecté');
+}
+
+function startFamilyChat(uid){
+  if(!uid)return;
+  if(familyChatStartedUid===uid && unsubscribeFamilyChat)return;
+  stopFamilyChat();
+  familyChatStartedUid=uid;
+  window.setChatConnectionState?.(true,'Chat familial connecté');
+
+  unsubscribeFamilyChat=onSnapshot(
+    familyChatDocRef(uid),
+    snapshot=>{
+      const messages=normaliseFamilyChatMessages(snapshot.exists()?snapshot.data()?.messages:[]);
+      window.setFamilyChatMessages?.(messages);
+      window.setChatConnectionState?.(true,'Chat familial connecté');
+    },
+    error=>{
+      console.error('Family chat listener',error);
+      window.setChatConnectionState?.(false,'Chat indisponible');
+    }
+  );
+}
+
+window.firebaseStartFamilyChat=()=>{
+  if(currentUser)startFamilyChat(currentUser.uid);
+  else window.setChatConnectionState?.(false,'Connectez le compte familial pour utiliser le chat.');
+};
+
+window.firebaseSendFamilyChat=async(author,text)=>{
+  if(!currentUser)throw new Error('Compte familial non connecté.');
+  const cleanAuthor=String(author||'').trim().slice(0,30);
+  const cleanText=String(text||'').trim().slice(0,600);
+  if(!cleanAuthor)throw new Error('Prénom manquant.');
+  if(!cleanText)throw new Error('Message vide.');
+
+  const ref=familyChatDocRef(currentUser.uid);
+  const snapshot=await getDoc(ref);
+  const current=normaliseFamilyChatMessages(snapshot.exists()?snapshot.data()?.messages:[]);
+  const now=Date.now();
+  current.push({
+    id:currentUser.uid.slice(0,8)+'-'+now+'-'+Math.random().toString(36).slice(2,7),
+    author:cleanAuthor,
+    text:cleanText,
+    clientCreatedAt:now
+  });
+
+  await setDoc(ref,{
+    ownerUid:currentUser.uid,
+    ownerEmail:currentUser.email||'',
+    updatedAt:serverTimestamp(),
+    messages:current.slice(-150)
+  },{merge:false});
+};
+
+
 async function startCloud(uid){
   if(unsubscribeCloud){unsubscribeCloud();unsubscribeCloud=null;}
   const snap=await getDoc(cloudDocRef(uid));
@@ -2243,6 +2556,7 @@ window.firebaseFamilyCreate=async function(){
 };
 window.firebaseFamilyLogout=async function(){
   if(unsubscribeCloud){unsubscribeCloud();unsubscribeCloud=null}
+  stopFamilyChat();
   await signOut(auth);
   cloudMessage('Déconnecté.');
 };
@@ -2252,6 +2566,7 @@ onAuthStateChanged(auth,async user=>{
   if(user){
     setCloudUI('sync','Connexion cloud…');
     showAccountState();
+    startFamilyChat(user.uid);
     try{
       await startCloud(user.uid);
       setCloudUI('ok','Cloud synchronisé');
@@ -2261,6 +2576,8 @@ onAuthStateChanged(auth,async user=>{
       );
     }
   }else{
+    stopFamilyChat();
+    window.setFamilyChatMessages?.([]);
     setCloudUI('','Cloud non connecté');
     showAccountState();
   }
