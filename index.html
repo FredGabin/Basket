@@ -1132,47 +1132,29 @@ function coachText(i){
   const win=(localStorage.getItem('win'+i)||'').trim();
   const next=(localStorage.getItem('next'+i)||'').trim();
   const journal=(win+' '+next).toLowerCase();
-
-  let analysis='Journée enregistrée avec une progression régulière.';
-  let strength='La régularité et la qualité de la saisie.';
-  let watch='Continuer à écouter les sensations du corps.';
-  let mission='Revenir demain avec une consigne simple et une exécution propre.';
-
-  if(p.shot.att>=150 && p.shootPct>=75){
-    analysis=`Gros volume de travail : ${p.shot.made}/${p.shot.att} tirs, soit ${p.shootPct} %. La qualité reste solide malgré le volume.`;
-    strength='Volume et adresse combinés.';
-  }else if(p.shot.att>=100 && p.shootPct<60){
-    analysis=`Le volume est présent (${p.shot.att} tirs), mais la réussite de ${p.shootPct} % montre qu'il faut ralentir et stabiliser le geste.`;
-    watch='Qualité des appuis et équilibre avant le tir.';
-    mission='Faire moins de tirs, mais exiger une mécanique propre sur chaque répétition.';
-  }else if(p.shot.att>0){
-    analysis=`Séance de ${p.shot.att} tirs avec ${p.shootPct} % de réussite.`;
-    strength=p.shootPct>=70?'Bonne efficacité technique.':'Le travail a été réalisé jusqu’au bout.';
-  }
-
-  if(p.sleep && p.sleep<9){
-    watch='Sommeil insuffisant pour un joueur en croissance.';
-    mission='Priorité à la récupération et à une nuit longue.';
-  }
-  if(p.fatigue>=8){
-    watch='Fatigue élevée : éviter d’ajouter une séance intense.';
-    mission='Mobilité douce, hydratation et récupération.';
-  }
-  if(p.confidence && p.confidence<=4){
-    strength='Le fait d’avoir travaillé malgré une confiance basse.';
-    mission='Chercher une réussite simple dès le début de la prochaine séance.';
-  }
-  if(journal.includes('douleur') || journal.includes('genou') || journal.includes('cheville')){
-    watch='Une douleur est mentionnée dans le journal.';
-    mission='Réduire la charge et prévenir un adulte ou le coach si la douleur persiste.';
-  }
-  if(next){
-    mission=next;
-  }
-
-  return {analysis,strength,watch,mission};
+  const intros=['Tu peux être satisfait de cette journée.','Très bonne journée de travail.','Tu continues à construire des bases solides.','Belle implication aujourd’hui.'];
+  let analysis=intros[i%intros.length]+' ';
+  if(p.blockPct>=95) analysis+='Tu es allé au bout du programme prévu avec sérieux. ';
+  if(p.shot.att>=150&&p.shootPct>=75) analysis+=`Tu as conservé ${p.shootPct}% de réussite malgré ${p.shot.att} tirs. C’est un excellent signe de concentration.`;
+  else if(p.shot.att>0) analysis+=`Tu as réalisé ${p.shot.att} tirs avec ${p.shootPct}% de réussite. Chaque répétition construit ton automatisme.`;
+  else analysis+='Même une journée plus légère participe à ta progression.';
+  let strength='Ta régularité est aujourd’hui ton meilleur atout.';
+  if(p.shootPct>=75&&p.shot.att>=100) strength='Tu as su garder une excellente qualité de tir malgré un gros volume.';
+  else if(p.blockPct>=95) strength='Tu as respecté le programme jusqu’au bout.';
+  let watch='Continue à écouter tes sensations et à bien récupérer ce soir.';
+  if(p.sleep&&p.sleep<9) watch='Essaie de dormir davantage cette nuit : la récupération fait partie de l’entraînement.';
+  if(p.fatigue>=8) watch='La fatigue est élevée : privilégie l’hydratation, les étirements et le sommeil.';
+  if(journal.includes('douleur')||journal.includes('genou')||journal.includes('cheville')) watch='Une douleur est mentionnée : surveille son évolution et n’insiste pas si elle augmente.';
+  let mission=next||'Demain, recherche encore plus de qualité que de quantité.';
+  const quotes=[
+'Les matchs récompensent les entraînements que personne ne voit.',
+'Chaque journée réussie est une pierre de plus dans le joueur que tu veux devenir.',
+'La confiance vient du travail accompli. Continue à accumuler ces bonnes journées.',
+'Les joueurs les plus réguliers progressent souvent le plus.',
+'Le stage approche : chaque journée sérieuse te rapproche de ton meilleur niveau.'
+];
+  return {analysis,strength,watch,mission,quote:quotes[(i+p.score)%quotes.length]};
 }
-
 function coachCard(i){
   const p=dayPerformance(i);
   const c=coachText(i);
@@ -1185,7 +1167,7 @@ function coachCard(i){
     <h4>Analyse du jour</h4><p>${c.analysis}</p>
     <h4>✅ Point fort</h4><p>${c.strength}</p>
     <h4>⚠️ Point de vigilance</h4><p>${c.watch}</p>
-    <h4>🎯 Mission demain</h4><p>${c.mission}</p>
+    <h4>🎯 Cap sur demain</h4><p>${c.mission}</p><h4>💬 Le mot du Coach</h4><p><i>${c.quote}</i></p>
   </div>`;
 }
 

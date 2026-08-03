@@ -1,4 +1,4 @@
-const CACHE = 'basket-gabin-v15-8';
+const CACHE = 'basket-gabin-v15-9';
 const STATIC = [
   './manifest.json',
   './icon-192.png',
