@@ -1141,34 +1141,471 @@ function scoreLabel(score){
   return '🔴 À améliorer';
 }
 
+function coachPick(pool,i,salt=0){
+  if(!Array.isArray(pool)||!pool.length)return '';
+  const p=dayPerformance(i);
+  const seed=(i*17)+(p.score*3)+(p.shot.att||0)+(p.shot.made||0)+(salt*29);
+  return pool[Math.abs(seed)%pool.length];
+}
+
+function previousCoachPerformance(i){
+  for(let j=i-1;j>=0;j--){
+    const p=dayPerformance(j);
+    if(p.validated || p.shot.att>0 || p.blocks.done>0 || p.sleep || p.confidence || p.fatigue){
+      return p;
+    }
+  }
+  return null;
+}
+
+function coachStrengthVolume(p){
+  return (p.strength||[]).reduce((sum,e)=>
+    sum+
+    Math.max(0,Number(e.sets||0))*
+    Math.max(0,Number(e.reps||0))*
+    Math.max(0,Number(e.load||0)),0);
+}
+
+function coachRunMinutes(p){
+  return (p.runs||[]).reduce((sum,e)=>sum+Math.max(0,Number(e.duration||0)),0);
+}
+
+
+function coachWeakArea(p){
+  const areas=[];
+  if(p.shot.att>=30 && p.shootPct<55)areas.push({key:'shoot',score:55-p.shootPct});
+  if(p.blockPct>0 && p.blockPct<75)areas.push({key:'completion',score:75-p.blockPct});
+  if(p.fatigue>=8)areas.push({key:'fatigue',score:(p.fatigue-7)*8});
+  if(p.sleep>0 && p.sleep<8.5)areas.push({key:'sleep',score:(8.5-p.sleep)*8});
+  if(p.confidence>0 && p.confidence<=5)areas.push({key:'confidence',score:(6-p.confidence)*8});
+  if(!areas.length)return null;
+  areas.sort((a,b)=>b.score-a.score);
+  return areas[0].key;
+}
+
+function coachTruthLine(p,i){
+  const weak=coachWeakArea(p);
+  if(!weak)return '';
+
+  const pools={
+    shoot:[
+      'Aujourd’hui, le tir n’a pas été au niveau habituel. Ce n’est pas grave, mais il faut l’assumer : les appuis et la mécanique devront être plus propres demain.',
+      'Journée compliquée au tir. Le pourcentage est en dessous de ce qu’on cherche, donc demain on revient à des tirs simples et bien équilibrés.',
+      'Le shoot a été le point faible aujourd’hui. Inutile de forcer davantage : mieux vaut retrouver de bonnes sensations avec moins de volume et plus de qualité.',
+      'Sur le plan du tir, la journée est à oublier rapidement mais à comprendre : rythme, jambes et équilibre doivent redevenir prioritaires.',
+      'L’adresse n’était pas bonne aujourd’hui. Ce type de journée arrive ; l’important est de ne pas laisser une mauvaise série devenir une mauvaise habitude.'
+    ],
+    completion:[
+      'La journée est restée incomplète. Le travail fait compte, mais demain il faudra mieux gérer l’énergie pour aller au bout du programme.',
+      'Aujourd’hui, le principal point faible est la régularité : trop de blocs sont restés de côté. Demain, priorité à la continuité.',
+      'Tu as fait une partie du travail, mais pas assez pour parler d’une journée pleinement réussie. L’objectif demain sera de mieux terminer.',
+      'Le contenu réalisé est utile, mais la journée manque de constance. Un joueur progresse aussi en apprenant à finir ce qu’il commence.',
+      'Ce n’est pas la quantité qui manque forcément, c’est la continuité. Demain, organise mieux la séance pour ne pas laisser de blocs derrière.'
+    ],
+    fatigue:[
+      'Physiquement, la fatigue était trop présente aujourd’hui. Ce n’est pas un échec : c’est un signal clair qu’il faut récupérer avant de remettre de l’intensité.',
+      'La journée montre que la charge commence à peser. Le meilleur choix maintenant est de récupérer, pas d’ajouter du travail.',
+      'Tu as travaillé avec beaucoup de fatigue. C’est utile de le reconnaître : demain, la qualité devra passer avant l’intensité.',
+      'Les jambes et l’énergie semblent avoir baissé aujourd’hui. Une vraie récupération ce soir peut transformer demain.',
+      'Sur le plan physique, tu étais moins frais. Ce signal compte autant qu’un chrono ou un pourcentage : protège la récupération.'
+    ],
+    sleep:[
+      'La récupération n’était pas suffisante aujourd’hui. Le sommeil est le point faible du jour, et il peut directement limiter le tir, la vitesse et la concentration.',
+      'Tu peux mieux faire sur la récupération. Une nuit trop courte finit toujours par se voir dans la qualité de séance.',
+      'Aujourd’hui, le problème n’est pas l’envie : c’est la récupération. Protéger le sommeil est une vraie partie de la préparation.',
+      'Le manque de sommeil est le point à corriger en priorité. Tu ne peux pas demander au corps le maximum sans lui donner assez de récupération.',
+      'La séance peut être bonne, mais le sommeil reste insuffisant. C’est le levier le plus simple à améliorer dès ce soir.'
+    ],
+    confidence:[
+      'Mentalement, la confiance était plus basse aujourd’hui. Ne cherche pas à tout corriger : demain, repars sur des objectifs simples et réussis.',
+      'La confiance a baissé. Ce n’est pas un jugement sur ton niveau : c’est simplement le domaine à reconstruire demain avec des réussites concrètes.',
+      'Aujourd’hui, le mental a été plus fragile. La bonne réponse sera de jouer simple et de remettre de la réussite au centre.',
+      'Tu sembles moins sûr de toi aujourd’hui. Demain, cherche d’abord des actions que tu maîtrises pour retrouver de la confiance.',
+      'La confiance n’était pas au plus haut. Ce genre de journée ne doit pas être dramatisé : elle doit servir à repartir plus simple et plus propre.'
+    ]
+  };
+  return coachPick(pools[weak],i,41);
+}
+
+function coachMotivationByContext(p,i){
+  const weak=coachWeakArea(p);
+
+  if(p.score>=88){
+    return coachPick([
+      'Très belle journée. Ce niveau de sérieux doit devenir une référence, pas une exception.',
+      'Tu as produit une journée complète. Maintenant, le défi est de reproduire cette qualité sans chercher à en faire plus.',
+      'Aujourd’hui, tu as donné une vraie preuve de progression. Garde-la comme repère pour les prochaines séances.',
+      'C’est exactement ce type de journée qui donne de la confiance avant une échéance importante.',
+      'Journée de référence : beaucoup de qualité, mais la vraie force sera de pouvoir la reproduire.'
+    ],i,42);
+  }
+
+  if(weak==='shoot'){
+    return coachPick([
+      'Un mauvais jour au tir ne change pas ton niveau. Ce qui compte, c’est la qualité de ta réaction demain.',
+      'Les shooteurs progressent aussi grâce aux journées où rien ne rentre : elles obligent à revenir aux fondamentaux.',
+      'Ne poursuis pas le pourcentage. Reviens aux appuis, au rythme et à la confiance, et le pourcentage suivra.',
+      'Une journée faible au tir n’efface pas les bonnes précédentes. Elle te donne simplement un nouveau détail à travailler.',
+      'La meilleure réponse à une mauvaise adresse, c’est une séance suivante simple, propre et patiente.'
+    ],i,43);
+  }
+
+  if(weak==='fatigue'||weak==='sleep'){
+    return coachPick([
+      'Savoir récupérer fait partie du niveau Élite. Aujourd’hui, la meilleure progression peut se faire en dormant.',
+      'La préparation n’est pas gagnée par celui qui s’épuise le plus, mais par celui qui arrive prêt au bon moment.',
+      'Récupérer aujourd’hui, c’est préparer la vitesse de demain.',
+      'Le corps progresse quand le travail et la récupération sont tous les deux respectés.',
+      'Une bonne nuit peut être plus utile qu’une séance supplémentaire.'
+    ],i,44);
+  }
+
+  if(weak==='confidence'){
+    return coachPick([
+      'La confiance se reconstruit avec des preuves simples : un bon appui, une bonne décision, un tir propre.',
+      'Tu n’as pas besoin de te sentir invincible pour progresser. Tu as juste besoin de continuer à faire les bonnes choses.',
+      'Le mental revient quand tu accumules des actions maîtrisées. Commence petit, puis accélère.',
+      'Une journée de doute ne définit pas un joueur. La réaction du lendemain compte beaucoup plus.',
+      'La confiance ne se commande pas : elle se reconstruit par le travail bien fait.'
+    ],i,45);
+  }
+
+  if(weak==='completion'){
+    return coachPick([
+      'Une journée incomplète n’est pas perdue, mais elle doit servir à mieux organiser la suivante.',
+      'Demain, ne cherche pas un exploit. Cherche simplement à aller au bout du plan.',
+      'Finir le programme est aussi une compétence : gestion du rythme, concentration et discipline.',
+      'Le prochain progrès peut être très simple : mieux tenir la journée entière.',
+      'La constance compte plus qu’un gros bloc isolé.'
+    ],i,46);
+  }
+
+  return coachPick([
+    'Tu avances. Continue à chercher un petit progrès mesurable chaque jour.',
+    'Le niveau monte quand les bonnes journées deviennent normales.',
+    'Reste concentré sur les détails que tu peux contrôler.',
+    'Le plus important n’est pas de gagner chaque séance, mais de progresser sur plusieurs semaines.',
+    'Continue à construire : qualité, régularité, récupération.'
+  ],i,47);
+}
+
 function coachText(i){
   const p=dayPerformance(i);
+  const prev=previousCoachPerformance(i);
   const win=(localStorage.getItem('win'+i)||'').trim();
   const next=(localStorage.getItem('next'+i)||'').trim();
   const journal=(win+' '+next).toLowerCase();
-  const intros=['Tu peux être satisfait de cette journée.','Très bonne journée de travail.','Tu continues à construire des bases solides.','Belle implication aujourd’hui.'];
-  let analysis=intros[i%intros.length]+' ';
-  if(p.blockPct>=95) analysis+='Tu es allé au bout du programme prévu avec sérieux. ';
-  if(p.shot.att>=150&&p.shootPct>=75) analysis+=`Tu as conservé ${p.shootPct}% de réussite malgré ${p.shot.att} tirs. C’est un excellent signe de concentration.`;
-  else if(p.shot.att>0) analysis+=`Tu as réalisé ${p.shot.att} tirs avec ${p.shootPct}% de réussite. Chaque répétition construit ton automatisme.`;
-  else analysis+='Même une journée plus légère participe à ta progression.';
-  let strength='Ta régularité est aujourd’hui ton meilleur atout.';
-  if(p.shootPct>=75&&p.shot.att>=100) strength='Tu as su garder une excellente qualité de tir malgré un gros volume.';
-  else if(p.blockPct>=95) strength='Tu as respecté le programme jusqu’au bout.';
-  let watch='Continue à écouter tes sensations et à bien récupérer ce soir.';
-  if(p.sleep&&p.sleep<9) watch='Essaie de dormir davantage cette nuit : la récupération fait partie de l’entraînement.';
-  if(p.fatigue>=8) watch='La fatigue est élevée : privilégie l’hydratation, les étirements et le sommeil.';
-  if(journal.includes('douleur')||journal.includes('genou')||journal.includes('cheville')) watch='Une douleur est mentionnée : surveille son évolution et n’insiste pas si elle augmente.';
-  let mission=next||'Demain, recherche encore plus de qualité que de quantité.';
+  const strengthVolume=coachStrengthVolume(p);
+  const runMinutes=coachRunMinutes(p);
+
+  const introExcellent=[
+    'Très grosse journée : tu as répondu présent du début à la fin.',
+    'Aujourd’hui, le travail a été complet et surtout très sérieux.',
+    'Tu viens de signer une journée qui compte vraiment dans une préparation.',
+    'Belle journée : beaucoup de choses ont été faites, et elles ont été faites avec intention.',
+    'Tu as produit une journée solide, avec du contenu et de la qualité.',
+    'Ce genre de journée construit de la confiance parce qu’elle repose sur du travail réel.',
+    'Aujourd’hui, tu as mis ensemble effort, concentration et régularité.',
+    'Journée de haut niveau dans l’attitude : tu as été constant jusqu’au bout.'
+  ];
+  const introGood=[
+    'Bonne journée de travail : tu continues à faire avancer ta préparation.',
+    'Tu as encore ajouté une journée utile à ta progression.',
+    'Le travail du jour est bien posé : sérieux, régulier et exploitable pour la suite.',
+    'Tu avances de façon propre. Ce n’est pas spectaculaire, mais c’est exactement ce qui fait progresser.',
+    'Journée positive : tu as construit sans chercher à en faire inutilement plus.',
+    'Tu as gardé un bon niveau d’implication aujourd’hui.',
+    'Cette journée va dans le bon sens : du travail, des repères et de la continuité.',
+    'Tu as fait ce qu’il fallait aujourd’hui pour continuer à monter en puissance.'
+  ];
+  const introTough=[
+    'La journée n’était pas parfaite, mais elle reste utile si tu en tires les bons enseignements.',
+    'Aujourd’hui a demandé plus d’efforts : c’est aussi dans ces journées-là qu’on apprend.',
+    'Tout n’a pas été facile, mais tu as quand même avancé.',
+    'Journée plus exigeante : l’important maintenant est de comprendre ce que ton corps et ton jeu t’ont montré.',
+    'Tu n’avais peut-être pas toutes les sensations, mais tu as quand même posé du travail.',
+    'Ce n’est pas la journée la plus fluide, mais elle peut être très productive pour la suite.'
+  ];
+
+  let analysis=(p.score>=82?coachPick(introExcellent,i,1):p.score>=65?coachPick(introGood,i,2):coachPick(introTough,i,3))+' ';
+
+  const completionFull=[
+    'Tu as terminé tout le programme prévu, ce qui montre une vraie discipline.',
+    'Tous les blocs ont été menés au bout : c’est exactement la régularité recherchée dans une préparation.',
+    'Tu n’as laissé aucun bloc de côté et tu as tenu le plan de la journée.',
+    'Le programme est complet aujourd’hui : tu as respecté le travail prévu sans chercher de raccourci.',
+    'Tu es allé jusqu’au dernier bloc, et cette constance compte autant que les meilleures statistiques.',
+    'Journée complète : tu peux cocher le travail prévu sans avoir triché avec le contenu.'
+  ];
+  const completionPartial=[
+    'Une partie du programme reste à compléter, donc le bilan est encore perfectible.',
+    'Tout n’a pas été réalisé aujourd’hui : demain, cherche surtout à mieux terminer ce que tu commences.',
+    'Le contenu effectué est utile, mais la régularité passera aussi par des journées plus complètes.',
+    'Quelques blocs manquent encore. Ce n’est pas grave ponctuellement, mais il faut éviter que cela devienne une habitude.',
+    'La qualité est là sur une partie du travail ; la prochaine étape est de tenir cette qualité sur l’ensemble de la journée.'
+  ];
+  if(p.blockPct>=98) analysis+=coachPick(completionFull,i,4)+' ';
+  else if(p.blockPct>0 && p.blockPct<85) analysis+=coachPick(completionPartial,i,5)+' ';
+
+  const shootElite=[
+    `Avec ${p.shootPct}% sur ${p.shot.att} tirs, tu as combiné volume et efficacité.`,
+    `${p.shot.made} tirs réussis sur ${p.shot.att} : ton adresse est restée élevée malgré la répétition.`,
+    `Ton ${p.shootPct}% aujourd’hui montre que tu n’as pas seulement tiré beaucoup : tu as tiré efficacement.`,
+    `Maintenir ${p.shootPct}% avec ${p.shot.att} tentatives demande de la concentration, surtout quand la fatigue arrive.`,
+    `Le chiffre intéressant n’est pas seulement ${p.shot.att} tirs : c’est d’avoir gardé ${p.shootPct}% de réussite.`,
+    `Ton adresse est restée solide jusqu’au bout : ${p.shot.made}/${p.shot.att}, c’est une vraie base de confiance.`
+  ];
+  const shootGood=[
+    `Tu termines à ${p.shootPct}% sur ${p.shot.att} tirs : une base solide à continuer de stabiliser.`,
+    `${p.shot.made}/${p.shot.att} aujourd’hui. Le volume est utile et l’adresse reste intéressante.`,
+    `Tu as produit ${p.shot.att} tirs avec ${p.shootPct}% de réussite. Continue à rechercher la même mécanique sur chaque répétition.`,
+    `L’adresse du jour est correcte : ${p.shootPct}%. L’étape suivante est de la conserver quand le rythme augmente.`,
+    `${p.shot.made} réussites aujourd’hui : la répétition commence à installer des repères fiables.`
+  ];
+  const shootWork=[
+    `L’adresse est à ${p.shootPct}% aujourd’hui. Ne cherche pas à compenser en tirant plus vite : reviens aux appuis et à l’équilibre.`,
+    `${p.shot.made}/${p.shot.att} : journée moins précise. Ce type de séance sert à identifier ce qui se dérègle quand les sensations baissent.`,
+    `Le pourcentage est plus bas aujourd’hui. La bonne réponse n’est pas plus de volume, mais plus de qualité sur les prochaines séries.`,
+    `Aujourd’hui, l’adresse demande encore du travail. Garde la même routine de pieds et de finition sur chaque tir.`
+  ];
+  if(p.shot.att>=140 && p.shootPct>=72) analysis+=coachPick(shootElite,i,6);
+  else if(p.shot.att>0 && p.shootPct>=60) analysis+=coachPick(shootGood,i,7);
+  else if(p.shot.att>0) analysis+=coachPick(shootWork,i,8);
+  else {
+    analysis+=coachPick([
+      'La journée était moins orientée tir, donc le bilan se lit surtout dans le travail physique et la régularité.',
+      'Peu de données de tir aujourd’hui : ce sont surtout les autres qualités travaillées qui comptent.',
+      'Le shoot n’était pas le centre de la journée. C’est normal dans une préparation qui doit rester complète.'
+    ],i,9);
+  }
+
+  const truthLine=coachTruthLine(p,i);
+  if(truthLine)analysis+=' '+truthLine;
+
+  if(prev && prev.shot.att>0 && p.shot.att>0){
+    const diff=p.shootPct-prev.shootPct;
+    const volumeDiff=p.shot.att-prev.shot.att;
+    if(diff>=5){
+      analysis+=' '+coachPick([
+        `Par rapport à la dernière journée renseignée, ton adresse progresse de ${Math.round(diff)} points : c’est un signal encourageant.`,
+        `Tu gagnes ${Math.round(diff)} points d’adresse par rapport à la séance précédente. La qualité du geste est en train de se stabiliser.`,
+        `L’évolution est intéressante : +${Math.round(diff)} points de réussite depuis la dernière séance enregistrée.`
+      ],i,10);
+    }else if(diff<=-7 && p.fatigue>=6){
+      analysis+=' '+coachPick([
+        'L’adresse baisse par rapport à la dernière séance et la fatigue est plus présente : ce lien mérite d’être surveillé.',
+        'La précision recule alors que la fatigue monte. C’est un bon rappel : la fraîcheur influence directement la qualité technique.',
+        'Aujourd’hui, la fatigue semble avoir davantage pesé sur le tir. La récupération devient donc une priorité.'
+      ],i,11);
+    }else if(Math.abs(diff)<=3 && p.shot.att>=100 && prev.shot.att>=100){
+      analysis+=' '+coachPick([
+        'Ton adresse reste très proche de la séance précédente malgré le volume : cette stabilité est intéressante.',
+        'Deux journées avec une efficacité similaire commencent à montrer de la régularité, pas seulement un bon jour isolé.',
+        'Tu confirmes un niveau d’adresse proche de la dernière séance : la répétition de la qualité est un vrai progrès.'
+      ],i,12);
+    }else if(volumeDiff>=60 && diff>=-3){
+      analysis+=' '+coachPick([
+        'Tu as nettement augmenté le volume sans perdre beaucoup d’adresse : c’est une bonne résistance technique.',
+        'Le nombre de tirs monte fortement alors que ton pourcentage reste stable. C’est exactement le type de progression utile.',
+        'Plus de volume, presque la même précision : ton geste résiste mieux à la répétition.'
+      ],i,13);
+    }
+  }
+
+  let strength='';
+  if(p.shootPct>=78 && p.shot.att>=80){
+    strength=coachPick([
+      'Ton meilleur point aujourd’hui est la précision : tu as su répéter un geste efficace.',
+      'L’adresse est clairement le point fort de la journée. Tu as su rester propre même après beaucoup de répétitions.',
+      'Tu as donné de la valeur à ton volume de tir grâce à une vraie efficacité.',
+      'Ton shoot a été fiable aujourd’hui : c’est une arme quand elle reste stable sous fatigue.',
+      'Le point fort est technique : tes tirs ont gardé une bonne qualité sur l’ensemble de la séance.',
+      'Tu as montré une adresse qui peut devenir un vrai repère de confiance.'
+    ],i,14);
+  }else if(p.blockPct>=98){
+    strength=coachPick([
+      'Ton point fort aujourd’hui, c’est la discipline : programme complet, sans bloc laissé de côté.',
+      'La régularité ressort avant tout : tu as fait le travail prévu jusqu’au bout.',
+      'Tu as été fiable dans l’effort. Ce type de constance fait progresser sur plusieurs semaines.',
+      'La meilleure chose aujourd’hui est d’avoir respecté toute la journée, pas seulement les exercices que tu préfères.',
+      'Tu as montré une vraie capacité à finir le programme, et c’est une qualité de compétiteur.',
+      'Ton sérieux sur l’ensemble de la journée est le principal point positif.'
+    ],i,15);
+  }else if(p.confidence>=8){
+    strength=coachPick([
+      'Ta confiance est haute aujourd’hui : utilise-la pour jouer plus librement, pas pour forcer.',
+      'Tu sembles sûr de toi, et cette confiance peut t’aider à prendre des décisions plus rapides.',
+      'Le mental est un vrai point fort aujourd’hui : tu crois en ce que tu fais.',
+      'Ta confiance est solide. Garde-la connectée au travail et à la qualité des choix.',
+      'Tu abordes le travail avec de bonnes sensations mentales : profite-en pour être agressif et lucide.'
+    ],i,16);
+  }else if(strengthVolume>0){
+    strength=coachPick([
+      'La séance de renforcement est un bon point : tu construis de la force utile sans chercher la charge pour la charge.',
+      'Tu as ajouté du travail de force à la journée, ce qui rend la préparation plus complète.',
+      'Le renforcement a été bien intégré au reste : c’est cette complémentarité qui est intéressante.',
+      'La musculation du jour apporte une base physique importante, surtout si chaque répétition reste propre.',
+      'Ton travail physique complète bien le basket aujourd’hui : force et technique avancent ensemble.'
+    ],i,17);
+  }else if(runMinutes>0){
+    strength=coachPick([
+      'Le cardio est le point fort du jour : tu entretiens ta capacité à répéter les efforts.',
+      'Tu as bien intégré le travail d’endurance à la préparation sans oublier la technique.',
+      'Le travail cardio du jour renforce ta capacité à rester efficace plus longtemps.',
+      'Tu as travaillé le moteur aujourd’hui : ce sera utile quand les séquences s’enchaîneront en match.'
+    ],i,18);
+  }else{
+    strength=coachPick([
+      'Ta constance dans le travail reste ton meilleur atout aujourd’hui.',
+      'Le point fort est la qualité générale de la journée : rien de spectaculaire, mais beaucoup de travail utile.',
+      'Tu continues à accumuler des répétitions propres, et c’est ce qui construit les automatismes.',
+      'Ta progression vient aujourd’hui de ta régularité plus que d’un chiffre isolé.',
+      'Tu as gardé une bonne implication du début à la fin.'
+    ],i,19);
+  }
+
+  let watch='';
+  if(journal.includes('douleur')||journal.includes('genou')||journal.includes('cheville')||journal.includes('dos')){
+    watch=coachPick([
+      'Une douleur est mentionnée : ne cherche pas à la masquer. Si elle augmente ou modifie tes appuis, arrête le travail concerné et parle-en à un adulte.',
+      'Le signal douleur doit passer avant le programme. Surveille son évolution et ne force pas dessus.',
+      'Attention au signal physique noté aujourd’hui : aucune séance ne vaut le risque de transformer une gêne en vraie blessure.'
+    ],i,20);
+  }else if(p.fatigue>=8){
+    watch=coachPick([
+      'La fatigue est élevée. Ce soir, la priorité est simple : manger, boire et dormir.',
+      'Ton niveau de fatigue indique qu’il ne faut rien rajouter ce soir. La récupération fait partie du programme.',
+      'La charge commence à se sentir : protège la nuit qui arrive pour pouvoir remettre de la qualité demain.',
+      'Avec cette fatigue, le meilleur travail supplémentaire serait de récupérer correctement.',
+      'Attention à ne pas confondre courage et surcharge : aujourd’hui, la bonne décision est de récupérer.'
+    ],i,21);
+  }else if(p.sleep>0 && p.sleep<9){
+    watch=coachPick([
+      'Le sommeil est un peu court pour soutenir cette charge. Essaie de récupérer davantage cette nuit.',
+      'Le principal axe de vigilance n’est pas sur le terrain : c’est la durée de sommeil.',
+      'Ta récupération peut encore progresser. Une nuit plus longue donnera plus de qualité aux séances suivantes.',
+      'Avec ce volume de travail, le sommeil doit rester une priorité au même titre que le shoot ou le physique.',
+      'Tu peux gagner de la performance simplement en protégeant mieux ta nuit.'
+    ],i,22);
+  }else if(p.shot.att>=180){
+    watch=coachPick([
+      'Le volume de tirs est important. Surveille surtout la qualité des jambes et des appuis sur les dernières séries.',
+      'Beaucoup de répétitions aujourd’hui : inutile d’en rajouter ce soir. Laisse le geste se consolider.',
+      'Le volume est élevé. Dès que la mécanique se dégrade, la répétition perd de sa valeur.',
+      'Avec autant de tirs, la vigilance porte sur la fraîcheur : demain, repars avec des jambes disponibles.'
+    ],i,23);
+  }else if(strengthVolume>2500){
+    watch=coachPick([
+      'La charge de renforcement est conséquente : inutile de chercher un supplément de musculation ce soir.',
+      'Le volume muscu est important. La qualité de récupération déterminera ce que tu en retireras.',
+      'Bonne séance de force, mais ne cherche pas à battre une charge demain : laisse le corps assimiler.'
+    ],i,24);
+  }else if(p.confidence>0 && p.confidence<=5){
+    watch=coachPick([
+      'La confiance est plus basse aujourd’hui. Reviens demain à des objectifs simples et mesurables pour accumuler des réussites.',
+      'Le mental est le point à surveiller : ne juge pas ton niveau sur une seule séance.',
+      'Confiance moyenne aujourd’hui : concentre-toi sur les actions que tu contrôles, pas sur le résultat final.',
+      'Quand les sensations sont moins bonnes, simplifie le jeu et reconstruis la confiance par de petites réussites.'
+    ],i,25);
+  }else if(p.blockPct<80 && p.blockPct>0){
+    watch=coachPick([
+      'Le principal axe de progrès est de mieux tenir l’ensemble du programme.',
+      'La journée est utile, mais elle manque encore de continuité entre les blocs.',
+      'Demain, cherche surtout à mieux organiser ton énergie pour aller plus loin dans le programme.',
+      'Tu peux encore gagner en régularité en terminant davantage de blocs prévus.'
+    ],i,26);
+  }else{
+    watch=coachPick([
+      'La seule vigilance ce soir : ne rajoute pas du travail juste pour en faire plus. Assimile la séance.',
+      'Garde de la fraîcheur. Une bonne préparation alterne charge et récupération.',
+      'Continue à surveiller tes sensations pour garder de la qualité demain.',
+      'Reste exigeant sur la récupération : hydratation, repas et sommeil sont aussi des outils de performance.',
+      'Ne cherche pas à gagner la semaine en une soirée. La régularité vaut plus que la surcharge.',
+      'Le piège maintenant serait d’en faire trop. Le travail utile est déjà fait pour aujourd’hui.',
+      'Protège tes jambes et ton sommeil : demain doit commencer avec de l’énergie.',
+      'La préparation avance bien ; veille simplement à conserver de la fraîcheur.'
+    ],i,27);
+  }
+
+  let mission='';
+  if(next){
+    const missionTemplates=[
+      `Demain, ton axe annoncé est « ${next} ». Transforme-le en objectif concret dès le premier exercice.`,
+      `Cap sur « ${next} » demain : cherche une amélioration visible, même petite, plutôt qu’un grand changement d’un coup.`,
+      `Tu as choisi « ${next} » pour demain. Prépare-toi à l’attaquer avec la même rigueur que le travail d’aujourd’hui.`,
+      `Demain : « ${next} ». Fais-en un vrai challenge mesurable, avec un seuil clair à atteindre.`,
+      `Ton objectif de demain est « ${next} ». Reste concentré dessus sans vouloir tout corriger en même temps.`,
+      `Pour demain, priorité à « ${next} ». Une séance réussie sera celle où tu peux dire précisément ce qui a progressé.`,
+      `Demain, mets « ${next} » au centre de ta séance et cherche surtout de la qualité.`,
+      `Le prochain objectif est « ${next} ». Commence simple, puis augmente la difficulté si les sensations sont bonnes.`
+    ];
+    mission=coachPick(missionTemplates,i,28);
+  }else if(p.fatigue>=7){
+    mission=coachPick([
+      'Demain, commence par évaluer tes jambes et adapte l’intensité avant de chercher du volume.',
+      'Demain, la première mission sera d’arriver frais. La qualité passera avant la quantité.',
+      'Cap sur demain : retrouver de la vitesse et de la précision grâce à une bonne récupération ce soir.'
+    ],i,29);
+  }else{
+    mission=coachPick([
+      'Demain, fixe-toi un seuil simple à battre sur un exercice important.',
+      'Demain, cherche un petit progrès mesurable : une série plus propre, un meilleur pourcentage ou un meilleur passage.',
+      'Cap sur demain : être plus rapide dans les décisions sans perdre la qualité technique.',
+      'Demain, choisis un défi précis et va le chercher avec méthode.',
+      'La mission de demain : transformer la régularité d’aujourd’hui en un nouveau petit progrès.'
+    ],i,30);
+  }
+
   const quotes=[
-'Les matchs récompensent les entraînements que personne ne voit.',
-'Chaque journée réussie est une pierre de plus dans le joueur que tu veux devenir.',
-'La confiance vient du travail accompli. Continue à accumuler ces bonnes journées.',
-'Les joueurs les plus réguliers progressent souvent le plus.',
-'Le stage approche : chaque journée sérieuse te rapproche de ton meilleur niveau.'
-];
-  return {analysis,strength,watch,mission,quote:quotes[(i+p.score)%quotes.length]};
+    'Le niveau ne se construit pas en une séance : il se construit dans la répétition des bonnes journées.',
+    'Le travail que personne ne voit devient souvent la confiance que tout le monde remarque en match.',
+    'La vraie progression commence quand la qualité reste présente même lorsque la séance devient difficile.',
+    'Chaque répétition propre ajoute quelque chose au joueur que tu seras au prochain match.',
+    'Tu n’as pas besoin de gagner toute la saison aujourd’hui. Gagne simplement ta journée.',
+    'Le talent ouvre des portes ; la régularité permet de rester dans la salle.',
+    'Un joueur prêt n’est pas celui qui en fait toujours plus, mais celui qui sait quoi faire et quand le faire.',
+    'Quand la fatigue arrive, la technique et les décisions montrent la qualité du travail réalisé.',
+    'La confiance durable vient des preuves que tu accumules à l’entraînement.',
+    'Les meilleurs progrès sont souvent silencieux avant de devenir évidents en match.',
+    'Chaque journée sérieuse réduit un peu l’écart entre ton niveau actuel et ton objectif.',
+    'Le chrono mesure un passage ; ta discipline mesure la préparation entière.',
+    'Une bonne séance te fatigue parfois. Une bonne préparation te rend meilleur au bon moment.',
+    'Reste exigeant sur les détails : ce sont eux qui font la différence quand le niveau monte.',
+    'Le joueur que tu veux devenir se construit surtout les jours où personne ne t’applaudit.',
+    'La vitesse impressionne ; la vitesse avec contrôle fait gagner des actions.',
+    'Une réussite répétée devient une habitude. Une habitude solide devient une arme en match.',
+    'Ne cherche pas seulement à réussir l’exercice : cherche à comprendre pourquoi tu le réussis.',
+    'Ton objectif n’est pas d’être parfait aujourd’hui, mais d’être mieux préparé demain.',
+    'Le travail physique donne des possibilités ; la technique et la lecture permettent de les utiliser.',
+    'Un bon compétiteur sait accélérer quand il faut et récupérer quand il le faut.',
+    'Les journées difficiles ne cassent pas une progression : elles apprennent à mieux la gérer.',
+    'Quand tu peux rester précis sous fatigue, ton entraînement commence à ressembler au match.',
+    'Le meilleur défi est celui qui te force à être rapide sans devenir brouillon.',
+    'Tu construis ta place avec des actions répétées, pas avec une seule grosse journée.',
+    'La préparation sert à arriver prêt, pas simplement à arriver fatigué.',
+    'Chaque fois que tu gardes une bonne technique sous pression, tu rapproches l’entraînement de la compétition.',
+    'Être sérieux dans les petites choses rend les grands moments plus simples.',
+    'La régularité transforme les bonnes intentions en vrai niveau de jeu.',
+    'Tu peux aimer les défis, mais le vrai défi reste de garder la qualité quand tu veux aller vite.',
+    'Les records sont motivants ; la capacité à reproduire la performance est encore plus importante.',
+    'Ton prochain niveau se cache souvent dans un détail que tu acceptes de répéter correctement.',
+    'Un joueur complet sait scorer, défendre, courir, décider et récupérer.',
+    'La fraîcheur est une qualité de performance quand elle arrive au bon moment.',
+    'Tu n’entraînes pas seulement ton corps : tu entraînes ta capacité à rester lucide.',
+    'Les bonnes habitudes gagnent souvent les minutes où le talent seul ne suffit plus.',
+    'Le travail d’aujourd’hui doit servir le joueur de demain, pas seulement remplir une journée.',
+    'Une préparation réussie se voit quand les jambes sont rapides et la tête claire.',
+    'Le niveau Élite demande de la qualité répétée, pas des coups d’éclat isolés.',
+    'Fais de chaque défi une occasion de rester propre, rapide et concentré.'
+  ];
+
+  // Unique by day index across the 16-day preparation before cycling.
+  const contextualMotivation=coachMotivationByContext(p,i);
+  const quote=contextualMotivation || quotes[(i*3 + Math.min(2,Math.floor(p.score/35)))%quotes.length];
+
+  return {analysis,strength,watch,mission,quote};
 }
+
 function coachCard(i){
   const p=dayPerformance(i);
   const c=coachText(i);
