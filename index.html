@@ -466,6 +466,8 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
         <button class="primary" onclick="cloudUploadNow()">💾 Envoyer ma sauvegarde</button>
         <button onclick="cloudDownloadNow()">📥 Récupérer la sauvegarde</button>
       </div>
+      <button style="width:100%;margin-top:10px;border-color:#f59e0b" onclick="cloudRecoverLostDays()">🛟 Récupérer les données manquantes 8–10 août</button>
+      <p class="small" style="margin-top:8px">La récupération d'urgence fusionne uniquement les données manquantes et ne supprime rien sur ce téléphone.</p>
       <button style="width:100%;margin-top:10px" onclick="cloudLogout()">🔐 Déconnexion</button>
       <div class="cloud-note">
         <b>Fonctionnement :</b><br>
@@ -2554,6 +2556,7 @@ function cloudUploadNow(){
 
 function cloudDownloadNow(){if(window.firebaseDownloadNow)window.firebaseDownloadNow()}
 function cloudRestoreBackup(){if(window.firebaseRestoreBackup)window.firebaseRestoreBackup()}
+function cloudRecoverLostDays(){if(window.firebaseRecoverLostDays)window.firebaseRecoverLostDays()}
 function cloudLogoutAndShowLogin(){
   if(window.firebaseFamilyLogout){
     Promise.resolve(window.firebaseFamilyLogout()).finally(()=>{
@@ -2568,17 +2571,24 @@ function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
 
 function cleanupLegacySnapshotsAtStartup(){
+  // V15.21 : ne supprime plus les anciens snapshots.
+  // Certains anciens snapshots peuvent contenir des valeurs encore récupérables.
   try{
-    const keys=[];
     for(let i=0;i<localStorage.length;i++){
       const k=localStorage.key(i);
-      if(!k)continue;
-      if(k.startsWith('basket_gabin_state_v') && k!==STATE_KEY)keys.push(k);
-      if(k.startsWith('basket_gabin_field_clock_') && k!==FIELD_CLOCK_KEY)keys.push(k);
+      if(!k || !k.startsWith('basket_gabin_state_v') || k===STATE_KEY)continue;
+      try{
+        const legacy=JSON.parse(localStorage.getItem(k)||'null');
+        if(!legacy || !legacy.values)continue;
+        Object.entries(legacy.values).forEach(([field,value])=>{
+          if(isAppStorageKey(field) && localStorage.getItem(field)===null){
+            applyAppValue(field,value,Number(legacy.updated?.[field]||1));
+          }
+        });
+      }catch(_){}
     }
-    keys.forEach(k=>localStorage.removeItem(k));
   }catch(e){
-    console.warn('Nettoyage local ignoré',e);
+    console.warn('Récupération snapshot historique ignorée',e);
   }
 }
 
@@ -2782,37 +2792,30 @@ function clearLocalAppDataForCloudRestore(){
 function storeCloudStateLocally(state){
   if(!state || !state.values)throw new Error('Sauvegarde Cloud invalide.');
 
-  // The Cloud has already been fetched successfully.
-  // Clear only Basket Gabin data, never Firebase authentication data.
-  clearLocalAppDataForCloudRestore();
-
+  // V15.21 : fusion non destructive.
+  // Les champs locaux ne sont plus supprimés avant une récupération Cloud.
+  const merged=mergeStates(collectState(),state);
   let stored=0;
-  try{
-    for(const [k,v] of Object.entries(state.values||{})){
-      if(!isAppStorageKey(k))continue;
-      localStorage.setItem(k,String(v));
-      stored++;
-    }
 
-    // Do not duplicate the full state in localStorage.
+  for(const [k,v] of Object.entries(merged.values||{})){
+    if(!isAppStorageKey(k))continue;
+    applyAppValue(k,v,Number(merged.updated?.[k]||1));
+    stored++;
+  }
+
+  suppressFieldClock=true;
+  try{
     localStorage.setItem(
       STATE_KEY,
-      JSON.stringify({version:'15.3',savedAt:state.savedAt||new Date().toISOString()})
+      JSON.stringify({version:'15.3',savedAt:merged.savedAt||new Date().toISOString()})
     );
     localStorage.setItem(
       'basket_gabin_last_local_save',
-      state.savedAt||new Date().toISOString()
+      merged.savedAt||new Date().toISOString()
     );
-    localStorage.setItem(FIELD_CLOCK_KEY,'{}');
-    return stored;
-  }catch(e){
-    removeRedundantLocalCopies();
-    throw new Error(
-      e && e.name==='QuotaExceededError'
-        ? 'Mémoire du téléphone insuffisante même après nettoyage.'
-        : (e.message||String(e))
-    );
-  }
+  }finally{suppressFieldClock=false;}
+
+  return stored;
 }
 
 function refreshAfterCloudLoad(){
@@ -2884,7 +2887,7 @@ window.firebaseUploadNow=async()=>{
 
 window.firebaseDownloadNow=async()=>{
   if(!currentUser)return;
-  if(!confirm('Récupérer la sauvegarde Cloud sur ce téléphone ? Les données Basket Gabin présentes sur ce téléphone seront remplacées.'))return;
+  if(!confirm('Récupérer la sauvegarde Cloud ? Les données seront fusionnées sans supprimer les données déjà présentes sur ce téléphone.'))return;
 
   try{
     setCloudUI('sync','Téléchargement de la sauvegarde…');
@@ -2922,6 +2925,98 @@ window.firebaseDownloadNow=async()=>{
   }
 };
 
+
+function isRecoveryDayKey(k){
+  if(/^u15_(6|7|8)_[bpe]_\d+$/.test(k))return true;
+  if(/^v10(?:made|att)_(6|7|8)_\d+_\d+$/.test(k))return true;
+  if(/^(?:fat|confidence|sleep|win|next|journalSaved|validatedAt|draftSaved|freeStretch|freeAbs|freeStretchMin|freeAbsMin|freeAbsIntensity|strengthEntries|runEntries)(6|7|8)$/.test(k))return true;
+  return false;
+}
+
+function shouldRecoverMissingValue(k,current,source){
+  if(source===undefined || source===null)return false;
+  const src=String(source);
+  if(k.startsWith('journalSaved')){
+    return src==='1' && current!=='1';
+  }
+  if(k.startsWith('validatedAt')){
+    return Boolean(src) && !current;
+  }
+  return current===null || current==='';
+}
+
+window.firebaseRecoverLostDays=async()=>{
+  if(!currentUser)return;
+  if(!confirm('Chercher les anciennes données des 8, 9 et 10 août dans le Cloud et la sauvegarde précédente ? Aucune donnée actuelle ne sera supprimée.'))return;
+
+  try{
+    setCloudUI('sync','Recherche des données perdues…');
+    cloudMessage('Recherche dans la sauvegarde précédente et la sauvegarde actuelle…');
+
+    const [backupSnap,currentSnap]=await Promise.all([
+      getDoc(cloudBackupRef(currentUser.uid)),
+      getDoc(cloudDocRef(currentUser.uid))
+    ]);
+
+    const backupState=backupSnap.exists()?backupSnap.data()?.state:null;
+    const currentState=currentSnap.exists()?currentSnap.data()?.state:null;
+
+    // Priorité à la sauvegarde précédente, puis au Cloud courant pour les champs encore absents.
+    const sources=[
+      {name:'sauvegarde précédente',state:backupState},
+      {name:'sauvegarde actuelle',state:currentState}
+    ];
+
+    let recovered=0;
+    const recoveredKeys=[];
+    const recoveredSources=new Set();
+
+    for(const source of sources){
+      const state=source.state;
+      if(!state || !state.values)continue;
+
+      for(const [k,v] of Object.entries(state.values)){
+        if(!isRecoveryDayKey(k))continue;
+
+        const current=localStorage.getItem(k);
+        if(!shouldRecoverMissingValue(k,current,v))continue;
+
+        applyAppValue(k,v,Number(state.updated?.[k]||1));
+        recovered++;
+        recoveredKeys.push(k);
+        recoveredSources.add(source.name);
+      }
+    }
+
+    // Si validatedAt est revenu, garantir aussi journalSaved pour l'affichage.
+    [6,7,8].forEach(i=>{
+      if(localStorage.getItem('validatedAt'+i) && localStorage.getItem('journalSaved'+i)!=='1'){
+        setAppValue('journalSaved'+i,'1');
+      }
+    });
+
+    writeSnapshot();
+    const refreshErrors=refreshAfterCloudLoad();
+
+    if(recovered){
+      setCloudUI('ok','Données anciennes récupérées');
+      cloudMessage(
+        `✅ ${recovered} champs récupérés pour les 8–10 août depuis ${[...recoveredSources].join(' et ')}. Vérifie les trois journées avant d’envoyer une nouvelle sauvegarde Cloud.`
+      );
+    }else{
+      setCloudUI('err','Aucune donnée ancienne trouvée');
+      cloudMessage(
+        'Aucune donnée manquante des 8–10 août n’a été retrouvée dans les deux sauvegardes Cloud disponibles. Ne fais pas de nouvel envoi Cloud avant vérification.',
+        true
+      );
+    }
+  }catch(e){
+    console.error('Emergency recovery error',e);
+    setCloudUI('err','Erreur récupération');
+    cloudMessage('Récupération d’urgence impossible : '+(e.message||String(e)),true);
+  }
+};
+
 window.firebaseRestoreBackup=async()=>{
   if(!currentUser)return;
   if(!confirm('Restaurer la sauvegarde cloud précédente sur ce téléphone ?'))return;
@@ -2934,12 +3029,18 @@ window.firebaseRestoreBackup=async()=>{
     const state=snap.data().state;
     applyingRemote=true;
     try{
-      Object.entries(state.values||{}).forEach(([k,v])=>{
-        if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
+      // V15.21 : restauration précédente = fusion, jamais effacement.
+      const merged=mergeStates(collectState(),state);
+      Object.entries(merged.values||{}).forEach(([k,v])=>{
+        if(isAppStorageKey(k))applyAppValue(k,v,Number(merged.updated?.[k]||1));
       });
       suppressFieldClock=true;
-      try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
-      finally{suppressFieldClock=false;}
+      try{
+        localStorage.setItem(STATE_KEY,JSON.stringify({
+          version:'15.3',
+          savedAt:merged.savedAt||new Date().toISOString()
+        }));
+      }finally{suppressFieldClock=false;}
     }finally{
       applyingRemote=false;
     }
