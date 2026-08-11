@@ -53,11 +53,13 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .stat-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
 
 
-.day-validated[data-validated="true"]{opacity:1;filter:none;border-color:#22c55e}
-.day-validated[data-validated="true"]::before{content:"✅ JOURNÉE VALIDÉE";display:block;background:#123524;color:#ecfdf5;border:1px solid #22c55e;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:900;text-align:center}
-.day-button-validated{opacity:1!important;filter:none!important;background:#172236!important;color:#f8fafc!important;border:1px solid #22c55e!important;box-shadow:inset 0 0 0 1px rgba(34,197,94,.16)}
-.day-button-validated .small{color:#cbd5e1!important}
-.day-button-current{outline:2px solid #f59e0b;outline-offset:2px}
+.day-validated[data-validated="true"]{opacity:1!important;filter:none!important;border-color:#22c55e!important}
+.day-validated[data-validated="true"]::before{content:"✅ JOURNÉE VALIDÉE";display:block;background:linear-gradient(90deg,#14532d,#166534);color:#fff;border:2px solid #22c55e;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:900;text-align:center;letter-spacing:.02em}
+.days button.day-button-validated{opacity:1!important;filter:none!important;background:linear-gradient(135deg,#153c27,#0d2a1d)!important;color:#fff!important;border:2px solid #22c55e!important;box-shadow:0 0 0 2px rgba(34,197,94,.12),0 8px 22px rgba(0,0,0,.24)!important}
+.days button.day-button-validated b{color:#fff!important}
+.days button.day-button-validated .small{color:#d1fae5!important}
+.day-valid-badge{display:inline-block;margin-top:8px;padding:3px 8px;border-radius:999px;background:#22c55e;color:#052e16;font-size:.68rem;font-weight:900;letter-spacing:.03em}
+.day-button-current{outline:3px solid #f59e0b!important;outline-offset:3px}
 
 
 .manual-entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -548,12 +550,19 @@ function currentProgramDayIndex(){
   return nearest;
 }
 
+function isDayValidated(i){
+  // Compatibilité avec toutes les anciennes versions :
+  // certaines journées historiques n'ont que journalSaved, d'autres validatedAt.
+  return localStorage.getItem('journalSaved'+i)==='1' ||
+         Boolean(localStorage.getItem('validatedAt'+i));
+}
+
 function cleanInvalidValidationMarkers(){
+  // Ne supprime plus les marqueurs historiques.
+  // On complète seulement journalSaved si une ancienne journée possède validatedAt.
   days.forEach((_,i)=>{
-    const journal=localStorage.getItem('journalSaved'+i);
-    const timestamp=localStorage.getItem('validatedAt'+i);
-    if(timestamp && journal!=='1'){
-      localStorage.removeItem('validatedAt'+i);
+    if(localStorage.getItem('validatedAt'+i) && localStorage.getItem('journalSaved'+i)!=='1'){
+      localStorage.setItem('journalSaved'+i,'1');
     }
   });
 }
@@ -870,9 +879,7 @@ function render(){
 <button class="good" onclick="validateDay()">✅ VALIDER LA JOURNÉE</button>
 </div>
 <p class="small">Sauvegarder = brouillon modifiable. Valider = journée terminée et ajoutée au journal.</p></div>`;
- const validated=
-   localStorage.getItem('journalSaved'+idx)==='1' &&
-   Boolean(localStorage.getItem('validatedAt'+idx));
+ const validated=isDayValidated(idx);
  const hc=document.getElementById('homeContent');
  hc.dataset.validated=validated?'true':'false';
  hc.classList.toggle('day-validated',validated);
@@ -1078,11 +1085,9 @@ function renderDays(){
  const current=currentProgramDayIndex();
  document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{
    const c=count(i);
-   const validated=
-     localStorage.getItem('journalSaved'+i)==='1' &&
-     Boolean(localStorage.getItem('validatedAt'+i));
+   const validated=isDayValidated(i);
    const classes=[validated?'day-button-validated':'',i===current?'day-button-current':''].filter(Boolean).join(' ');
-   return `<button class="${classes}" onclick="openDay(${i})"><b>${validated?'✅ ':''}${d.date}</b><br><span class="small">${d.mission}<br>${validated?'Validée • ':''}${c[0]}/${c[1]}</span></button>`;
+   return `<button class="${classes}" onclick="openDay(${i})"><b>${validated?'✅ ':''}${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span>${validated?'<br><span class="day-valid-badge">VALIDÉE</span>':''}</button>`;
  }).join('');
 }
 
@@ -1123,7 +1128,7 @@ function dayPerformance(i){
   const sleep=numVal('sleep'+i);
   const fatigue=numVal('fat'+i);
   const confidence=numVal('confidence'+i);
-  const validated=localStorage.getItem('journalSaved'+i)==='1' && Boolean(localStorage.getItem('validatedAt'+i));
+  const validated=isDayValidated(i);
   const strength=readJsonList('strengthEntries'+i);
   const runs=readJsonList('runEntries'+i);
 
@@ -1634,10 +1639,7 @@ function coachCard(i){
 }
 
 function validatedDayIndexes(){
-  return days.map((_,i)=>i).filter(i=>
-    localStorage.getItem('journalSaved'+i)==='1' &&
-    Boolean(localStorage.getItem('validatedAt'+i))
-  );
+  return days.map((_,i)=>i).filter(i=>isDayValidated(i));
 }
 
 function streakSummary(){
