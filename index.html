@@ -466,8 +466,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
         <button class="primary" onclick="cloudUploadNow()">💾 Envoyer ma sauvegarde</button>
         <button onclick="cloudDownloadNow()">📥 Récupérer la sauvegarde</button>
       </div>
-      <button style="width:100%;margin-top:10px;border-color:#f59e0b" onclick="cloudRecoverLostDays()">🛟 Récupérer les données manquantes 8–10 août</button>
-      <p class="small" style="margin-top:8px">La récupération d'urgence fusionne uniquement les données manquantes et ne supprime rien sur ce téléphone.</p>
+
       <button style="width:100%;margin-top:10px" onclick="cloudLogout()">🔐 Déconnexion</button>
       <div class="cloud-note">
         <b>Fonctionnement :</b><br>
@@ -552,9 +551,40 @@ function currentProgramDayIndex(){
   return nearest;
 }
 
+
+function repairHistoricalValidation810(){
+  // V15.22 — migration ciblée et non destructive.
+  // L'utilisateur a confirmé que les 8, 9 et 10 août étaient validés.
+  // On ne crée les marqueurs que si la journée contient déjà des données réelles.
+  [6,7,8].forEach(i=>{
+    const c=countCompletedBlocks(i);
+    const shot=readDayShotTotals(i);
+    const hasJournalData=
+      Boolean(localStorage.getItem('win'+i)) ||
+      Boolean(localStorage.getItem('next'+i)) ||
+      Boolean(localStorage.getItem('sleep'+i)) ||
+      Boolean(localStorage.getItem('fat'+i)) ||
+      Boolean(localStorage.getItem('confidence'+i));
+    const hasEntries=
+      readJsonList('strengthEntries'+i).length>0 ||
+      readJsonList('runEntries'+i).length>0;
+    const hasRealData=(c.done>0) || shot.att>0 || hasJournalData || hasEntries;
+
+    if(!hasRealData)return;
+
+    if(localStorage.getItem('journalSaved'+i)!=='1'){
+      setAppValue('journalSaved'+i,'1');
+    }
+    if(!localStorage.getItem('validatedAt'+i)){
+      // Timestamp technique de migration ; aucune donnée sportive n'est modifiée.
+      setAppValue('validatedAt'+i,new Date().toISOString());
+    }
+    try{localStorage.setItem('basket_gabin_repair_810_v1522','1')}catch(_){}
+
+  });
+}
+
 function isDayValidated(i){
-  // Compatibilité avec toutes les anciennes versions :
-  // certaines journées historiques n'ont que journalSaved, d'autres validatedAt.
   return localStorage.getItem('journalSaved'+i)==='1' ||
          Boolean(localStorage.getItem('validatedAt'+i));
 }
@@ -570,6 +600,7 @@ function cleanInvalidValidationMarkers(){
 }
 
 cleanInvalidValidationMarkers();
+repairHistoricalValidation810();
 let idx=currentProgramDayIndex();
 
 
@@ -2250,7 +2281,7 @@ function updateStats(){
  days.forEach((d,i)=>{let dm=0,da=0;d.scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{const mm=Number(localStorage.getItem('v10made_'+i+'_'+gi+'_'+ii)||0),aa=Number(localStorage.getItem('v10att_'+i+'_'+gi+'_'+ii)||0);m+=mm;a+=aa;dm+=mm;da+=aa}));if(da>0){const p=Math.round(dm/da*100);best=best===null?p:Math.max(best,p)}const sv=Number(localStorage.getItem('sleep'+i));if(sv){s+=sv;sn++;if(sv>=10)s10++}const cv=Number(localStorage.getItem('confidence'+i));if(cv){conf+=cv;cn++}});
  const gc=globalCount(),completion=gc[1]?Math.round(gc[0]/gc[1]*100):0;
  document.getElementById('statShots').textContent=a;document.getElementById('statMade').textContent=m;document.getElementById('statPct').textContent=a?Math.round(m/a*100)+' %':'—';document.getElementById('statBestPct').textContent=best===null?'—':best+' %';document.getElementById('statSleep').textContent=sn?(s/sn).toFixed(1)+' h':'—';document.getElementById('statSleep10').textContent=sn?s10+'/'+sn:'—';document.getElementById('statConfidence').textContent=cn?(conf/cn).toFixed(1)+'/10':'—';document.getElementById('statCompletion').textContent=completion+' %';
- let valid=0,journal=0;days.forEach((_,i)=>{if(localStorage.getItem('journalSaved'+i)==='1'){valid++;journal++}});
+ let valid=0,journal=0;days.forEach((_,i)=>{if(isDayValidated(i)){valid++;journal++}});
  document.getElementById('statStreak').textContent=valid;
  document.getElementById('statJournal').textContent=journal;
  renderBadges();
@@ -2282,7 +2313,7 @@ function computeBadges(){
   let completedDays=0,journalDays=0,totalMade=0,sleep10=0,scoreDays=0;
   days.forEach((d,i)=>{
     const c=count(i); if(c[0]===c[1])completedDays++;
-    if(localStorage.getItem('journalSaved'+i)==='1')journalDays++;
+    if(isDayValidated(i))journalDays++;
     const sl=Number(localStorage.getItem('sleep'+i));if(sl>=10)sleep10++;
     let made=0,att=0;d.basket.forEach((_,j)=>{made+=Number(localStorage.getItem('made_'+i+'_'+j)||0);att+=Number(localStorage.getItem('att_'+i+'_'+j)||0)});
     totalMade+=made;if(att>0)scoreDays++;
@@ -2556,7 +2587,6 @@ function cloudUploadNow(){
 
 function cloudDownloadNow(){if(window.firebaseDownloadNow)window.firebaseDownloadNow()}
 function cloudRestoreBackup(){if(window.firebaseRestoreBackup)window.firebaseRestoreBackup()}
-function cloudRecoverLostDays(){if(window.firebaseRecoverLostDays)window.firebaseRecoverLostDays()}
 function cloudLogoutAndShowLogin(){
   if(window.firebaseFamilyLogout){
     Promise.resolve(window.firebaseFamilyLogout()).finally(()=>{
@@ -2925,97 +2955,6 @@ window.firebaseDownloadNow=async()=>{
   }
 };
 
-
-function isRecoveryDayKey(k){
-  if(/^u15_(6|7|8)_[bpe]_\d+$/.test(k))return true;
-  if(/^v10(?:made|att)_(6|7|8)_\d+_\d+$/.test(k))return true;
-  if(/^(?:fat|confidence|sleep|win|next|journalSaved|validatedAt|draftSaved|freeStretch|freeAbs|freeStretchMin|freeAbsMin|freeAbsIntensity|strengthEntries|runEntries)(6|7|8)$/.test(k))return true;
-  return false;
-}
-
-function shouldRecoverMissingValue(k,current,source){
-  if(source===undefined || source===null)return false;
-  const src=String(source);
-  if(k.startsWith('journalSaved')){
-    return src==='1' && current!=='1';
-  }
-  if(k.startsWith('validatedAt')){
-    return Boolean(src) && !current;
-  }
-  return current===null || current==='';
-}
-
-window.firebaseRecoverLostDays=async()=>{
-  if(!currentUser)return;
-  if(!confirm('Chercher les anciennes données des 8, 9 et 10 août dans le Cloud et la sauvegarde précédente ? Aucune donnée actuelle ne sera supprimée.'))return;
-
-  try{
-    setCloudUI('sync','Recherche des données perdues…');
-    cloudMessage('Recherche dans la sauvegarde précédente et la sauvegarde actuelle…');
-
-    const [backupSnap,currentSnap]=await Promise.all([
-      getDoc(cloudBackupRef(currentUser.uid)),
-      getDoc(cloudDocRef(currentUser.uid))
-    ]);
-
-    const backupState=backupSnap.exists()?backupSnap.data()?.state:null;
-    const currentState=currentSnap.exists()?currentSnap.data()?.state:null;
-
-    // Priorité à la sauvegarde précédente, puis au Cloud courant pour les champs encore absents.
-    const sources=[
-      {name:'sauvegarde précédente',state:backupState},
-      {name:'sauvegarde actuelle',state:currentState}
-    ];
-
-    let recovered=0;
-    const recoveredKeys=[];
-    const recoveredSources=new Set();
-
-    for(const source of sources){
-      const state=source.state;
-      if(!state || !state.values)continue;
-
-      for(const [k,v] of Object.entries(state.values)){
-        if(!isRecoveryDayKey(k))continue;
-
-        const current=localStorage.getItem(k);
-        if(!shouldRecoverMissingValue(k,current,v))continue;
-
-        applyAppValue(k,v,Number(state.updated?.[k]||1));
-        recovered++;
-        recoveredKeys.push(k);
-        recoveredSources.add(source.name);
-      }
-    }
-
-    // Si validatedAt est revenu, garantir aussi journalSaved pour l'affichage.
-    [6,7,8].forEach(i=>{
-      if(localStorage.getItem('validatedAt'+i) && localStorage.getItem('journalSaved'+i)!=='1'){
-        setAppValue('journalSaved'+i,'1');
-      }
-    });
-
-    writeSnapshot();
-    const refreshErrors=refreshAfterCloudLoad();
-
-    if(recovered){
-      setCloudUI('ok','Données anciennes récupérées');
-      cloudMessage(
-        `✅ ${recovered} champs récupérés pour les 8–10 août depuis ${[...recoveredSources].join(' et ')}. Vérifie les trois journées avant d’envoyer une nouvelle sauvegarde Cloud.`
-      );
-    }else{
-      setCloudUI('err','Aucune donnée ancienne trouvée');
-      cloudMessage(
-        'Aucune donnée manquante des 8–10 août n’a été retrouvée dans les deux sauvegardes Cloud disponibles. Ne fais pas de nouvel envoi Cloud avant vérification.',
-        true
-      );
-    }
-  }catch(e){
-    console.error('Emergency recovery error',e);
-    setCloudUI('err','Erreur récupération');
-    cloudMessage('Récupération d’urgence impossible : '+(e.message||String(e)),true);
-  }
-};
 
 window.firebaseRestoreBackup=async()=>{
   if(!currentUser)return;
