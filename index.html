@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V16.2</title>
+<title>Basket Elite Gabin V16.3</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -132,7 +132,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 .library-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:10px 0}.library-tabs button{white-space:nowrap;flex:0 0 auto}
 .library-grid{display:grid;grid-template-columns:1fr;gap:10px}.library-card{background:#101827;border:1px solid #29364c;border-radius:16px;padding:13px}.library-card h3{margin:0 0 7px}.library-meta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.library-visual{width:100%;border-radius:13px;border:1px solid #334155;background:#050a13;display:block;cursor:zoom-in}.library-list{margin:7px 0 0;padding-left:20px}.library-list li{margin:5px 0}.coach-points{border-left:4px solid #38bdf8;background:#08101d;border-radius:10px;padding:10px;margin-top:10px}.coach-points b{color:#f59e0b}.lib-exercise-grid{display:grid;grid-template-columns:1fr;gap:9px}.lib-exercise{background:#08101d;border:1px solid #334155;border-radius:13px;padding:11px}.lib-exercise .name{font-weight:900;color:#f8fafc}.lib-exercise .dose{color:#f59e0b;font-weight:800;font-size:.84rem;margin:3px 0}.lib-exercise .why{color:#cbd5e1;font-size:.88rem}.lib-exercise .cue{font-size:.82rem;color:#94a3b8;margin-top:6px}.safety-note{background:#2a1608;border:1px solid #92400e;border-left:4px solid #f59e0b;border-radius:11px;padding:10px;margin:10px 0}.lib-image-modal{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:500;padding:12px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}.lib-image-modal img{max-width:1500px;width:100%;height:auto;border-radius:12px;margin-top:44px}.lib-image-close{position:fixed;right:15px;top:15px;z-index:501;background:#ef4444;color:#fff;font-size:1.05rem}
 @media(min-width:760px){.library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lib-exercise-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.library-card.wide{grid-column:1/-1}}
-.library-link{margin-top:8px;width:auto;padding:7px 10px;font-size:.82rem;background:#172236;border-color:#475569}.library-link:hover{border-color:#f59e0b}.library-highlight{outline:3px solid #f59e0b;outline-offset:2px;transition:outline .2s}
+.library-link{margin:8px 0 0 38px;width:auto;max-width:calc(100% - 38px);padding:7px 10px;font-size:.82rem;background:#172236;border-color:#475569;display:inline-flex;align-items:center;justify-content:center}.library-link:hover{border-color:#f59e0b}.library-highlight{outline:3px solid #f59e0b;outline-offset:2px;transition:outline .2s}
 
 </style>
 </head>
@@ -583,7 +583,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V16.2</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V16.3</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -777,7 +777,7 @@ function libraryRefForExercise(name,detail,p){
  if(/muscu|developpe|rowing|traction|farmer|force fonctionnelle|step-up|pont fessier/.test(txt))return null;
  if(/endurance|course aerobie|fractionne|course facile|course moderee/.test(txt))return null;
  if(/coast.?to.?coast|parcours coast/.test(txt))return {id:'lib-coast',cat:'exercise',label:'Coast-to-Coast'};
- if(/defen|close.?out|pas chass|lateral|t-drill|5-10-5/.test(txt))return {id:'lib-defense',cat:'defense',label:'Défense'};
+ if(/defen|défenseur|defenseur|close.?out|pas chass|lateral|t-drill|5-10-5|1v1|angle à fermer|angle a fermer|repli/.test(txt))return {id:'lib-defense',cat:'defense',label:'Défense'};
  if(/dribble|handle|cross|between|behind|in.?out|hesitation|combo/.test(txt))return {id:'lib-dribble',cat:'dribble',label:'Dribbles'};
  if(/tir|shoot|catch|pull-up|lancer|floater|flotteur|mecanique|3 points|3 pts|finition|lay-up|reverse|eurostep/.test(txt))return {id:'lib-shoot',cat:'shoot',label:'Tirs / finitions'};
  if(/echelle|jump box|saut|pliometr|acceleration|sprint|reaction|coordination|escalier|pneu|appui/.test(txt))return {id:'lib-physical',cat:'physical',label:'Physique'};
@@ -795,8 +795,20 @@ function openLibraryRef(id,cat){
  },60);
 }
 function libraryButtonForExercise(name,detail,p){
- const ref=libraryRefForExercise(name,detail,p);if(!ref)return '';
- return `<button type="button" class="library-link" onclick="openLibraryRef('${ref.id}','${ref.cat}')">📚 Voir fiche ${ref.label}</button>`;
+ const txt=((name||'')+' '+(detail||'')).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ // Musculation / endurance restent en saisie libre, sans fiche imposée.
+ if(/muscu|developpe|rowing|traction|farmer|force fonctionnelle|step-up|pont fessier|endurance|course aerobie|fractionne|course facile|course moderee/.test(txt))return '';
+
+ const refs=[];
+ const add=(id,cat,label)=>{if(!refs.some(r=>r.id===id))refs.push({id,cat,label});};
+
+ if(/coast.?to.?coast|parcours coast/.test(txt))add('lib-coast','exercise','Coast-to-Coast');
+ if(/defen|defenseur|close.?out|pas chass|lateral|t-drill|5-10-5|1v1|angle a fermer|repli/.test(txt))add('lib-defense','defense','Défense');
+ if(/dribble|handle|cross|between|behind|in.?out|hesitation|combo|retreat/.test(txt))add('lib-dribble','dribble','Dribbles');
+ if(/tir|shoot|catch|pull-up|lancer|floater|flotteur|mecanique|3 points|3 pts|finition|lay-up|reverse|eurostep/.test(txt))add('lib-shoot','shoot','Tirs / finitions');
+ if(/echelle|jump box|saut|pliometr|acceleration|sprint|reaction|coordination|escalier|pneu|appui/.test(txt))add('lib-physical','physical','Physique');
+
+ return refs.map(ref=>`<button type="button" class="library-link" onclick="openLibraryRef('${ref.id}','${ref.cat}')">📚 ${ref.label}</button>`).join('');
 }
 
 function showTrainingTab(tab){
