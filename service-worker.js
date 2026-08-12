@@ -1,8 +1,11 @@
-const CACHE = 'basket-gabin-v15-3';
+const CACHE = 'basket-gabin-v16';
 const STATIC = [
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './coast-to-coast.png',
+  './dribbles.png',
+  './tirs.png'
 ];
 
 self.addEventListener('install', event => {
