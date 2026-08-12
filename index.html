@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V15.4</title>
+<title>Basket Elite Gabin V15.3</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -53,13 +53,10 @@ input,textarea,select{width:100%;background:#050a13;color:white;border:1px solid
 .stat-section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
 
 
-.day-validated[data-validated="true"]{opacity:1!important;filter:none!important;border-color:#22c55e!important}
-.day-validated[data-validated="true"]::before{content:"✅ JOURNÉE VALIDÉE";display:block;background:linear-gradient(90deg,#14532d,#166534);color:#fff;border:2px solid #22c55e;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:900;text-align:center;letter-spacing:.02em}
-.days button.day-button-validated{opacity:1!important;filter:none!important;background:linear-gradient(135deg,#153c27,#0d2a1d)!important;color:#fff!important;border:2px solid #22c55e!important;box-shadow:0 0 0 2px rgba(34,197,94,.12),0 8px 22px rgba(0,0,0,.24)!important}
-.days button.day-button-validated b{color:#fff!important}
-.days button.day-button-validated .small{color:#d1fae5!important}
-.day-valid-badge{display:inline-block;margin-top:8px;padding:3px 8px;border-radius:999px;background:#22c55e;color:#052e16;font-size:.68rem;font-weight:900;letter-spacing:.03em}
-.day-button-current{outline:3px solid #f59e0b!important;outline-offset:3px}
+.day-validated[data-validated="true"]{opacity:.48;filter:grayscale(.55)}
+.day-validated[data-validated="true"]::before{content:"✅ JOURNÉE VALIDÉE";display:block;background:#14532d;color:#dcfce7;border:1px solid #22c55e;border-radius:12px;padding:10px;margin-bottom:12px;font-weight:900;text-align:center}
+.day-button-validated{opacity:.5;filter:grayscale(.7);border-color:#22c55e!important}
+.day-button-current{outline:2px solid #f59e0b;outline-offset:2px}
 
 
 .manual-entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -93,42 +90,6 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 .pin-keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
 .pin-keypad button{font-size:1.2rem;padding:14px}
 
-
-.chat-shell{display:flex;flex-direction:column;min-height:62vh}
-.chat-status{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.chat-status-dot{width:9px;height:9px;border-radius:50%;background:#64748b}
-.chat-status-dot.ok{background:#22c55e}
-.chat-messages{display:flex;flex-direction:column;gap:10px;min-height:280px;max-height:58vh;overflow-y:auto;padding:8px 2px 16px}
-.chat-empty{text-align:center;color:#94a3b8;padding:45px 12px}
-.chat-row{display:flex;justify-content:flex-start}
-.chat-row.mine{justify-content:flex-end}
-.chat-bubble{max-width:86%;background:#172236;border:1px solid #334155;border-radius:16px 16px 16px 5px;padding:10px 12px}
-.chat-row.mine .chat-bubble{background:#26364e;border-color:#f59e0b;border-radius:16px 16px 5px 16px}
-.chat-author{font-size:.78rem;font-weight:800;color:#f59e0b;margin-bottom:4px}
-.chat-text{white-space:pre-wrap;overflow-wrap:anywhere}
-.chat-time{font-size:.7rem;color:#94a3b8;text-align:right;margin-top:5px}
-.chat-compose{position:sticky;bottom:0;background:#0f172a;border:1px solid #334155;border-radius:16px;padding:10px}
-.chat-compose textarea{min-height:66px;resize:none}
-.chat-compose-actions{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end}
-.chat-name-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:8px}
-.chat-unread{display:none;min-width:20px;height:20px;border-radius:10px;background:#ef4444;color:white;font-size:.72rem;align-items:center;justify-content:center;padding:0 5px}
-.chat-unread.visible{display:inline-flex}
-
-
-.evo-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:12px 0}
-.evo-kpi{background:#08101d;border:1px solid #334155;border-radius:13px;padding:11px}
-.evo-kpi .value{font-size:1.35rem;font-weight:900;color:#f59e0b;margin-top:3px}
-.evo-bars{display:grid;gap:9px;margin-top:12px}
-.evo-bar-row{display:grid;grid-template-columns:52px 1fr 72px;gap:8px;align-items:center}
-.evo-bar-label{font-size:.78rem;color:#cbd5e1;text-align:right}
-.evo-bar-track{height:18px;background:#111827;border:1px solid #334155;border-radius:9px;overflow:hidden;position:relative}
-.evo-bar-fill{height:100%;background:#f59e0b;border-radius:8px;min-width:0}
-.evo-bar-value{font-size:.78rem;font-weight:800;color:#f8fafc;text-align:right}
-.evo-scale{display:grid;grid-template-columns:52px 1fr 72px;gap:8px;align-items:center;margin-top:5px}
-.evo-scale-values{display:flex;justify-content:space-between;color:#64748b;font-size:.68rem}
-.evo-explain{background:#08101d;border:1px solid #334155;border-radius:12px;padding:10px;margin-top:10px}
-@media(min-width:700px){.evo-summary{grid-template-columns:repeat(4,minmax(0,1fr))}}
-
 </style>
 </head>
 <body>
@@ -149,7 +110,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
 <header><div class="wrap">
 <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027</div></div>
+<div><h1>BASKET ELITE • GABIN</h1><div class="small">Saison 2026–2027 • <b style="color:#f59e0b">V15.3</b></div></div>
 <button class="cloud-chip" onclick="openCloudPanel()"><span id="cloudDot" class="cloud-dot"></span><span id="cloudLabel">Cloud non connecté</span></button>
 </div>
 <div class="menu">
@@ -161,7 +122,6 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <button id="m-journal" onclick="show('journal')">Journal</button>
 <button id="m-life" onclick="show('life')">Hygiène</button>
 <button id="m-mental" onclick="show('mental')">Mental</button>
-<button id="m-chat" onclick="show('chat')">💬 Chat <span id="chatUnread" class="chat-unread"></span></button>
 </div></div></header>
 
 <main class="wrap">
@@ -177,6 +137,14 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
 
 <div id="homeAgenda" class="card"></div>
+<div class="card"><b>🚀 V15.3</b><p class="small">Cloud manuel. Une journée est grisée seulement après validation réelle. Déverrouillage protégé par code parent.</p></div>
+<div class="card">
+  <h3>💾 Protection des données</h3>
+  <p><b>Local :</b> sauvegarde immédiate sur ce téléphone.<br>
+  <b>Cloud :</b> envoi et récupération manuels.</p>
+  <p class="small">Sauvegarder conserve un brouillon. Valider marque une journée ou un match comme terminé.</p>
+</div>
+
 <div class="hero">
 <h2 id="date"></h2>
 <div class="score" id="mission"></div>
@@ -246,13 +214,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
     <div class="card">
       <h3>💪 Charge et régularité</h3>
-      <div id="summerTrainingStats"></div><div class="card">
-<h3>🏋️ Statistiques musculation</h3>
-<div id="strengthStatsSummary" class="stat-kpis"></div>
-<div id="strengthStatsExercises" class="record-list" style="margin-top:12px"></div>
-<canvas id="strengthProgressChart" class="performance-chart" height="210" style="margin-top:12px"></canvas>
-<p class="small">Le volume correspond à séries × répétitions × charge. Il sert à suivre la régularité, pas à rechercher des charges maximales.</p>
-</div>
+      <div id="summerTrainingStats"></div>
     </div>
 
     <div class="card">
@@ -294,24 +256,16 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
   <div id="statsEvolutionView" class="hidden">
     <div class="card">
-      <h3>📊 Évolution</h3>
-      <p class="small">Les 10 dernières journées. Les valeurs sont affichées directement, avec une échelle adaptée à chaque indicateur.</p>
-
+      <h3>📈 Graphiques de progression</h3>
       <div class="chart-tabs">
-        <button class="active" onclick="setEvolutionMetric('shoot',this)">Adresse</button>
-        <button onclick="setEvolutionMetric('volume',this)">Tirs</button>
+        <button class="active" onclick="setEvolutionMetric('shoot',this)">Tirs</button>
+        <button onclick="setEvolutionMetric('volume',this)">Volume</button>
         <button onclick="setEvolutionMetric('sleep',this)">Sommeil</button>
         <button onclick="setEvolutionMetric('fatigue',this)">Fatigue</button>
         <button onclick="setEvolutionMetric('confidence',this)">Confiance</button>
         <button onclick="setEvolutionMetric('blocks',this)">Blocs</button>
-        <button onclick="setEvolutionMetric('strength',this)">Musculation</button>
-        <button onclick="setEvolutionMetric('run',this)">Course / cardio</button>
       </div>
-
-      <div id="evolutionMetricTitle" class="evo-explain"></div>
-      <div id="evolutionSummary" class="evo-summary"></div>
-      <div id="evolutionBars" class="evo-bars"></div>
-      <div id="evolutionScale" class="evo-scale"></div>
+      <canvas id="evolutionChart" class="performance-chart" height="210"></canvas>
     </div>
 
     <div class="card">
@@ -365,37 +319,6 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <li>😤 Compétiteur : j'aime les gros matchs.</li>
 </ul></div>
 </section>
-
-<section id="chat" class="hidden">
-  <div class="hero">
-    <h2>💬 Chat familial</h2>
-    <p class="quote">Un espace commun pour Gabin et sa famille.</p>
-  </div>
-
-  <div class="card chat-shell">
-    <div class="chat-status">
-      <span id="chatStatusDot" class="chat-status-dot"></span>
-      <span id="chatStatusText" class="small">Connexion au chat…</span>
-    </div>
-
-    <div id="chatMessages" class="chat-messages">
-      <div class="chat-empty">Chargement des messages…</div>
-    </div>
-
-    <div class="chat-compose">
-      <div class="chat-name-row">
-        <input id="chatAuthor" maxlength="30" placeholder="Votre prénom (ex. Gabin, Papa, Maman)">
-        <button onclick="saveChatAuthor()">Enregistrer</button>
-      </div>
-      <div class="chat-compose-actions">
-        <textarea id="chatInput" maxlength="600" placeholder="Écrire un message…"></textarea>
-        <button id="chatSendButton" class="primary" onclick="sendFamilyChatMessage()">Envoyer</button>
-      </div>
-      <div id="chatMessageInfo" class="small" style="margin-top:7px"></div>
-    </div>
-  </div>
-</section>
-
 </main>
 
 
@@ -459,14 +382,13 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V15.4</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V15.3</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
         <button class="primary" onclick="cloudUploadNow()">💾 Envoyer ma sauvegarde</button>
         <button onclick="cloudDownloadNow()">📥 Récupérer la sauvegarde</button>
       </div>
-
       <button style="width:100%;margin-top:10px" onclick="cloudLogout()">🔐 Déconnexion</button>
       <div class="cloud-note">
         <b>Fonctionnement :</b><br>
@@ -509,21 +431,11 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 </div>
 
 <script>
-const days=[{"date":"Dimanche 2 août","theme":"Vitesse d’appuis et technique propre","load":"Moyenne","basket":[["Échauffement ballon","12 min","Dribble bas/haut, changements de main, 10 lay-ups de chaque côté."],["Handles explosifs","15 min","6 exercices × 30 s, 30 s de repos : cross, between, behind, in-and-out, double cross, combo libre."],["Finitions","20 min","10 main droite + 10 main gauche : lay-up, reverse, eurostep, flotteur. Refaire les ratés."],["Tir en mouvement","25 min","5 spots : 8 tirs réussis catch-and-shoot + 6 réussites après 1 dribble par spot."],["Lancers francs","10 min","5 séries de 10. Noter le total."]],"physical":[["Échauffement","10 min","Corde 2 × 60 s, mobilité chevilles/hanches, 3 accélérations progressives."],["Échelle de rythme","8 min","Deux pieds par case 3 passages; latéral deux pieds 3 passages; in-out 3 passages. Retour en marchant."],["Accélérations","15 min","4 × 5 m, 4 × 10 m, 3 × 15 m. Repos 60 à 90 s; chaque sprint doit être rapide."],["Changements de direction","15 min","T-Drill 3 passages; 5-10-5 shuttle 3 passages; défense latérale 4 × 8 s."],["Retour au calme","8 min","Marche, respiration, mobilité légère. Pas de sauts aujourd’hui : jambes déjà sollicitées la veille."]],"evening":[["Planche ventrale","3 × 30–40 s","Gainage propre, respiration normale."],["Planche latérale","2 × 25 s/côté","Bassin haut."],["Roue abdominale","2 × 6–10","Amplitude contrôlée."],["Étirements doux","10 min","Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]],"mission":"Domine les 5 premiers mètres.","mindset":"Un joueur rapide n’est pas celui qui s’agite : c’est celui qui part au bon moment.","life":"Hydrate-toi avant d’avoir soif.","scoreDetails":[{"name":"Échauffement ballon","items":["Échauffement ballon"]},{"name":"Handles explosifs","items":["Cross","In & Out","Between","Behind","Hesitation","Combo libre"]},{"name":"Finitions","items":["Lay-up droite","Lay-up gauche","Reverse droite","Reverse gauche","Eurostep droite","Eurostep gauche","Floater droite","Floater gauche"]},{"name":"Tir en mouvement","items":["Corner gauche","45° gauche","Axe","45° droite","Corner droit"]},{"name":"Lancers francs","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]}]},{"date":"Lundi 3 août","theme":"Tir + haut du corps","load":"Moyenne","basket":[["Échauffement","10 min","Mobilité + 30 finitions faciles."],["Mécanique de tir","15 min","50 tirs proches du cercle, équilibre et tenue de finition."],["Catch-and-shoot","25 min","10 réussites sur 5 spots = 50 réussites."],["Pull-up","20 min","5 réussites main droite + 5 main gauche sur 5 zones."],["Lancers francs","10 min","50 tirs, objectif régularité."]],"physical":[["Échauffement","8 min","Élastiques, épaules, omoplates, poignets."],["Tractions ou tirage","4 × 5–8","Garder 2 répétitions possibles; aucune répétition forcée."],["Développé haltères au sol ou banc","3 × 8","Charge maîtrisée, mouvement fluide."],["Rowing unilatéral","3 × 10/côté","Dos stable, coude vers la hanche."],["Pompes explosives","3 × 5","Arrêter si la poussée ralentit."],["Farmer carry","4 × 20 m","Buste grand, marche contrôlée."],["Roue abdominale","3 × 6–10","Amplitude seulement si le dos reste neutre."]],"evening":[["Planche ventrale","3 × 30–40 s","Gainage propre, respiration normale."],["Planche latérale","2 × 25 s/côté","Bassin haut."],["Roue abdominale","2 × 6–10","Amplitude contrôlée."],["Étirements doux","10 min","Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]],"mission":"Mets du rythme sans perdre la technique.","mindset":"Tu n’as pas besoin d’en faire plus. Tu dois faire mieux.","life":"Le sommeil protège ta vitesse.","scoreDetails":[{"name":"Échauffement","items":["Échauffement"]},{"name":"Mécanique de tir","items":["Corner gauche","45° gauche","Axe","45° droite","Corner droit"]},{"name":"Catch-and-shoot","items":["Corner gauche","45° gauche","Axe","45° droite","Corner droit"]},{"name":"Pull-up","items":["Pull-up"]},{"name":"Lancers francs","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]}]},{"date":"Mardi 4 août","theme":"Finitions + coordination légère","load":"Légère avant ostéo","basket":[["Handles","12 min","Travail main faible et changements de rythme."],["Finitions contact contrôlé","25 min","Avec coussin ou contact léger : 5 séries de 6 finitions variées."],["Flotteurs","15 min","5 réussites depuis 4 zones."],["Tir à 3 points","20 min","5 spots : corner gauche, 45° gauche, axe, 45° droite, corner droit. Mettre 5 tirs par spot, soit 25 réussites."],["Lancers francs","8 min","40 tirs."]],"physical":[["Mobilité dynamique","12 min","Chevilles, hanches, adducteurs, colonne thoracique."],["Coordination échelle","10 min","3 exercices seulement, 3 passages chacun, sans chercher l’épuisement."],["Réaction","12 min","8 départs de 5 m au signal + 6 réactions gauche/droite."],["Gainage léger","12 min","Dead bug 3 × 8/côté; bird dog 3 × 8/côté; planche latérale 2 × 25 s."],["Retour au calme","8 min","Respiration et étirements doux."]],"evening":[["Dead bug","2 × 8/côté","Contrôle et respiration."],["Bird dog","2 × 8/côté","Bassin immobile."],["Étirements doux","8–10 min","Sans forcer, surtout chevilles, hanches et dos."]],"mission":"Finis fort des deux mains.","mindset":"Main faible, contact, équilibre : c’est là que tu progresses.","life":"Un bon repas prépare la prochaine séance.","scoreDetails":[{"name":"Handles","items":["Cross","In & Out","Between","Behind","Hesitation","Combo libre"]},{"name":"Finitions contact contrôlé","items":["Lay-up droite","Lay-up gauche","Reverse droite","Reverse gauche","Eurostep droite","Eurostep gauche","Floater droite","Floater gauche"]},{"name":"Flotteurs","items":["Flotteurs"]},{"name":"Tir à 3 points","items":["Corner gauche","45° gauche","Axe","45° droite","Corner droit"]},{"name":"Lancers francs","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]}]},{"date":"Mercredi 5 août","theme":"Ostéo : journée allégée","load":"Très légère","basket":[["Tir facile","35–45 min","100 à 150 tirs proches et mi-distance, sans séries sous fatigue."],["Mobilité","10 min","Chevilles, hanches, épaules."]],"physical":[["Après-midi","—","Rendez-vous ostéo."],["Après le rendez-vous","—","Pas de musculation, pas de sprint, pas de pliométrie. Marche tranquille seulement si confortable."]],"evening":[["Dead bug","2 × 8/côté","Contrôle et respiration."],["Bird dog","2 × 8/côté","Bassin immobile."],["Étirements doux","8–10 min","Sans forcer, surtout chevilles, hanches et dos."]],"mission":"Récupère comme un joueur sérieux.","mindset":"La récupération fait partie du travail.","life":"Ce soir, récupération priorité.","scoreDetails":[{"name":"Tir facile","items":["Corner gauche","45° gauche","Axe","45° droite","Corner droit"]},{"name":"Mobilité","items":["Mobilité"]}]},{"date":"Jeudi 6 août","theme":"Repos complet","load":"Repos","basket":[["Repos","—","Aucune séance programmée."]],"physical":[["🚀 Récupérer, c'est progresser.","—","Sommeil, hydratation, repas complets. Pas d’abdos ni d’étirements forcés."]],"evening":[["Respiration calme","5 min","Allongé sur le dos, respiration lente. Aucun gainage ni étirement forcé."],["Mobilité très douce","5–8 min","Chevilles, hanches, épaules, sans douleur."]],"mission":"Recharge les batteries.","mindset":"Le repos d’aujourd’hui prépare la performance de demain.","life":"Repos total = mission accomplie.","scoreDetails":[{"name":"Repos","items":["Repos"]}]},{"date":"Vendredi 7 août","theme":"Speed & Shoot + puissance / cardio","load":"Élevée","basket":[["Handle Chaos","10 min","5 combos : cross, in&out, between, behind, hesitation. 30 s très rapide / 30 s récupération. Finir chaque combo par un départ explosif."],["Finishing 40","15 min","40 finitions : 10 main faible, 10 reverse, 10 eurostep, 10 floater. Défi : au moins 32/40."],["Parcours Coast to Coast","20 min","6 passages : slalom dribble → changement de main → accélération → finition → retour → pull-up. Chronométrer chaque passage. +3 s si la finition est ratée. Chercher vitesse ET propreté."],["Shoot après déplacement","20 min","25 pull-ups réussis + 20 tirs à 3 points réussis répartis sur 5 spots. Noter réussis/tentés."],["Lancers francs Clutch","10 min","5 séries. Objectif 8/10 sur les 10 derniers. Boss final : terminer par 5 réussites consécutives."]],"physical":[["Activation dynamique","7 min","Mobilité chevilles/hanches, rebonds légers, montées de genoux et 3 accélérations progressives."],["Jump Box Power","10 min","4 × 4 sauts. Réception stable 2 s, récupération 60–75 s. Chaque saut doit être explosif."],["Accélérations qualité","10 min","4 × 5 m + 4 × 10 m + 2 × 15 m. Départs variés, récupération complète. Pas de chrono obligatoire."],["Force fonctionnelle jambes","10 min","2 tours : step-up 8/jambe, pont fessier 12, mollets 15, gainage dynamique 30 s. Charge légère, exécution parfaite."],["Course aérobie","15 min","Course facile à modérée, régulière. Pouvoir parler par petites phrases. Finir frais, pas épuisé."]],"evening":[["Planche ventrale","3 × 30–40 s","Gainage propre, respiration normale."],["Planche latérale","2 × 25 s/côté","Bassin haut."],["Roue abdominale","2 × 6–10","Amplitude contrôlée."],["Étirements doux","10 min","Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]],"mission":"Être rapide sans sacrifier la qualité : le meilleur chrono est un passage propre.","mindset":"Vitesse, adresse et lucidité doivent fonctionner ensemble.","life":"Après cette double séance : hydratation, repas complet et sommeil long.","scoreDetails":[{"name":"Handle Chaos","items":["Échauffement"]},{"name":"Finishing 40","items":["Cross","In & Out","Between","Behind","Hesitation","Combo libre"]},{"name":"Parcours Coast to Coast","items":["1 contre 0"]},{"name":"Shoot après déplacement","items":["Corner gauche","45° gauche","Axe","45° droite","Corner droit"]},{"name":"Lancers francs Clutch","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]}]},{"date":"Samedi 8 août","theme":"1v1 Live — création, lecture & contact","load":"Élevée","basket":[["Killer Moves","12 min","Construire 5 moves personnels. Chaque move : attaque droite puis gauche, avec vrai changement de rythme."],["1v1 — Premier pas","15 min","12 possessions : 6 départs côté droit, 6 côté gauche. Départ à 45° ou dans l’axe, maximum 3 dribbles. Objectif : créer un vrai avantage dans les 2 premiers dribbles puis finir, pull-up ou floater selon la défense. Noter les tirs réussis/tentés."],["1v1 — Lecture du défenseur","15 min","3 séries de 6 possessions. Le défenseur varie volontairement : très proche, avec espace, ou en fermant un côté. Maximum 4 dribbles. Attaquant : lire avant d’agir — drive si espace, pull-up si recul, changement de direction si le couloir est fermé. Défi : au moins 9 bonnes décisions sur 18."],["1v1 — Match à 11","20 min","Vrai duel. 1 point par panier, possessions alternées pour multiplier les situations. Départ dans l’axe, maximum 4 dribbles. À partir de 9 points, il faut gagner avec 2 points d’écart. Chercher vitesse de décision et efficacité, pas le duel de force."],["Lancers francs — Clutch 1v1","10 min","Après le duel : 5 séries de 2 lancers. Objectif 8/10 minimum. Puis chacun tire 5 lancers : meilleur score gagne le dernier mini-duel. Finir par 2 réussites consécutives."]],"physical":[["Tractions / tirage","3 × 6–10","Amplitude propre, garder 2 répétitions en réserve."],["Développé haltères","3 × 8–10","Charge maîtrisée, aucun échec."],["Rowing","3 × 10","Dos stable, contrôle complet."],["Pompes Challenge","3 × 8–12","Deux séries propres puis 45 s de challenge technique. Arrêt dès que la forme se dégrade."],["Épaules / stabilité","2 × 12","Élévations légères ou travail de stabilité. Pas de charge lourde."],["Roue abdos + gainage","3 tours","Roue 6–10 répétitions + planche 30–40 s + latéral 20 s/côté."]],"evening":[["Planche ventrale","3 × 30–40 s","Gainage propre, respiration normale."],["Planche latérale","2 × 25 s/côté","Bassin haut."],["Roue abdominale","2 × 6–10","Amplitude contrôlée."],["Étirements doux","10 min","Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]],"mission":"Contre un défenseur plus âgé : créer l’avantage vite, lire juste et choisir la bonne finition.","mindset":"Ne cherche pas à être plus fort que lui. Sois plus rapide dans la lecture, le changement de rythme et la décision.","life":"Le 1v1 sera exigeant pour les jambes. Après la séance : hydratation, repas complet et récupération avant le haut du corps.","scoreDetails":[{"name":"Killer Moves","items":["Échauffement"]},{"name":"1v1 — Premier pas","items":["45° gauche","Aile gauche","Axe","45° droite","Aile droite"]},{"name":"1v1 — Lecture du défenseur","items":["45° gauche","Aile gauche","Axe","45° droite","Aile droite"]},{"name":"1v1 — Match à 11","items":["45° gauche","Aile gauche","Axe","45° droite","Aile droite"]},{"name":"Lancers francs — Clutch 1v1","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]}]},{"date":"Dimanche 9 août","theme":"Survive the Rounds — basket sous fatigue","load":"Élevée","basket":[["Parcours Engine Ball","55–60 min","5 rounds. Chaque round : 30 s handle intense → sprint terrain → 2 finitions → 3 pull-ups → 2 tirs à 3 points → 2 LF. Récupération 90 s. Chronométrer le round complet et noter les tirs. +5 s par tir raté. Après 5 rounds : 20 tirs à 3 points réussis sans chrono."]],"physical":[["Échauffement cardio","8 min","Course légère, mobilité dynamique et déplacements défensifs progressifs."],["Cardio basket — série 1","12 min","6 × 20 s intense / 40 s récupération : défense, avant/arrière, changements de direction."],["Cardio basket — série 2","12 min","6 × 20 s intense / 40 s récupération avec ballon : dribble rapide, shuttle court, changement de main."],["Retour au calme","8 min","Marche, respiration, mobilité chevilles/hanches. Aucun sprint supplémentaire."]],"evening":[["Planche ventrale","3 × 30–40 s","Gainage propre, respiration normale."],["Planche latérale","2 × 25 s/côté","Bassin haut."],["Roue abdominale","2 × 6–10","Amplitude contrôlée."],["Étirements doux","10 min","Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]],"mission":"Le dernier round doit rester techniquement proche du premier.","mindset":"La vraie endurance basket, c'est rester lucide quand le souffle monte.","life":"Pas de travail jambes supplémentaire ce soir : récupérer fait partie de la séance.","scoreDetails":[{"name":"Parcours Engine Ball","items":["Technique légère"]}]},{"date":"Lundi 10 août","theme":"Travail réel du jour — coordination, puissance & appuis","load":"Élevée","basket":[
-["Passe gauche / droite avec rebond","20 min","Travail réalisé ce matin : passes à gauche puis à droite avec rebond. Chercher précision, rythme, qualité des appuis et réception propre."],
-["Passes avec ballon lesté","20 min","Travail réalisé ce matin avec ballon lesté : passes puissantes et contrôlées, gainage du tronc et qualité du geste. Ne pas rechercher la vitesse au détriment de la technique."],
-["Skip Pass","20 min","Travail réalisé ce matin : skip passes longues et tendues pour changer rapidement le côté du jeu. Viser une trajectoire précise et une réception exploitable."],
-["Javelot — 2 séries","10 min","Deux séries réalisées ce matin. Travail explosif de lancer type javelot avec engagement coordonné jambes–bassin–tronc–bras, sans recherche de charge maximale."]
-],"physical":[["Sprint avec tirage pneu — avant","8 min","Sprints résistés vers l’avant. Départ explosif, poussée forte, buste légèrement incliné, appuis courts et puissants."],["Sprint avec tirage pneu — arrière","6 min","Déplacements rapides vers l’arrière avec résistance. Rester bas, gainé et contrôlé ; priorité à la qualité des appuis."],["Latéral 1 pas — gauche / droite","6 min","Travail latéral sur un pas : déplacement vif gauche puis droite, pieds actifs et bassin stable."],["Circuit appuis — latéral → avant → arrière","6 min","Enchaîner un pas latéral, un pas vers l’avant puis un pas vers l’arrière, sans croiser les pieds. Recherche de vitesse et de précision."],["Circuit appuis — côté opposé","5 min","Même séquence de l’autre côté afin de travailler la symétrie : latéral, avant, arrière, puis retour latéral."],["Répétitions propres — vitesse d’exécution","5 min","Reprendre les enchaînements courts avec priorité à la fréquence d’appuis, à la posture et à la qualité. Stopper dès que la technique baisse."]],"evening":[["Planche ventrale","3 × 30–40 s","Gainage propre, respiration normale."],["Planche latérale","2 × 25 s/côté","Bassin haut."],["Roue abdominale","2 × 6–10","Amplitude contrôlée."],["Étirements doux","10 min","Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]],"mission":"Transformer la puissance en appuis rapides : exploser, freiner, repartir sans perdre le contrôle.","mindset":"Aujourd’hui, la qualité des appuis et de l’explosivité compte plus que le volume.","life":"Après les sprints résistés et les rebonds, priorité à l’hydratation, au repas complet et à la récupération des jambes.","scoreDetails":[
-{"name":"Passe gauche / droite avec rebond","items":["Série / repère"]},
-{"name":"Passes avec ballon lesté","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]},
-{"name":"Skip Pass","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]},
-{"name":"Javelot — 2 séries","items":["Série 1","Série 2","Série 3","Série 4","Série 5"]}
-]},{"date":"Mardi 11 août","theme":"Handle Lab — création, lecture & haut du corps","load":"Moyenne à élevée","basket":[["Handle Chaos + Exit","15 min","5 manches : 30 s de handle rapide / 30 s de récupération. Cross, in&out, between, behind, hesitation puis combo libre. Le partenaire reste fixe et annonce au hasard DROITE, GAUCHE, RETREAT ou GO : sur le signal, sortie explosive en 2 dribbles maximum."],["Gate 2 Dribbles","18 min","Le partenaire reste presque immobile dans une zone d’environ 1 m² et ferme un côté avec le bras ou l’orientation du corps. 16 départs, moitié à droite/moitié à gauche. Gabin doit créer un avantage en 2 dribbles maximum puis finir ou s’arrêter en pull-up. Défi : 12 actions propres minimum."],["1v1 Couloir — 3 dribbles","18 min","Couloir de 3 à 4 m. Le défenseur joue surtout avec l’angle, le corps et les bras, sans poursuite latérale rapide. Gabin : 3 dribbles maximum. Score : 2 paniers de Gabin = 1 point ; raté, perte de balle ou 4e dribble = 1 point défenseur. Premier à 7."],["Drive / Stop / Retreat","15 min","Départ ballon en main. Le partenaire donne tardivement un signal : CERCLE = finir, STOP = pull-up, RECUL = retreat puis tir. 15 actions, 5 de chaque famille environ. Finir par 10 lancers francs, objectif 8/10."]],"physical":[["Activation haut du corps","6 min","Mobilité épaules et omoplates, rotations externes légères, 2 × 8 scapular push-ups et gainage court. Pas de fatigue jambes."],["Tractions / tirage","3 × 6–10","Amplitude propre, garder 2 à 3 répétitions en réserve."],["Développé haltères","3 × 8–10","Charge maîtrisée, aucune répétition forcée."],["Rowing","3 × 10","Dos stable, omoplates actives, contrôle complet."],["Pompes dynamiques","2 × 8–12","Montée dynamique, corps gainé. Arrêter avant dégradation technique."],["Épaules / stabilité","2 × 12","Travail léger de stabilité ou élévations contrôlées. Pas de charge lourde."],["Roue abdos + gainage","3 tours","Roue 6–10 + planche 30 s + latéral 20 s/côté. Qualité avant quantité."]],"evening":[["Dead bug","3 × 8/côté","Dos plaqué, mouvement lent."],["Planche latérale","2 × 25–30 s/côté","Bassin aligné."],["Roue abdominale","2 × 6–8","Seulement si le dos reste neutre."],["Étirements doux","10–12 min","Mollets, quadriceps, ischios, fessiers, hanches. 20–30 s par position."]],"mission":"Créer un avantage en 2 ou 3 dribbles maximum et apprendre à battre une position, pas seulement une vitesse.","mindset":"Le handle devient dangereux quand il sert à lire puis à attaquer immédiatement.","life":"Les jambes récupèrent du travail explosif de lundi ; aujourd’hui le physique reste surtout haut du corps.","scoreDetails":[{"name":"Handle Chaos + Exit","items":["Cross","In & Out","Between","Behind","Hesitation","Combo libre"]},{"name":"Gate 2 Dribbles","items":["Sortie droite","Sortie gauche","Cross attaque","In&Out attaque","Between attaque","Retreat + réattaque","Pull-up","Finition"]},{"name":"1v1 Couloir — 3 dribbles","items":["Manche 1","Manche 2","Manche 3","Manche 4","Manche 5"]},{"name":"Drive / Stop / Retreat","items":["Cercle","Pull-up","Retreat shot","Main faible","Lancers francs"]}]},{"date":"Mercredi 12 août","theme":"Decision Day — lecture rapide + détente","load":"Moyenne","basket":[["Traffic Light Handle","12 min","Le partenaire reste fixe et donne un signal imprévisible : VERT = attaque, ROUGE = retreat, BLEU = changement de main, DROITE/GAUCHE = sortie correspondante. 8 manches de 40 s, récupération 30–40 s. Chaque signal doit produire une vraie accélération."],["Prison Break — main faible","15 min","Zone de départ 3 × 3 m. Le partenaire indique tardivement une porte de sortie ou ferme une porte avec un bras. Gabin doit sortir en 2 dribbles maximum puis terminer main faible. 20 actions, objectif 16 décisions propres."],["0.5 Second Read","18 min","Le partenaire passe le ballon puis donne immédiatement une information en restant sur place : bras haut = drive, recul = tir, côté fermé = attaque opposée. Gabin doit décider en moins d’une seconde. 18 actions, alterner droite/gauche et noter les bonnes lectures."],["Clutch 7","12 min","Circuit de 7 tirs de match différents : 2 pull-ups, 2 finitions, 2 tirs extérieurs, 1 lancer franc. Objectif 5/7 minimum. Faire 2 à 3 manches maximum et tenter de battre son meilleur score."]],"physical":[["Préparation dynamique","7 min","Chevilles, hanches, balancements contrôlés, petits rebonds, 2 accélérations progressives. Aucun travail répétitif d’échelle ou de corde."],["Touch Max Challenge","3 × 3 sauts","Toucher une cible la plus haute possible. 3 sauts maximum par série, 60–90 s de récupération. Noter le meilleur toucher ; chaque saut doit être maximal et propre."],["Jump Box Power","3 × 3","Saut explosif, réception stable 2 s, descendre de la box sans sauter. Récupération complète entre séries."],["Accélérations 10 m","4 × 10 m","Départs variés : face, légèrement décalé, position basse, réaction au signal. 60–90 s de récupération. Chercher le meilleur premier pas, pas la fatigue."],["Force fonctionnelle jambes","2 tours","Step-up 6/jambe + pont fessier 10 + walkout ischios 6 + mollets 10. Charges légères à modérées, amplitude confortable, aucune série à l’échec."]],"evening":[["Planche ventrale","3 × 30–40 s","Gainage propre, respiration normale."],["Planche latérale","2 × 25 s/côté","Bassin haut."],["Roue abdominale","2 × 6–10","Amplitude contrôlée."],["Étirements doux","10 min","Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]],"mission":"Décider plus vite tout en gardant des jambes explosives : peu de répétitions, beaucoup de qualité.","mindset":"Le meilleur saut est un saut frais. Le meilleur dribble est celui qui crée immédiatement quelque chose.","life":"C’est la dernière vraie séance de construction de détente : récupération sérieuse ensuite.","scoreDetails":[{"name":"Traffic Light Handle","items":["Réactivité"]},{"name":"Prison Break — main faible","items":["Cross","In & Out","Between","Behind","Hesitation","Combo libre"]},{"name":"0.5 Second Read","items":["45° gauche","Aile gauche","Axe","45° droite","Aile droite"]},{"name":"Clutch 7","items":["Manche 1","Manche 2","Manche 3","Meilleur score","LF final"]}]},{"date":"Jeudi 13 août","theme":"Elite Game Day — 4 quarts de lecture","load":"Moyenne à élevée","basket":[["Quarter 1 — 3 Dribble Creator","8 min","Départs variés. Le défenseur reste dans une petite zone et choisit l’angle à fermer. Gabin a 3 dribbles maximum pour obtenir finition ou pull-up. Compter paniers / possessions."],["Quarter 2 — Catch & Read","8 min","Le partenaire passe puis reste presque fixe : avance légèrement = drive, recule = shoot, ferme un côté = attaque opposée. Décision immédiate à la réception, sans dribble inutile."],["Quarter 3 — Score the Advantage","8 min","Alterner 1v1 couloir et départ avec avantage d’un demi-pas. Défenseur limité à un petit espace : bras, verticalité, angle. Gabin doit convertir l’avantage sans chercher le duel de force."],["Quarter 4 — Clutch Mix","8 min","Séquences courtes : finition main faible, pull-up, tir extérieur puis 2 LF. Recommencer en changeant le côté. Défi : finir avec une qualité technique aussi bonne qu’au premier quart. 2 min de repos entre quarts."]],"physical":[["Circuit haut du corps léger","2 tours","Tirage 8–10 + développé haltères 8 + rowing 8–10. RPE environ 5–6/10, 3 répétitions en réserve."],["Tronc + épaules","2 tours","Dead bug 8/côté + planche latérale 20 s/côté + stabilité épaules 10–12."],["Mobilité / récupération","10 min","Chevilles, hanches, ischios, quadriceps et dos. Finir plus frais qu’en commençant."]],"evening":[["Dead bug","2 × 8/côté","Contrôle et respiration."],["Bird dog","2 × 8/côté","Bassin immobile."],["Étirements doux","8–10 min","Sans forcer, surtout chevilles, hanches et dos."]],"mission":"Gagner les possessions par la lecture et la vitesse de décision, pas par la quantité de dribbles.","mindset":"Un défenseur n’a pas besoin de bouger beaucoup pour te poser un problème : lis son angle et punis-le.","life":"Plus de gros cardio aujourd’hui : on entretient la qualité tout en faisant descendre la fatigue.","scoreDetails":[{"name":"Quarter 1 — 3 Dribble Creator","items":["Score Q1"]},{"name":"Quarter 2 — Catch & Read","items":["Corner gauche","45° gauche","Axe","45° droite","Corner droit"]},{"name":"Quarter 3 — Score the Advantage","items":["Manche 1","Manche 2","Manche 3","Manche 4","Manche 5"]},{"name":"Quarter 4 — Clutch Mix","items":["Finition droite","Finition gauche","Pull-up","Tir extérieur","LF 1","LF 2"]}]},{"date":"Vendredi 14 août","theme":"Guard Challenge — vitesse, handle & confiance","load":"Moyenne","basket":[["Kill Move Lab","12 min","Choisir 1 move du jour. 5 répétitions lentes pour sentir les appuis, 8 rapides de chaque côté, puis 6 répétitions live : le partenaire reste fixe et ferme une sortie avec son corps ou son bras. Le move doit réellement créer un avantage."],["3 Dribble Game","15 min","Vrai challenge dans un couloir. Le défenseur reste positionnel, sans poursuite rapide. Gabin : 3 dribbles maximum. 1 point si panier ; défenseur 1 point sur raté, perte ou 4e dribble. Premier à 7, puis revanche si les jambes restent fraîches."],["Body & Finish","12 min","Le partenaire reste planté près de la zone de finition et offre un contact léger ou une présence verticale avec les bras. 20 finitions variées : extension, reverse, eurostep, floater, main faible. Objectif : rester équilibré, jamais rentrer en force."],["Beat the Pro — rythme match","15 min","5 zones différentes. Panier = +1 Gabin ; raté = +2 au Pro. Premier à 11. Mélanger pull-up, mi-distance et quelques 3 points au lieu de répéter le même tir. Finir par 5 LF, objectif 4/5."]],"physical":[["Tirage","2 × 10","Entretien haut du corps, 3 répétitions en réserve."],["Rowing","2 × 10","Contrôle complet, pas d’échec."],["Développé haltères","2 × 8–10","Léger à modéré, exécution dynamique et propre."],["Pompes","2 × 8–10","Propres, arrêter avant ralentissement important."],["Primer détente","2 × 3 + 2 × 3","2 × 3 sauts max vers une cible puis 2 × 3 jump box faciles. Repos complet. Arrêter si le 2e bloc est moins explosif."],["Rappel accélération","3 × 5 m + 3 × 10 m","Départs explosifs, récupération complète. Aucun chrono obligatoire, aucune fatigue finale."]],"evening":[["Dead bug","2 × 8/côté","Contrôle."],["Planche latérale","2 × 20 s/côté","Facile."],["Étirements doux","8 min","Sans forcer."]],"mission":"Faire moins de dribbles, mais les rendre plus dangereux. Finir la séance avec des jambes rapides.","mindset":"À trois jours du stage, on cherche des sensations de vitesse et de maîtrise, pas un record de fatigue.","life":"Dernier jour avec vraie opposition. Ensuite, confiance et fraîcheur jusqu’au stage.","scoreDetails":[{"name":"Kill Move Lab","items":["Cross","In & Out","Between","Behind","Hesitation","Move choisi"]},{"name":"3 Dribble Game","items":["Manche 1","Manche 2","Manche 3","Manche 4","Manche 5","Manche 6","Manche 7","Revanche"]},{"name":"Body & Finish","items":["Extension","Reverse","Eurostep","Floater","Main faible"]},{"name":"Beat the Pro — rythme match","items":["Zone 1","Zone 2","Zone 3","Zone 4","Zone 5"]}]},{"date":"Samedi 15 août","theme":"Maman Challenge — handle, surprise & confiance","load":"Faible à moyenne","basket":[["Handle Roulette","12 min","Maman annonce au hasard DROITE, GAUCHE, CROSS, RETREAT ou GO. Gabin dribble librement puis réagit immédiatement. Sur GO : sortie explosive en 2 dribbles maximum vers le cercle ou un pull-up. 8 manches courtes, beaucoup de variété."],["Surprise Finish / Pull-up","15 min","Départ à 45°. Maman annonce tardivement CERCLE, STOP ou RECUL. CERCLE = finition ; STOP = pull-up ; RECUL = retreat puis tir. 18 actions au total, alterner les deux côtés. Défi : 14 actions propres minimum."],["Beat the Pro + Clutch","15–18 min","5 spots. Panier = +1 Gabin ; raté = +2 au Pro. Premier à 11. Mélanger tirs proches, pull-ups et quelques tirs à 3 points. Puis 10 LF, objectif 8/10, et terminer obligatoirement par 2 réussites consécutives."]],"physical":[["Muscu haut du corps légère","2 tours","Tirage 8–10 + développé haltères 8 + rowing 8–10 + pompes 8. RPE 5/10 environ, aucune série difficile."],["Mobilité","10–12 min","Chevilles, hanches, ischios, quadriceps, dos et épaules. Mouvement doux, aucune recherche d’amplitude forcée."],["Respiration / visualisation","5 min","Respiration lente puis visualiser 3 actions simples du stage : bon premier pas, défense active, tir pris avec confiance."]],"evening":[["Respiration","5 min","Calme."],["Mobilité douce","8 min","Chevilles, hanches, dos."]],"mission":"Utiliser les signaux de maman pour rester réactif et finir la séance avec plus de confiance qu’en la commençant.","mindset":"Aujourd’hui, le score sert à jouer. La qualité et le plaisir passent avant le volume.","life":"À J-2, aucune fatigue inutile : repas complet, hydratation et sommeil.","scoreDetails":[{"name":"Handle Roulette","items":["Réactivité"]},{"name":"Surprise Finish / Pull-up","items":["Cercle gauche","Cercle droite","Pull-up gauche","Pull-up droite","Retreat"]},{"name":"Beat the Pro + Clutch","items":["Zone 1","Zone 2","Zone 3","Zone 4","LF clutch"]}]},{"date":"Dimanche 16 août","theme":"Prime Day — léger, rapide, prêt","load":"Très faible","basket":[["Favorite Handle","5 min","Choisir les 3 moves préférés. Maman annonce seulement la direction de sortie. Dribble relâché, 1 ou 2 accélérations courtes par minute. Aucun travail à l’échec."],["8 Finitions Confiance","5 min","8 paniers réussis seulement : 4 côté droit, 4 côté gauche, avec les finitions qu’il maîtrise le mieux. Arrêter dès l’objectif atteint."],["Pull-up Feel Good","5 min","10 pull-ups réussis répartis sur 3 zones confortables. Pas de série longue : rechercher rythme et jambes légères."],["3PTS Confiance","5 min","8 tirs à 3 points réussis maximum, sur les spots préférés. Si la mécanique force ou si les jambes sont lourdes, arrêter avant 8."],["Boss Final + LF","5 min","10 lancers francs. Puis Boss final : 2 LF + 1 pull-up + 1 tir à 3 points consécutifs. Une réussite suffit : préparation terminée."]],"physical":[["Activation nerveuse très légère","6–8 min","Mobilité dynamique puis, uniquement si les jambes sont fraîches et sans douleur : 2 × 3 sauts vers une cible avec récupération complète. Si les jambes semblent lourdes, supprimer les sauts. Aucun sprint."],["Repos","Reste de la journée","Repos complet. Préparer les affaires du stage, boire régulièrement, repas normal et coucher tôt."]],"evening":[["Préparation mentale","5 min","Visualiser 3 actions simples réussies."],["Respiration","5 min","Lente et calme."],["Coucher tôt","—","Objectif 9 à 10 h de sommeil."]],"mission":"Quitter le terrain avec des jambes légères, de bonnes sensations et l’envie de jouer lundi.","mindset":"Le travail est fait. Aujourd’hui, chaque répétition doit donner de la confiance, jamais de la fatigue.","life":"Préparer le sac, dîner normalement, bien s’hydrater et viser une longue nuit de sommeil.","scoreDetails":[{"name":"Favorite Handle","items":["Activation"]},{"name":"8 Finitions Confiance","items":["Droite 1","Droite 2","Droite 3","Droite 4","Gauche 1","Gauche 2"]},{"name":"Pull-up Feel Good","items":["Zone 1 A","Zone 1 B","Zone 2 A","Zone 2 B","Zone 3 A","Zone 3 B","Bonus 1","Bonus 2"]},{"name":"3PTS Confiance","items":["Spot 1","Spot 2","Spot 3","Spot 4","Spot favori"]},{"name":"Boss Final + LF","items":["LF 1","LF 2","LF 3","Boss pull-up","Boss 3PTS"]}]},{"date":"Lundi 17 août","theme":"Début du stage / reprise","load":"Stage","basket":[["Avant le stage","—","Petit-déjeuner habituel, hydratation, collation prête."],["Échauffement personnel","8–10 min","Chevilles, hanches, activation, ballon."],["Objectifs du jour","—","Parler en défense, sprinter au repli, attaquer les espaces, accepter le contact."],["Après la séance","—","Note une réussite et un point à améliorer."]],"physical":[["Aucune séance supplémentaire","—","Le stage est la séance principale."],["🚀 Récupérer, c'est progresser.","—","Eau, repas complet, douche, mobilité légère, sommeil."]],"evening":[["🚀 Récupérer, c'est progresser.","10 min","Mobilité très légère et respiration."],["Bilan","5 min","Une réussite, un point à améliorer, une intention pour demain."]],"mission":"Impose ton énergie dès le début.","mindset":"Joue simple, parle en défense, cours fort et reste positif.","life":"Petit-déjeuner habituel, hydratation, arrivée en avance.","scoreDetails":[{"name":"Avant le stage","items":["Avant le stage"]},{"name":"Échauffement personnel","items":["Échauffement personnel"]},{"name":"Objectifs du jour","items":["Objectifs du jour"]},{"name":"Après la séance","items":["Après la séance"]}]}];
+const days=[{"date": "Dimanche 2 août", "theme": "Vitesse d’appuis et technique propre", "load": "Moyenne", "basket": [["Échauffement ballon", "12 min", "Dribble bas/haut, changements de main, 10 lay-ups de chaque côté."], ["Handles explosifs", "15 min", "6 exercices × 30 s, 30 s de repos : cross, between, behind, in-and-out, double cross, combo libre."], ["Finitions", "20 min", "10 main droite + 10 main gauche : lay-up, reverse, eurostep, flotteur. Refaire les ratés."], ["Tir en mouvement", "25 min", "5 spots : 8 tirs réussis catch-and-shoot + 6 réussites après 1 dribble par spot."], ["Lancers francs", "10 min", "5 séries de 10. Noter le total."]], "physical": [["Échauffement", "10 min", "Corde 2 × 60 s, mobilité chevilles/hanches, 3 accélérations progressives."], ["Échelle de rythme", "8 min", "Deux pieds par case 3 passages; latéral deux pieds 3 passages; in-out 3 passages. Retour en marchant."], ["Accélérations", "15 min", "4 × 5 m, 4 × 10 m, 3 × 15 m. Repos 60 à 90 s; chaque sprint doit être rapide."], ["Changements de direction", "15 min", "T-Drill 3 passages; 5-10-5 shuttle 3 passages; défense latérale 4 × 8 s."], ["Retour au calme", "8 min", "Marche, respiration, mobilité légère. Pas de sauts aujourd’hui : jambes déjà sollicitées la veille."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Domine les 5 premiers mètres.", "mindset": "Un joueur rapide n’est pas celui qui s’agite : c’est celui qui part au bon moment.", "life": "Hydrate-toi avant d’avoir soif.", "scoreDetails": [{"name": "Échauffement ballon", "items": ["Échauffement ballon"]}, {"name": "Handles explosifs", "items": ["Cross", "In & Out", "Between", "Behind", "Hesitation", "Combo libre"]}, {"name": "Finitions", "items": ["Lay-up droite", "Lay-up gauche", "Reverse droite", "Reverse gauche", "Eurostep droite", "Eurostep gauche", "Floater droite", "Floater gauche"]}, {"name": "Tir en mouvement", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Lundi 3 août", "theme": "Tir + haut du corps", "load": "Moyenne", "basket": [["Échauffement", "10 min", "Mobilité + 30 finitions faciles."], ["Mécanique de tir", "15 min", "50 tirs proches du cercle, équilibre et tenue de finition."], ["Catch-and-shoot", "25 min", "10 réussites sur 5 spots = 50 réussites."], ["Pull-up", "20 min", "5 réussites main droite + 5 main gauche sur 5 zones."], ["Lancers francs", "10 min", "50 tirs, objectif régularité."]], "physical": [["Échauffement", "8 min", "Élastiques, épaules, omoplates, poignets."], ["Tractions ou tirage", "4 × 5–8", "Garder 2 répétitions possibles; aucune répétition forcée."], ["Développé haltères au sol ou banc", "3 × 8", "Charge maîtrisée, mouvement fluide."], ["Rowing unilatéral", "3 × 10/côté", "Dos stable, coude vers la hanche."], ["Pompes explosives", "3 × 5", "Arrêter si la poussée ralentit."], ["Farmer carry", "4 × 20 m", "Buste grand, marche contrôlée."], ["Roue abdominale", "3 × 6–10", "Amplitude seulement si le dos reste neutre."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Mets du rythme sans perdre la technique.", "mindset": "Tu n’as pas besoin d’en faire plus. Tu dois faire mieux.", "life": "Le sommeil protège ta vitesse.", "scoreDetails": [{"name": "Échauffement", "items": ["Échauffement"]}, {"name": "Mécanique de tir", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Catch-and-shoot", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Pull-up", "items": ["Pull-up"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Mardi 4 août", "theme": "Finitions + coordination légère", "load": "Légère avant ostéo", "basket": [["Handles", "12 min", "Travail main faible et changements de rythme."], ["Finitions contact contrôlé", "25 min", "Avec coussin ou contact léger : 5 séries de 6 finitions variées."], ["Flotteurs", "15 min", "5 réussites depuis 4 zones."], ["Tir mi-distance", "20 min", "40 réussites après arrêt 1-2 et 40 après arrêt simultané."], ["Lancers francs", "8 min", "40 tirs."]], "physical": [["Mobilité dynamique", "12 min", "Chevilles, hanches, adducteurs, colonne thoracique."], ["Coordination échelle", "10 min", "3 exercices seulement, 3 passages chacun, sans chercher l’épuisement."], ["Réaction", "12 min", "8 départs de 5 m au signal + 6 réactions gauche/droite."], ["Gainage léger", "12 min", "Dead bug 3 × 8/côté; bird dog 3 × 8/côté; planche latérale 2 × 25 s."], ["Retour au calme", "8 min", "Respiration et étirements doux."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle et respiration."], ["Bird dog", "2 × 8/côté", "Bassin immobile."], ["Étirements doux", "8–10 min", "Sans forcer, surtout chevilles, hanches et dos."]], "mission": "Finis fort des deux mains.", "mindset": "Main faible, contact, équilibre : c’est là que tu progresses.", "life": "Un bon repas prépare la prochaine séance.", "scoreDetails": [{"name": "Handles", "items": ["Cross", "In & Out", "Between", "Behind", "Hesitation", "Combo libre"]}, {"name": "Finitions contact contrôlé", "items": ["Lay-up droite", "Lay-up gauche", "Reverse droite", "Reverse gauche", "Eurostep droite", "Eurostep gauche", "Floater droite", "Floater gauche"]}, {"name": "Flotteurs", "items": ["Flotteurs"]}, {"name": "Tir mi-distance", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Mercredi 5 août", "theme": "Ostéo : journée allégée", "load": "Très légère", "basket": [["Tir facile", "35–45 min", "100 à 150 tirs proches et mi-distance, sans séries sous fatigue."], ["Mobilité", "10 min", "Chevilles, hanches, épaules."]], "physical": [["Après-midi", "—", "Rendez-vous ostéo."], ["Après le rendez-vous", "—", "Pas de musculation, pas de sprint, pas de pliométrie. Marche tranquille seulement si confortable."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle et respiration."], ["Bird dog", "2 × 8/côté", "Bassin immobile."], ["Étirements doux", "8–10 min", "Sans forcer, surtout chevilles, hanches et dos."]], "mission": "Récupère comme un joueur sérieux.", "mindset": "La récupération fait partie du travail.", "life": "Ce soir, récupération priorité.", "scoreDetails": [{"name": "Tir facile", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Mobilité", "items": ["Mobilité"]}]}, {"date": "Jeudi 6 août", "theme": "Repos complet", "load": "Repos", "basket": [["Repos", "—", "Aucune séance programmée."]], "physical": [["🚀 Récupérer, c'est progresser.", "—", "Sommeil, hydratation, repas complets. Pas d’abdos ni d’étirements forcés."]], "evening": [["Respiration calme", "5 min", "Allongé sur le dos, respiration lente. Aucun gainage ni étirement forcé."], ["Mobilité très douce", "5–8 min", "Chevilles, hanches, épaules, sans douleur."]], "mission": "Recharge les batteries.", "mindset": "Le repos d’aujourd’hui prépare la performance de demain.", "life": "Repos total = mission accomplie.", "scoreDetails": [{"name": "Repos", "items": ["Repos"]}]}, {"date": "Vendredi 7 août", "theme": "Reprise progressive + réaction", "load": "Moyenne", "basket": [["Échauffement", "12 min", "Ballon + finitions faciles."], ["Handles en déplacement", "15 min", "Cross, retreat, changement de rythme."], ["1 contre 0", "20 min", "Attaquer un cône, changement de direction, finition."], ["Tir après dribble", "25 min", "50 réussites au total."], ["Lancers francs", "10 min", "5 × 10."]], "physical": [["Échauffement", "10 min", "Progressif; vérifier l’absence de gêne après l’ostéo."], ["Réaction courte", "12 min", "10 départs de 5 m au clap ou signal visuel."], ["Sprint", "12 min", "4 × 10 m + 3 × 15 m, repos complet."], ["Appuis", "12 min", "5-10-5 × 3; shuffle + sprint × 4."], ["Plyométrie basse", "8 min", "Pogo jumps 3 × 12; box jump 3 × 3. Pas de drop jump si raideur."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Réagis avant l’adversaire.", "mindset": "Le premier pas se gagne dans la tête avant de se gagner dans les jambes.", "life": "Après la séance, mange et bois rapidement.", "scoreDetails": [{"name": "Échauffement", "items": ["Échauffement"]}, {"name": "Handles en déplacement", "items": ["Cross", "In & Out", "Between", "Behind", "Hesitation", "Combo libre"]}, {"name": "1 contre 0", "items": ["1 contre 0"]}, {"name": "Tir après dribble", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Samedi 8 août", "theme": "Tir volume + force haut du corps", "load": "Moyenne", "basket": [["Échauffement", "10 min", "30 finitions."], ["Tir proche", "10 min", "40 réussites."], ["Catch-and-shoot", "25 min", "75 réussites."], ["Tir après dribble", "25 min", "50 réussites."], ["Lancers francs", "10 min", "50 tirs."]], "physical": [["Tractions/tirage", "3 × 6–8", "Technique parfaite."], ["Développé haltères", "3 × 8", "Sans aller à l’échec."], ["Rowing", "3 × 10", "Contrôle."], ["Pompes", "3 × 10", "Amplitude propre."], ["Lancer médecine-ball poitrine", "4 × 5", "Explosif, récupération 60 s."], ["Gainage anti-rotation", "3 × 10/côté", "Avec élastique si disponible."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Empile les tirs propres.", "mindset": "Chaque tir propre compte. Les tirs bâclés ne comptent pas.", "life": "Les muscles progressent aussi à table.", "scoreDetails": [{"name": "Échauffement", "items": ["Échauffement"]}, {"name": "Tir proche", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Catch-and-shoot", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Tir après dribble", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Dimanche 9 août", "theme": "Tests de référence + basket léger", "load": "Moyenne", "basket": [["Technique légère", "60 min", "Handles, finitions, 150 tirs. Pas de gros volume avant les tests."]], "physical": [["Échauffement test", "15 min", "Progressif, 2 essais sous-maximaux."], ["Tests", "25 min", "3 essais sur 10 m et 20 m; 2 essais 5-10-5; 3 essais détente. Garder le meilleur."], ["🚀 Récupérer, c'est progresser.", "10 min", "3 min entre essais de sprint; 4 min entre tests."], ["Note importante", "—", "Le chrono smartphone sert surtout à comparer ses propres résultats dans les mêmes conditions."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Mesure-toi, pas aux autres.", "mindset": "Ton chrono sert à battre ton ancien toi.", "life": "Une bonne nuit vaut une séance supplémentaire.", "scoreDetails": [{"name": "Technique légère", "items": ["Technique légère"]}]}, {"date": "Lundi 10 août", "theme": "Lecture de jeu + haut du corps", "load": "Moyenne", "basket": [["Passe et lecture", "15 min", "Passe contre mur : 50 poitrine, 50 rebond, 30 main faible."], ["Closeout imaginaire", "20 min", "Recevoir, lire : tir / drive / extra-pass."], ["Tir décision", "25 min", "Signal vocal : tirer, attaquer droite ou gauche."], ["Lancers francs", "10 min", "50 tirs."]], "physical": [["Tractions/tirage", "4 × 6", "RIR 2 : garder 2 répétitions en réserve."], ["Développé haltères", "3 × 8", "Contrôlé."], ["Rowing", "3 × 8/côté", "Stable."], ["Développé épaules léger", "2 × 8", "Pas de compensation lombaire."], ["Lancer médecine-ball rotation", "3 × 5/côté", "Explosif."], ["Roue abdos", "3 × 8", "Propre."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Joue simple et juste.", "mindset": "Lis, décide, exécute.", "life": "Reste régulier dans les repas.", "scoreDetails": [{"name": "Passe et lecture", "items": ["Passe poitrine", "Passe rebond", "Passe main faible", "Lecture tir", "Lecture drive", "Extra-pass"]}, {"name": "Closeout imaginaire", "items": ["Closeout imaginaire"]}, {"name": "Tir décision", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Mardi 11 août", "theme": "Puissance jambes", "load": "Élevée", "basket": [["Handles", "12 min", "Qualité, pas d’épuisement."], ["Finitions", "20 min", "Main faible prioritaire."], ["Tir", "30 min", "100 réussites variées."], ["Lancers francs", "8 min", "40 tirs."]], "physical": [["Échauffement", "12 min", "Mobilité + activation fessiers + 3 accélérations."], ["Goblet squat vers box", "3 × 6", "Charge modérée, profondeur confortable, vitesse à la remontée."], ["Step-up", "3 × 6/jambe", "Box pas trop haute; bassin stable."], ["Soulevé de terre roumain haltères", "3 × 8", "Dos neutre."], ["Box jump", "4 × 3", "Descendre de la box, ne pas sauter en bas."], ["Saut horizontal", "3 × 3", "Réception silencieuse et stable."], ["Sprint", "4 × 10 m", "Repos 90 s."]], "evening": [["Dead bug", "3 × 8/côté", "Dos plaqué, mouvement lent."], ["Planche latérale", "2 × 25–30 s/côté", "Bassin aligné."], ["Roue abdominale", "2 × 6–8", "Seulement si le dos reste neutre."], ["Étirements doux", "10–12 min", "Mollets, quadriceps, ischios, fessiers, hanches. 20–30 s par position."]], "mission": "Transforme la force en vitesse.", "mindset": "Puissant ne veut pas dire lourd. Puissant veut dire rapide.", "life": "Pas d’entraînement à jeun.", "scoreDetails": [{"name": "Handles", "items": ["Cross", "In & Out", "Between", "Behind", "Hesitation", "Combo libre"]}, {"name": "Finitions", "items": ["Lay-up droite", "Lay-up gauche", "Reverse droite", "Reverse gauche", "Eurostep droite", "Eurostep gauche", "Floater droite", "Floater gauche"]}, {"name": "Tir", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Mercredi 12 août", "theme": "Vitesse pure et défense", "load": "Moyenne", "basket": [["Déplacements défensifs ballon", "15 min", "Closeout, slide, contest sans contact."], ["Handle pression", "15 min", "Protection balle, retreat dribble."], ["Tir après effort court", "25 min", "Sprint 5 m puis 1 tir; 40 réussites."], ["Lancers francs", "10 min", "50 tirs."]], "physical": [["Échauffement", "12 min", "Course, mobilité, éducatifs."], ["Départs variés", "10 min", "2 debout, 2 assis, 2 dos au sens de course, tous sur 5–8 m."], ["Sprints", "15 min", "4 × 10 m + 3 × 20 m, repos 90–120 s."], ["Défense", "12 min", "Shuffle 4 × 6 s; closeout + recul × 4."], ["Pogo jumps", "3 × 10", "Contacts rapides, amplitude basse."]], "evening": [["Planche ventrale", "3 × 30–40 s", "Gainage propre, respiration normale."], ["Planche latérale", "2 × 25 s/côté", "Bassin haut."], ["Roue abdominale", "2 × 6–10", "Amplitude contrôlée."], ["Étirements doux", "10 min", "Mollets, quadriceps, ischios, fessiers, adducteurs, épaules."]], "mission": "Défends avec les jambes.", "mindset": "Parle, glisse, conteste. Défendre, c’est imposer ton rythme.", "life": "Recharge après les sprints.", "scoreDetails": [{"name": "Déplacements défensifs ballon", "items": ["Déplacements défensifs ballon"]}, {"name": "Handle pression", "items": ["Cross", "In & Out", "Between", "Behind", "Hesitation", "Combo libre"]}, {"name": "Tir après effort court", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Jeudi 13 août", "theme": "Adresse + récupération musculaire", "load": "Légère", "basket": [["Échauffement ballon", "10 min", "Dribble fluide, finitions faciles."], ["Tir technique", "35 min", "120 réussites : proche, mi-distance, catch-and-shoot."], ["Lancers francs", "10 min", "5 séries de 10, routine identique à celle du match."], ["Lecture simple", "10 min", "Recevoir, lire, tirer ou attaquer sans précipitation."]], "physical": [["Mobilité", "15 min", "Chevilles, hanches, adducteurs, thorax."], ["Stabilité", "15 min", "Dead bug, bird dog, équilibre une jambe, mollets isométriques."], ["Marche ou vélo facile", "15–20 min", "Rythme facile, conversation possible."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle et respiration."], ["Bird dog", "2 × 8/côté", "Bassin immobile."], ["Étirements doux", "8–10 min", "Sans forcer, surtout chevilles, hanches et dos."]], "mission": "Reste propre, relâché et précis.", "mindset": "Aujourd’hui, tu construis de la fraîcheur sans perdre le rythme.", "life": "Hydrate-toi bien et couche-toi à heure régulière.", "scoreDetails": [{"name": "Échauffement ballon", "items": ["Échauffement ballon"]}, {"name": "Tir technique", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}, {"name": "Lecture simple", "items": ["Passe poitrine", "Passe rebond", "Passe main faible", "Lecture tir", "Lecture drive", "Extra-pass"]}]}, {"date": "Vendredi 14 août", "theme": "Dernier rappel de puissance", "load": "Moyenne", "basket": [["Handles rapides", "10 min", "Qualité maximale, pas de fatigue inutile."], ["Finitions", "20 min", "Main faible, reverse, flotteur."], ["Tir match", "25 min", "80 réussites à haute qualité."], ["Lancers francs", "8 min", "40 tirs."]], "physical": [["Échauffement", "10 min", "Progressif."], ["Goblet squat léger", "2 × 5", "Remontée rapide, charge facile."], ["Step-up léger", "2 × 5/jambe", "Stable et dynamique."], ["Box jump", "3 × 3", "Hauteur modérée, réception silencieuse."], ["Sprint", "4 × 10 m", "Repos complet 90 s."], ["Réaction", "4 × 5 m", "Au signal."]], "evening": [["Dead bug", "2 × 8/côté", "Contrôle."], ["Planche latérale", "2 × 20 s/côté", "Facile."], ["Étirements doux", "8 min", "Sans forcer."]], "mission": "Explose sans te fatiguer.", "mindset": "Peu de répétitions, beaucoup de vitesse.", "life": "Dîner complet et sommeil prioritaire.", "scoreDetails": [{"name": "Handles rapides", "items": ["Cross", "In & Out", "Between", "Behind", "Hesitation", "Combo libre"]}, {"name": "Finitions", "items": ["Lay-up droite", "Lay-up gauche", "Reverse droite", "Reverse gauche", "Eurostep droite", "Eurostep gauche", "Floater droite", "Floater gauche"]}, {"name": "Tir match", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Samedi 15 août", "theme": "🚀 Récupérer, c'est progresser. active + confiance", "load": "Légère", "basket": [["Basket plaisir", "45–55 min", "Handles libres, finitions, concours de tirs."], ["Tir confiance", "20 min", "Zones préférées, 80 à 100 réussites."], ["Lancers francs", "20 tirs", "Routine calme."]], "physical": [["Mobilité", "15 min", "Douce."], ["Marche ou vélo facile", "20 min", "Très facile."], ["Respiration", "5 min", "Retour au calme."]], "evening": [["Respiration", "5 min", "Calme."], ["Mobilité douce", "8 min", "Chevilles, hanches, dos."]], "mission": "Recharge sans perdre les sensations.", "mindset": "Le travail est fait. Maintenant, laisse ton corps l’assimiler.", "life": "💧 Boire avant d'avoir soif garde ton jeu rapide., repas complets, écran réduit le soir.", "scoreDetails": [{"name": "Basket plaisir", "items": ["Basket plaisir"]}, {"name": "Tir confiance", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Dimanche 16 août", "theme": "Activation pré-stage", "load": "Très légère", "basket": [["Échauffement", "8 min", "Ballon et mobilité."], ["Handles", "10 min", "Rapides mais relâchés."], ["Finitions", "10 min", "20 réussites faciles."], ["Tir confiance", "15 min", "50 à 70 réussites, pas de gros volume."], ["Lancers francs", "10 tirs", "Routine complète."]], "physical": [["Activation", "20–25 min", "3 accélérations à 85–90 %, 2 × 3 box jumps bas, mobilité."], ["Fin", "—", "Pas de musculation. Pas de test. Pas de fatigue."]], "evening": [["Préparation mentale", "5 min", "Visualiser 3 actions simples réussies."], ["Respiration", "5 min", "Lente et calme."], ["Coucher tôt", "—", "Objectif 9 à 10 h de sommeil."]], "mission": "Prépare tes jambes, garde ton énergie.", "mindset": "Demain, tu veux être vif dès la première minute.", "life": "Prépare ton sac, mange simple, couche-toi tôt.", "scoreDetails": [{"name": "Échauffement", "items": ["Échauffement"]}, {"name": "Handles", "items": ["Cross", "In & Out", "Between", "Behind", "Hesitation", "Combo libre"]}, {"name": "Finitions", "items": ["Lay-up droite", "Lay-up gauche", "Reverse droite", "Reverse gauche", "Eurostep droite", "Eurostep gauche", "Floater droite", "Floater gauche"]}, {"name": "Tir confiance", "items": ["Corner gauche", "45° gauche", "Axe", "45° droite", "Corner droit"]}, {"name": "Lancers francs", "items": ["Série 1", "Série 2", "Série 3", "Série 4", "Série 5"]}]}, {"date": "Lundi 17 août", "theme": "Début du stage / reprise", "load": "Stage", "basket": [["Avant le stage", "—", "Petit-déjeuner habituel, hydratation, collation prête."], ["Échauffement personnel", "8–10 min", "Chevilles, hanches, activation, ballon."], ["Objectifs du jour", "—", "Parler en défense, sprinter au repli, attaquer les espaces, accepter le contact."], ["Après la séance", "—", "Note une réussite et un point à améliorer."]], "physical": [["Aucune séance supplémentaire", "—", "Le stage est la séance principale."], ["🚀 Récupérer, c'est progresser.", "—", "Eau, repas complet, douche, mobilité légère, sommeil."]], "evening": [["🚀 Récupérer, c'est progresser.", "10 min", "Mobilité très légère et respiration."], ["Bilan", "5 min", "Une réussite, un point à améliorer, une intention pour demain."]], "mission": "Impose ton énergie dès le début.", "mindset": "Joue simple, parle en défense, cours fort et reste positif.", "life": "Petit-déjeuner habituel, hydratation, arrivée en avance.", "scoreDetails": [{"name": "Avant le stage", "items": ["Avant le stage"]}, {"name": "Échauffement personnel", "items": ["Échauffement personnel"]}, {"name": "Objectifs du jour", "items": ["Objectifs du jour"]}, {"name": "Après la séance", "items": ["Après la séance"]}]}];
 const summerEvents=[{"date": "2026-08-17", "label": "Lundi 17 août", "time": "10h00–16h00", "place": "Bruguières", "team": "Élite + R1", "content": "Stage", "coach": "Nico (+ Ghis ?)"}, {"date": "2026-08-19", "label": "Mercredi 19 août", "time": "10h00–16h00", "place": "Bruguières", "team": "Élite + R1", "content": "Stage", "coach": "Nico (+ Ghis ?)"}, {"date": "2026-08-24", "label": "Lundi 24 août", "time": "19h00–20h00", "place": "Bruguières", "team": "Élite + R1", "content": "Ateliers", "coach": "Nico / Laure"}, {"date": "2026-08-24", "label": "Lundi 24 août", "time": "20h00–21h00", "place": "Bruguières", "team": "R1 / U15 M2", "content": "Collectif 10/12 joueurs", "coach": "Laure / Ghis"}, {"date": "2026-08-26", "label": "Mercredi 26 août", "time": "10h00–16h00", "place": "Bruguières", "team": "Élite + R1", "content": "Stage", "coach": "Nico"}, {"date": "2026-08-27", "label": "Jeudi 27 août", "time": "1 h à partir de 18h00", "place": "Bruguières", "team": "R1 / U15 M2", "content": "Collectif 10/12 joueurs", "coach": "Laure / Ghis"}, {"date": "2026-08-29", "label": "Week-end 29–30 août", "time": "À définir", "place": "Muret", "team": "R1 / U15 M2", "content": "Match amical contre Muret", "coach": "Laure / Ghis"}, {"date": "2026-09-05", "label": "Samedi 5 septembre", "time": "Journée", "place": "Grisolles", "team": "R1 / U15 M2", "content": "Tournoi", "coach": "Laure"}, {"date": "2026-09-13", "label": "Dimanche 13 septembre", "time": "—", "place": "—", "team": "R1 / U15 M2", "content": "Repos", "coach": "—"}, {"date": "2026-09-21", "label": "Dimanche 21 septembre", "time": "À définir", "place": "À définir", "team": "R1 / U15 M2", "content": "Match amical", "coach": "Laure / Ghis"}, {"date": "2026-09-27", "label": "Dimanche 27 septembre", "time": "13h00", "place": "Bruguières", "team": "R1 / U15 M2", "content": "J1 championnat", "coach": "Laure / Ghis"}];
 const weeklyTraining=[{"day": 2, "dayLabel": "Mardi", "time": "18h00–19h30", "team": "U15 M2 / Région", "place": "Maison du Basket", "note": "Créneau annuel"}, {"day": 3, "dayLabel": "Mercredi", "time": "19h15–20h30", "team": "U15 M2 / Région", "place": "Salle bleue – Bruguières", "note": "Créneau annuel"}, {"day": 4, "dayLabel": "Jeudi", "time": "18h00", "team": "Entraînement avec Ousmane", "place": "Maison du Basket", "note": "Horaire communiqué"}, {"day": 5, "dayLabel": "Vendredi", "time": "17h30–19h00", "team": "U15 Élite", "place": "Maison du Basket", "note": "Créneau annuel"}];
 const seasonMatches=[{"id": "r01", "date": "2026-09-27", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "La Croix d’Argent Montpellier 2", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r02", "date": "2026-10-04", "time": "13h00", "home": "Stade Toulousain Basketball 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r03", "date": "2026-10-11", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Exempt", "type": "Région / U15 M2", "status": "bye", "place": "Repos"}, {"id": "r04", "date": "2026-11-08", "time": "13h00", "home": "CTC Cévennes Basket-Ball 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r05", "date": "2026-11-15", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "CTC Avenir Toulouse Basket – TOAC 2", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r06", "date": "2026-11-29", "time": "13h00", "home": "Castelnau Basket 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r07", "date": "2026-12-06", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "CTC Élan Aveyron Basket 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r08", "date": "2026-12-13", "time": "13h00", "home": "Montpellier Basket Mosson 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r09", "date": "2027-01-10", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Toulouges BA 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r10", "date": "2027-01-17", "time": "13h00", "home": "La Croix d’Argent Montpellier 2", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r11", "date": "2027-01-31", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Stade Toulousain Basketball 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r12", "date": "2027-02-28", "time": "13h00", "home": "Exempt", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "bye", "place": "Repos"}, {"id": "r13", "date": "2027-03-07", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "CTC Cévennes Basket-Ball 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r14", "date": "2027-03-14", "time": "13h00", "home": "CTC Avenir Toulouse Basket – TOAC 2", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r15", "date": "2027-03-21", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Castelnau Basket 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r16", "date": "2027-04-18", "time": "13h00", "home": "CTC Élan Aveyron Basket 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}, {"id": "r17", "date": "2027-04-25", "time": "13h00", "home": "Bruguières Basket Club 2", "away": "Montpellier Basket Mosson 1", "type": "Région / U15 M2", "status": "home", "place": "Bruguières"}, {"id": "r18", "date": "2027-05-02", "time": "13h00", "home": "Toulouges BA 1", "away": "Bruguières Basket Club 2", "type": "Région / U15 M2", "status": "away", "place": "Extérieur"}];
-const championQuotes=[{"text":"Tu peux rater un tir sans rater ta journée : la réponse au tir suivant compte davantage.","author":"Michael Jordan · basket · idée adaptée"},{"text":"Travaille assez précisément pour que la confiance ait des preuves sur lesquelles s’appuyer.","author":"Kobe Bryant · basket · idée adaptée"},{"text":"Le niveau monte quand tu apprends à transformer une difficulté en information.","author":"Giannis Antetokounmpo · basket · idée adaptée"},{"text":"La constance dans les détails finit par devenir une différence visible.","author":"LeBron James · basket · idée adaptée"},{"text":"Un tir fiable commence bien avant le ballon : appuis, équilibre, rythme, répétition.","author":"Stephen Curry · basket · idée adaptée"},{"text":"Simplifie ton jeu jusqu’à ce que tes qualités deviennent difficiles à arrêter.","author":"Kevin Durant · basket · idée adaptée"},{"text":"Le bon choix fait vite vaut souvent mieux qu’un geste compliqué fait tard.","author":"Nikola Jokić · basket · idée adaptée"},{"text":"Joue avec créativité, mais garde toujours une raison derrière chaque décision.","author":"Luka Dončić · basket · idée adaptée"},{"text":"Grandir comme joueur, c’est apprendre à être utile même quand ton tir ne tombe pas.","author":"Victor Wembanyama · basket · idée adaptée"},{"text":"La confiance n’est pas du bruit : c’est savoir que tu as préparé ce moment.","author":"Sue Bird · basket · idée adaptée"},{"text":"Sois compétitif sur les détails que les autres trouvent trop petits.","author":"Diana Taurasi · basket · idée adaptée"},{"text":"Le contrôle et le calme peuvent être aussi dominants que la vitesse.","author":"Tim Duncan · basket · idée adaptée"},{"text":"Rends ton jeu assez simple pour pouvoir le reproduire sous pression.","author":"Tony Parker · basket · idée adaptée"},{"text":"La passe juste et le déplacement juste peuvent créer plus qu’un dribble de plus.","author":"Magic Johnson · basket · idée adaptée"},{"text":"Le travail invisible devient une arme quand le match accélère.","author":"Larry Bird · basket · idée adaptée"},{"text":"Ne cherche pas à gagner chaque action avec la force : gagne-la avec le timing.","author":"Hakeem Olajuwon · basket · idée adaptée"},{"text":"La meilleure équipe apprend à rester présente sur l’action qui est en train de se jouer.","author":"Phil Jackson · coach basket · idée adaptée"},{"text":"Les standards élevés ne servent que s’ils restent présents les jours ordinaires.","author":"Gregg Popovich · coach basket · idée adaptée"},{"text":"Une bonne attaque commence par des décisions rapides et des joueurs disponibles les uns pour les autres.","author":"Steve Kerr · coach basket · idée adaptée"},{"text":"Prépare plusieurs solutions : le haut niveau appartient aux joueurs capables de s’adapter.","author":"Erik Spoelstra · coach basket · idée adaptée"},{"text":"Le talent compte, mais les habitudes déterminent ce que tu peux reproduire quand la pression monte.","author":"Mike Krzyzewski · coach basket · idée adaptée"},{"text":"La dureté mentale se voit surtout dans la manière de répondre à l’action précédente.","author":"Dawn Staley · coach basket · idée adaptée"},{"text":"Un grand joueur reste entraînable : curieux, attentif et prêt à corriger un détail.","author":"Geno Auriemma · coach basket · idée adaptée"},{"text":"L’énergie est utile quand elle est dirigée vers une décision claire.","author":"Becky Hammon · coach basket · idée adaptée"},{"text":"La performance se prépare longtemps avant le moment où elle est mesurée.","author":"Bob Bowman · natation · idée adaptée"},{"text":"Les jours ordinaires décident souvent de ce que tu seras capable de faire le jour important.","author":"Bob Bowman · natation · idée adaptée"},{"text":"Ne cherche pas seulement à travailler dur : cherche à répéter correctement ce qui compte.","author":"Bob Bowman · natation · idée adaptée"},{"text":"La maîtrise vient quand la qualité reste présente malgré la fatigue et la pression.","author":"Bob Bowman · natation · idée adaptée"},{"text":"Prépare assez bien les détails pour pouvoir rester calme quand le moment devient grand.","author":"Bob Bowman · natation · idée adaptée"},{"text":"Comprendre l’espace te permet de jouer plus vite sans forcément courir plus vite.","author":"Pep Guardiola · football · idée adaptée"},{"text":"La vitesse du ballon et de la décision peut battre la vitesse des jambes.","author":"Pep Guardiola · football · idée adaptée"},{"text":"Le calme aide à choisir juste lorsque tout autour de toi accélère.","author":"Carlo Ancelotti · football · idée adaptée"},{"text":"Un joueur progresse quand il comprend pourquoi il fait les choses, pas seulement comment.","author":"Arsène Wenger · football · idée adaptée"},{"text":"L’intensité devient puissante quand toute l’équipe sait vers quoi elle court.","author":"Jürgen Klopp · football · idée adaptée"},{"text":"Les grandes équipes construisent des habitudes capables de survivre aux moments difficiles.","author":"Alex Ferguson · football · idée adaptée"},{"text":"Dans les grands rendez-vous, rester lucide est déjà une forme de force.","author":"Didier Deschamps · football · idée adaptée"},{"text":"La compétition récompense ceux qui savent imposer leurs exigences sans perdre leur contrôle.","author":"José Mourinho · football · idée adaptée"},{"text":"Le talent ouvre une possibilité ; le travail quotidien décide de ce que tu en fais.","author":"Cristiano Ronaldo · football · idée adaptée"},{"text":"Jouer simple à très haute vitesse demande énormément de maîtrise.","author":"Lionel Messi · football · idée adaptée"},{"text":"La vitesse est encore plus dangereuse quand tu sais exactement quand l’utiliser.","author":"Kylian Mbappé · football · idée adaptée"},{"text":"La répétition ne doit pas seulement te fatiguer : elle doit rendre ton geste plus fiable.","author":"Rafael Nadal · tennis · idée adaptée"},{"text":"La concentration consiste à revenir au point présent, encore et encore.","author":"Novak Djokovic · tennis · idée adaptée"},{"text":"L’efficacité donne l’impression de facilité, mais elle vient de milliers de détails travaillés.","author":"Roger Federer · tennis · idée adaptée"},{"text":"Un mauvais point ne mérite pas de devenir deux mauvais points.","author":"Serena Williams · tennis · idée adaptée"},{"text":"Reste agressif dans l’intention et propre dans l’exécution.","author":"Carlos Alcaraz · tennis · idée adaptée"},{"text":"Rêver grand n’a de valeur que si les journées ordinaires restent sérieuses.","author":"Michael Phelps · natation · idée adaptée"},{"text":"La confiance se construit quand tu acceptes de répéter les bases avec exigence.","author":"Katie Ledecky · natation · idée adaptée"},{"text":"La meilleure course commence par la maîtrise de ce que tu peux contrôler.","author":"Léon Marchand · natation · idée adaptée"},{"text":"Être puissant ne suffit pas : il faut pouvoir produire cette puissance au bon moment.","author":"Usain Bolt · athlétisme · idée adaptée"},{"text":"La patience et la régularité permettent d’aller beaucoup plus loin que l’impatience.","author":"Eliud Kipchoge · athlétisme · idée adaptée"},{"text":"Chaque détail technique économisé devient de l’énergie disponible pour la performance.","author":"Allyson Felix · athlétisme · idée adaptée"},{"text":"Le courage n’est pas l’absence de pression : c’est continuer à exécuter malgré elle.","author":"Simone Biles · gymnastique · idée adaptée"},{"text":"Une réception propre compte autant que le saut qui l’a précédée.","author":"Simone Biles · gymnastique · idée adaptée"},{"text":"La confiance vient de la préparation, pas de l’espoir que tout se passe bien.","author":"Tom Brady · football américain · idée adaptée"},{"text":"Fais ton travail avec précision avant de demander au résultat de te récompenser.","author":"Bill Belichick · coach football américain · idée adaptée"},{"text":"La discipline consiste à choisir ce qui sert l’objectif, même quand quelque chose d’autre serait plus amusant.","author":"Nick Saban · coach football américain · idée adaptée"},{"text":"Dans le contact, la technique permet d’utiliser la force sans la gaspiller.","author":"Teddy Riner · judo · idée adaptée"},{"text":"Rester calme dans le duel permet de voir l’ouverture avant l’autre.","author":"Teddy Riner · judo · idée adaptée"},{"text":"Le haut niveau demande de pouvoir accélérer, freiner, puis décider sans perdre sa lucidité.","author":"Antoine Dupont · rugby · idée adaptée"},{"text":"Une équipe devient dangereuse quand chacun gagne son duel sans oublier le joueur suivant.","author":"Fabien Galthié · coach rugby · idée adaptée"},{"text":"La récupération fait partie du programme : elle prépare la prochaine répétition de qualité.","author":"Principe de préparation haut niveau"},{"text":"Le meilleur entraînement n’est pas celui qui t’épuise le plus, mais celui qui te fait progresser le plus.","author":"Principe de préparation haut niveau"},{"text":"Si le dernier saut est beaucoup moins explosif que le premier, la séance a changé d’objectif.","author":"Principe de puissance"},{"text":"Le vrai défi : aller vite tout en restant propre.","author":"Principe de performance"},{"text":"Cherche une petite victoire mesurable aujourd’hui, puis recommence demain.","author":"Mental de compétiteur"},{"text":"Une séance moyenne peut devenir utile si tu identifies clairement ce que tu dois corriger.","author":"Mental de compétiteur"},{"text":"Une mauvaise journée n’efface pas la progression ; elle montre simplement où travailler ensuite.","author":"Mental de compétiteur"},{"text":"Quand les jambes sont fraîches et la tête claire, le travail des semaines précédentes peut enfin s’exprimer.","author":"Affûtage avant compétition"},{"text":"Le repos n’est pas l’opposé du travail : c’est l’endroit où le corps assimile le travail.","author":"Récupération sportive"},{"text":"Joue avec de l’envie, mais laisse la qualité décider du volume.","author":"Coach Gabin"}];
+const championQuotes=[{"text": "J’ai échoué encore et encore. C’est pour ça que je réussis.", "author": "Michael Jordan"}, {"text": "La pression et les défis sont des occasions de m’élever.", "author": "Kobe Bryant"}, {"text": "Il n’y a pas d’échec dans le sport : il y a des jours et des leçons.", "author": "Giannis Antetokounmpo"}, {"text": "Deviens la meilleure version de toi-même.", "author": "Simone Biles"}, {"text": "Mets-toi au travail. Encore et encore.", "author": "Frances Tiafoe"}, {"text": "La pression est un privilège. Elle peut devenir une force.", "author": "Kaysha Love"}, {"text": "Rêve aussi grand que possible.", "author": "Michael Phelps"}, {"text": "Sors de ta zone de confort pour progresser.", "author": "Allyson Felix"}];
 
 function programDateFromLabel(label){
   const months={janvier:0,février:1,mars:2,avril:3,mai:4,juin:5,juillet:6,août:7,septembre:8,octobre:9,novembre:10,décembre:11};
@@ -551,72 +463,28 @@ function currentProgramDayIndex(){
   return nearest;
 }
 
-
-function repairHistoricalValidation810(){
-  // V15.22 — migration ciblée et non destructive.
-  // L'utilisateur a confirmé que les 8, 9 et 10 août étaient validés.
-  // On ne crée les marqueurs que si la journée contient déjà des données réelles.
-  [6,7,8].forEach(i=>{
-    const c=countCompletedBlocks(i);
-    const shot=readDayShotTotals(i);
-    const hasJournalData=
-      Boolean(localStorage.getItem('win'+i)) ||
-      Boolean(localStorage.getItem('next'+i)) ||
-      Boolean(localStorage.getItem('sleep'+i)) ||
-      Boolean(localStorage.getItem('fat'+i)) ||
-      Boolean(localStorage.getItem('confidence'+i));
-    const hasEntries=
-      readJsonList('strengthEntries'+i).length>0 ||
-      readJsonList('runEntries'+i).length>0;
-    const hasRealData=(c.done>0) || shot.att>0 || hasJournalData || hasEntries;
-
-    if(!hasRealData)return;
-
-    if(localStorage.getItem('journalSaved'+i)!=='1'){
-      setAppValue('journalSaved'+i,'1');
-    }
-    if(!localStorage.getItem('validatedAt'+i)){
-      // Timestamp technique de migration ; aucune donnée sportive n'est modifiée.
-      setAppValue('validatedAt'+i,new Date().toISOString());
-    }
-    try{localStorage.setItem('basket_gabin_repair_810_v1522','1')}catch(_){}
-
-  });
-}
-
-function isDayValidated(i){
-  return localStorage.getItem('journalSaved'+i)==='1' ||
-         Boolean(localStorage.getItem('validatedAt'+i));
-}
-
 function cleanInvalidValidationMarkers(){
-  // Ne supprime plus les marqueurs historiques.
-  // On complète seulement journalSaved si une ancienne journée possède validatedAt.
   days.forEach((_,i)=>{
-    if(localStorage.getItem('validatedAt'+i) && localStorage.getItem('journalSaved'+i)!=='1'){
-      localStorage.setItem('journalSaved'+i,'1');
+    const journal=localStorage.getItem('journalSaved'+i);
+    const timestamp=localStorage.getItem('validatedAt'+i);
+    if(timestamp && journal!=='1'){
+      localStorage.removeItem('validatedAt'+i);
     }
   });
 }
 
 cleanInvalidValidationMarkers();
-repairHistoricalValidation810();
 let idx=currentProgramDayIndex();
 
 
 function show(id){saveAllVisibleInputs();
- const sections=['home','training','matches','days','scores','journal','life','mental','chat'];
+ const sections=['home','training','matches','days','scores','journal','life','mental'];
  sections.forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==id));
  sections.forEach(x=>document.getElementById('m-'+x).classList.toggle('active',x===id));
  if(id==='training')renderTraining();
  if(id==='matches')renderMatches();
  if(id==='scores')setTimeout(()=>{renderSummerStats();renderMatchStats();renderEvolutionDashboard();},40);
  if(id==='journal')renderJournal();
- if(id==='chat'){
-   markChatRead();
-   if(window.firebaseStartFamilyChat)window.firebaseStartFamilyChat();
-   setTimeout(scrollChatToBottom,60);
- }
 }
 
 
@@ -719,23 +587,9 @@ function key(i,p,j){return `u15_${i}_${p}_${j}`}
 function pct(m,a){m=Number(m);a=Number(a);return a>0?Math.round(m/a*100):null}
 
 function count(i){
- const d=days[i]||{};
- let done=0;
- const basket=Array.isArray(d.basket)?d.basket:[];
- const physical=Array.isArray(d.physical)?d.physical:[];
-
- basket.forEach((_,j)=>{
-   if(localStorage.getItem(key(i,'b',j))==='1')done++;
- });
- physical.forEach((_,j)=>{
-   if(localStorage.getItem(key(i,'p',j))==='1')done++;
- });
-
- // The interface displays exactly two evening blocks.
- if(localStorage.getItem('freeStretch'+i)==='1')done++;
- if(localStorage.getItem('freeAbs'+i)==='1')done++;
-
- return [done,basket.length+physical.length+2];
+ const d=days[i];let done=0,total=d.basket.length+d.physical.length+d.evening.length;
+ [['b','basket'],['p','physical'],['e','evening']].forEach(([p,k])=>d[k].forEach((_,j)=>{if(localStorage.getItem(key(i,p,j))==='1')done++}));
+ return [done,total]
 }
 
 function globalCount(){let d=0,t=0;days.forEach((_,i)=>{const c=count(i);d+=c[0];t+=c[1]});return[d,t]}
@@ -852,7 +706,7 @@ function renderManualEntries(){
 
 function render(){
  const d=days[idx];localStorage.setItem('u15day',idx);
- const dayNo=Math.floor(Date.now()/86400000);const qi=((dayNo*37)+(dayNo%11)*7)%championQuotes.length;const q=championQuotes[qi];document.getElementById('dailyQuote').textContent='“'+q.text+'”';document.getElementById('dailyAuthor').textContent='— '+q.author;
+ const qi=Math.floor(Date.now()/86400000)%championQuotes.length;const q=championQuotes[qi];document.getElementById('dailyQuote').textContent='“'+q.text+'”';document.getElementById('dailyAuthor').textContent='— '+q.author;
  document.getElementById('date').textContent=d.date;
  document.getElementById('mission').textContent=d.mission;
  document.getElementById('mindset').textContent=d.mindset;
@@ -912,7 +766,9 @@ function render(){
 <button class="good" onclick="validateDay()">✅ VALIDER LA JOURNÉE</button>
 </div>
 <p class="small">Sauvegarder = brouillon modifiable. Valider = journée terminée et ajoutée au journal.</p></div>`;
- const validated=isDayValidated(idx);
+ const validated=
+   localStorage.getItem('journalSaved'+idx)==='1' &&
+   Boolean(localStorage.getItem('validatedAt'+idx));
  const hc=document.getElementById('homeContent');
  hc.dataset.validated=validated?'true':'false';
  hc.classList.toggle('day-validated',validated);
@@ -1118,9 +974,11 @@ function renderDays(){
  const current=currentProgramDayIndex();
  document.getElementById('dayGrid').innerHTML=days.map((d,i)=>{
    const c=count(i);
-   const validated=isDayValidated(i);
+   const validated=
+     localStorage.getItem('journalSaved'+i)==='1' &&
+     Boolean(localStorage.getItem('validatedAt'+i));
    const classes=[validated?'day-button-validated':'',i===current?'day-button-current':''].filter(Boolean).join(' ');
-   return `<button class="${classes}" onclick="openDay(${i})"><b>${validated?'✅ ':''}${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span>${validated?'<br><span class="day-valid-badge">VALIDÉE</span>':''}</button>`;
+   return `<button class="${classes}" onclick="openDay(${i})"><b>${validated?'✅ ':''}${d.date}</b><br><span class="small">${d.mission}<br>${c[0]}/${c[1]}</span></button>`;
  }).join('');
 }
 
@@ -1161,7 +1019,7 @@ function dayPerformance(i){
   const sleep=numVal('sleep'+i);
   const fatigue=numVal('fat'+i);
   const confidence=numVal('confidence'+i);
-  const validated=isDayValidated(i);
+  const validated=localStorage.getItem('journalSaved'+i)==='1' && Boolean(localStorage.getItem('validatedAt'+i));
   const strength=readJsonList('strengthEntries'+i);
   const runs=readJsonList('runEntries'+i);
 
@@ -1190,469 +1048,50 @@ function scoreLabel(score){
   return '🔴 À améliorer';
 }
 
-function coachPick(pool,i,salt=0){
-  if(!Array.isArray(pool)||!pool.length)return '';
-  const p=dayPerformance(i);
-  const seed=(i*17)+(p.score*3)+(p.shot.att||0)+(p.shot.made||0)+(salt*29);
-  return pool[Math.abs(seed)%pool.length];
-}
-
-function previousCoachPerformance(i){
-  for(let j=i-1;j>=0;j--){
-    const p=dayPerformance(j);
-    if(p.validated || p.shot.att>0 || p.blocks.done>0 || p.sleep || p.confidence || p.fatigue){
-      return p;
-    }
-  }
-  return null;
-}
-
-function coachStrengthVolume(p){
-  return (p.strength||[]).reduce((sum,e)=>
-    sum+
-    Math.max(0,Number(e.sets||0))*
-    Math.max(0,Number(e.reps||0))*
-    Math.max(0,Number(e.load||0)),0);
-}
-
-function coachRunMinutes(p){
-  return (p.runs||[]).reduce((sum,e)=>sum+Math.max(0,Number(e.duration||0)),0);
-}
-
-
-function coachWeakArea(p){
-  const areas=[];
-  if(p.shot.att>=30 && p.shootPct<55)areas.push({key:'shoot',score:55-p.shootPct});
-  if(p.blockPct>0 && p.blockPct<75)areas.push({key:'completion',score:75-p.blockPct});
-  if(p.fatigue>=8)areas.push({key:'fatigue',score:(p.fatigue-7)*8});
-  if(p.sleep>0 && p.sleep<8.5)areas.push({key:'sleep',score:(8.5-p.sleep)*8});
-  if(p.confidence>0 && p.confidence<=5)areas.push({key:'confidence',score:(6-p.confidence)*8});
-  if(!areas.length)return null;
-  areas.sort((a,b)=>b.score-a.score);
-  return areas[0].key;
-}
-
-function coachTruthLine(p,i){
-  const weak=coachWeakArea(p);
-  if(!weak)return '';
-
-  const pools={
-    shoot:[
-      'Aujourd’hui, le tir n’a pas été au niveau habituel. Ce n’est pas grave, mais il faut l’assumer : les appuis et la mécanique devront être plus propres demain.',
-      'Journée compliquée au tir. Le pourcentage est en dessous de ce qu’on cherche, donc demain on revient à des tirs simples et bien équilibrés.',
-      'Le shoot a été le point faible aujourd’hui. Inutile de forcer davantage : mieux vaut retrouver de bonnes sensations avec moins de volume et plus de qualité.',
-      'Sur le plan du tir, la journée est à oublier rapidement mais à comprendre : rythme, jambes et équilibre doivent redevenir prioritaires.',
-      'L’adresse n’était pas bonne aujourd’hui. Ce type de journée arrive ; l’important est de ne pas laisser une mauvaise série devenir une mauvaise habitude.'
-    ],
-    completion:[
-      'La journée est restée incomplète. Le travail fait compte, mais demain il faudra mieux gérer l’énergie pour aller au bout du programme.',
-      'Aujourd’hui, le principal point faible est la régularité : trop de blocs sont restés de côté. Demain, priorité à la continuité.',
-      'Tu as fait une partie du travail, mais pas assez pour parler d’une journée pleinement réussie. L’objectif demain sera de mieux terminer.',
-      'Le contenu réalisé est utile, mais la journée manque de constance. Un joueur progresse aussi en apprenant à finir ce qu’il commence.',
-      'Ce n’est pas la quantité qui manque forcément, c’est la continuité. Demain, organise mieux la séance pour ne pas laisser de blocs derrière.'
-    ],
-    fatigue:[
-      'Physiquement, la fatigue était trop présente aujourd’hui. Ce n’est pas un échec : c’est un signal clair qu’il faut récupérer avant de remettre de l’intensité.',
-      'La journée montre que la charge commence à peser. Le meilleur choix maintenant est de récupérer, pas d’ajouter du travail.',
-      'Tu as travaillé avec beaucoup de fatigue. C’est utile de le reconnaître : demain, la qualité devra passer avant l’intensité.',
-      'Les jambes et l’énergie semblent avoir baissé aujourd’hui. Une vraie récupération ce soir peut transformer demain.',
-      'Sur le plan physique, tu étais moins frais. Ce signal compte autant qu’un chrono ou un pourcentage : protège la récupération.'
-    ],
-    sleep:[
-      'La récupération n’était pas suffisante aujourd’hui. Le sommeil est le point faible du jour, et il peut directement limiter le tir, la vitesse et la concentration.',
-      'Tu peux mieux faire sur la récupération. Une nuit trop courte finit toujours par se voir dans la qualité de séance.',
-      'Aujourd’hui, le problème n’est pas l’envie : c’est la récupération. Protéger le sommeil est une vraie partie de la préparation.',
-      'Le manque de sommeil est le point à corriger en priorité. Tu ne peux pas demander au corps le maximum sans lui donner assez de récupération.',
-      'La séance peut être bonne, mais le sommeil reste insuffisant. C’est le levier le plus simple à améliorer dès ce soir.'
-    ],
-    confidence:[
-      'Mentalement, la confiance était plus basse aujourd’hui. Ne cherche pas à tout corriger : demain, repars sur des objectifs simples et réussis.',
-      'La confiance a baissé. Ce n’est pas un jugement sur ton niveau : c’est simplement le domaine à reconstruire demain avec des réussites concrètes.',
-      'Aujourd’hui, le mental a été plus fragile. La bonne réponse sera de jouer simple et de remettre de la réussite au centre.',
-      'Tu sembles moins sûr de toi aujourd’hui. Demain, cherche d’abord des actions que tu maîtrises pour retrouver de la confiance.',
-      'La confiance n’était pas au plus haut. Ce genre de journée ne doit pas être dramatisé : elle doit servir à repartir plus simple et plus propre.'
-    ]
-  };
-  return coachPick(pools[weak],i,41);
-}
-
-function coachMotivationByContext(p,i){
-  const weak=coachWeakArea(p);
-
-  if(p.score>=88){
-    return coachPick([
-      'Très belle journée. Ce niveau de sérieux doit devenir une référence, pas une exception.',
-      'Tu as produit une journée complète. Maintenant, le défi est de reproduire cette qualité sans chercher à en faire plus.',
-      'Aujourd’hui, tu as donné une vraie preuve de progression. Garde-la comme repère pour les prochaines séances.',
-      'C’est exactement ce type de journée qui donne de la confiance avant une échéance importante.',
-      'Journée de référence : beaucoup de qualité, mais la vraie force sera de pouvoir la reproduire.'
-    ],i,42);
-  }
-
-  if(weak==='shoot'){
-    return coachPick([
-      'Un mauvais jour au tir ne change pas ton niveau. Ce qui compte, c’est la qualité de ta réaction demain.',
-      'Les shooteurs progressent aussi grâce aux journées où rien ne rentre : elles obligent à revenir aux fondamentaux.',
-      'Ne poursuis pas le pourcentage. Reviens aux appuis, au rythme et à la confiance, et le pourcentage suivra.',
-      'Une journée faible au tir n’efface pas les bonnes précédentes. Elle te donne simplement un nouveau détail à travailler.',
-      'La meilleure réponse à une mauvaise adresse, c’est une séance suivante simple, propre et patiente.'
-    ],i,43);
-  }
-
-  if(weak==='fatigue'||weak==='sleep'){
-    return coachPick([
-      'Savoir récupérer fait partie du niveau Élite. Aujourd’hui, la meilleure progression peut se faire en dormant.',
-      'La préparation n’est pas gagnée par celui qui s’épuise le plus, mais par celui qui arrive prêt au bon moment.',
-      'Récupérer aujourd’hui, c’est préparer la vitesse de demain.',
-      'Le corps progresse quand le travail et la récupération sont tous les deux respectés.',
-      'Une bonne nuit peut être plus utile qu’une séance supplémentaire.'
-    ],i,44);
-  }
-
-  if(weak==='confidence'){
-    return coachPick([
-      'La confiance se reconstruit avec des preuves simples : un bon appui, une bonne décision, un tir propre.',
-      'Tu n’as pas besoin de te sentir invincible pour progresser. Tu as juste besoin de continuer à faire les bonnes choses.',
-      'Le mental revient quand tu accumules des actions maîtrisées. Commence petit, puis accélère.',
-      'Une journée de doute ne définit pas un joueur. La réaction du lendemain compte beaucoup plus.',
-      'La confiance ne se commande pas : elle se reconstruit par le travail bien fait.'
-    ],i,45);
-  }
-
-  if(weak==='completion'){
-    return coachPick([
-      'Une journée incomplète n’est pas perdue, mais elle doit servir à mieux organiser la suivante.',
-      'Demain, ne cherche pas un exploit. Cherche simplement à aller au bout du plan.',
-      'Finir le programme est aussi une compétence : gestion du rythme, concentration et discipline.',
-      'Le prochain progrès peut être très simple : mieux tenir la journée entière.',
-      'La constance compte plus qu’un gros bloc isolé.'
-    ],i,46);
-  }
-
-  return coachPick([
-    'Tu avances. Continue à chercher un petit progrès mesurable chaque jour.',
-    'Le niveau monte quand les bonnes journées deviennent normales.',
-    'Reste concentré sur les détails que tu peux contrôler.',
-    'Le plus important n’est pas de gagner chaque séance, mais de progresser sur plusieurs semaines.',
-    'Continue à construire : qualité, régularité, récupération.'
-  ],i,47);
-}
-
 function coachText(i){
   const p=dayPerformance(i);
-  const prev=previousCoachPerformance(i);
   const win=(localStorage.getItem('win'+i)||'').trim();
   const next=(localStorage.getItem('next'+i)||'').trim();
   const journal=(win+' '+next).toLowerCase();
-  const strengthVolume=coachStrengthVolume(p);
-  const runMinutes=coachRunMinutes(p);
 
-  const introExcellent=[
-    'Très grosse journée : tu as répondu présent du début à la fin.',
-    'Aujourd’hui, le travail a été complet et surtout très sérieux.',
-    'Tu viens de signer une journée qui compte vraiment dans une préparation.',
-    'Belle journée : beaucoup de choses ont été faites, et elles ont été faites avec intention.',
-    'Tu as produit une journée solide, avec du contenu et de la qualité.',
-    'Ce genre de journée construit de la confiance parce qu’elle repose sur du travail réel.',
-    'Aujourd’hui, tu as mis ensemble effort, concentration et régularité.',
-    'Journée de haut niveau dans l’attitude : tu as été constant jusqu’au bout.'
-  ];
-  const introGood=[
-    'Bonne journée de travail : tu continues à faire avancer ta préparation.',
-    'Tu as encore ajouté une journée utile à ta progression.',
-    'Le travail du jour est bien posé : sérieux, régulier et exploitable pour la suite.',
-    'Tu avances de façon propre. Ce n’est pas spectaculaire, mais c’est exactement ce qui fait progresser.',
-    'Journée positive : tu as construit sans chercher à en faire inutilement plus.',
-    'Tu as gardé un bon niveau d’implication aujourd’hui.',
-    'Cette journée va dans le bon sens : du travail, des repères et de la continuité.',
-    'Tu as fait ce qu’il fallait aujourd’hui pour continuer à monter en puissance.'
-  ];
-  const introTough=[
-    'La journée n’était pas parfaite, mais elle reste utile si tu en tires les bons enseignements.',
-    'Aujourd’hui a demandé plus d’efforts : c’est aussi dans ces journées-là qu’on apprend.',
-    'Tout n’a pas été facile, mais tu as quand même avancé.',
-    'Journée plus exigeante : l’important maintenant est de comprendre ce que ton corps et ton jeu t’ont montré.',
-    'Tu n’avais peut-être pas toutes les sensations, mais tu as quand même posé du travail.',
-    'Ce n’est pas la journée la plus fluide, mais elle peut être très productive pour la suite.'
-  ];
+  let analysis='Journée enregistrée avec une progression régulière.';
+  let strength='La régularité et la qualité de la saisie.';
+  let watch='Continuer à écouter les sensations du corps.';
+  let mission='Revenir demain avec une consigne simple et une exécution propre.';
 
-  let analysis=(p.score>=82?coachPick(introExcellent,i,1):p.score>=65?coachPick(introGood,i,2):coachPick(introTough,i,3))+' ';
-
-  const completionFull=[
-    'Tu as terminé tout le programme prévu, ce qui montre une vraie discipline.',
-    'Tous les blocs ont été menés au bout : c’est exactement la régularité recherchée dans une préparation.',
-    'Tu n’as laissé aucun bloc de côté et tu as tenu le plan de la journée.',
-    'Le programme est complet aujourd’hui : tu as respecté le travail prévu sans chercher de raccourci.',
-    'Tu es allé jusqu’au dernier bloc, et cette constance compte autant que les meilleures statistiques.',
-    'Journée complète : tu peux cocher le travail prévu sans avoir triché avec le contenu.'
-  ];
-  const completionPartial=[
-    'Une partie du programme reste à compléter, donc le bilan est encore perfectible.',
-    'Tout n’a pas été réalisé aujourd’hui : demain, cherche surtout à mieux terminer ce que tu commences.',
-    'Le contenu effectué est utile, mais la régularité passera aussi par des journées plus complètes.',
-    'Quelques blocs manquent encore. Ce n’est pas grave ponctuellement, mais il faut éviter que cela devienne une habitude.',
-    'La qualité est là sur une partie du travail ; la prochaine étape est de tenir cette qualité sur l’ensemble de la journée.'
-  ];
-  if(p.blockPct>=98) analysis+=coachPick(completionFull,i,4)+' ';
-  else if(p.blockPct>0 && p.blockPct<85) analysis+=coachPick(completionPartial,i,5)+' ';
-
-  const shootElite=[
-    `Avec ${p.shootPct}% sur ${p.shot.att} tirs, tu as combiné volume et efficacité.`,
-    `${p.shot.made} tirs réussis sur ${p.shot.att} : ton adresse est restée élevée malgré la répétition.`,
-    `Ton ${p.shootPct}% aujourd’hui montre que tu n’as pas seulement tiré beaucoup : tu as tiré efficacement.`,
-    `Maintenir ${p.shootPct}% avec ${p.shot.att} tentatives demande de la concentration, surtout quand la fatigue arrive.`,
-    `Le chiffre intéressant n’est pas seulement ${p.shot.att} tirs : c’est d’avoir gardé ${p.shootPct}% de réussite.`,
-    `Ton adresse est restée solide jusqu’au bout : ${p.shot.made}/${p.shot.att}, c’est une vraie base de confiance.`
-  ];
-  const shootGood=[
-    `Tu termines à ${p.shootPct}% sur ${p.shot.att} tirs : une base solide à continuer de stabiliser.`,
-    `${p.shot.made}/${p.shot.att} aujourd’hui. Le volume est utile et l’adresse reste intéressante.`,
-    `Tu as produit ${p.shot.att} tirs avec ${p.shootPct}% de réussite. Continue à rechercher la même mécanique sur chaque répétition.`,
-    `L’adresse du jour est correcte : ${p.shootPct}%. L’étape suivante est de la conserver quand le rythme augmente.`,
-    `${p.shot.made} réussites aujourd’hui : la répétition commence à installer des repères fiables.`
-  ];
-  const shootWork=[
-    `L’adresse est à ${p.shootPct}% aujourd’hui. Ne cherche pas à compenser en tirant plus vite : reviens aux appuis et à l’équilibre.`,
-    `${p.shot.made}/${p.shot.att} : journée moins précise. Ce type de séance sert à identifier ce qui se dérègle quand les sensations baissent.`,
-    `Le pourcentage est plus bas aujourd’hui. La bonne réponse n’est pas plus de volume, mais plus de qualité sur les prochaines séries.`,
-    `Aujourd’hui, l’adresse demande encore du travail. Garde la même routine de pieds et de finition sur chaque tir.`
-  ];
-  if(p.shot.att>=140 && p.shootPct>=72) analysis+=coachPick(shootElite,i,6);
-  else if(p.shot.att>0 && p.shootPct>=60) analysis+=coachPick(shootGood,i,7);
-  else if(p.shot.att>0) analysis+=coachPick(shootWork,i,8);
-  else {
-    analysis+=coachPick([
-      'La journée était moins orientée tir, donc le bilan se lit surtout dans le travail physique et la régularité.',
-      'Peu de données de tir aujourd’hui : ce sont surtout les autres qualités travaillées qui comptent.',
-      'Le shoot n’était pas le centre de la journée. C’est normal dans une préparation qui doit rester complète.'
-    ],i,9);
+  if(p.shot.att>=150 && p.shootPct>=75){
+    analysis=`Gros volume de travail : ${p.shot.made}/${p.shot.att} tirs, soit ${p.shootPct} %. La qualité reste solide malgré le volume.`;
+    strength='Volume et adresse combinés.';
+  }else if(p.shot.att>=100 && p.shootPct<60){
+    analysis=`Le volume est présent (${p.shot.att} tirs), mais la réussite de ${p.shootPct} % montre qu'il faut ralentir et stabiliser le geste.`;
+    watch='Qualité des appuis et équilibre avant le tir.';
+    mission='Faire moins de tirs, mais exiger une mécanique propre sur chaque répétition.';
+  }else if(p.shot.att>0){
+    analysis=`Séance de ${p.shot.att} tirs avec ${p.shootPct} % de réussite.`;
+    strength=p.shootPct>=70?'Bonne efficacité technique.':'Le travail a été réalisé jusqu’au bout.';
   }
 
-  const truthLine=coachTruthLine(p,i);
-  if(truthLine)analysis+=' '+truthLine;
-
-  if(prev && prev.shot.att>0 && p.shot.att>0){
-    const diff=p.shootPct-prev.shootPct;
-    const volumeDiff=p.shot.att-prev.shot.att;
-    if(diff>=5){
-      analysis+=' '+coachPick([
-        `Par rapport à la dernière journée renseignée, ton adresse progresse de ${Math.round(diff)} points : c’est un signal encourageant.`,
-        `Tu gagnes ${Math.round(diff)} points d’adresse par rapport à la séance précédente. La qualité du geste est en train de se stabiliser.`,
-        `L’évolution est intéressante : +${Math.round(diff)} points de réussite depuis la dernière séance enregistrée.`
-      ],i,10);
-    }else if(diff<=-7 && p.fatigue>=6){
-      analysis+=' '+coachPick([
-        'L’adresse baisse par rapport à la dernière séance et la fatigue est plus présente : ce lien mérite d’être surveillé.',
-        'La précision recule alors que la fatigue monte. C’est un bon rappel : la fraîcheur influence directement la qualité technique.',
-        'Aujourd’hui, la fatigue semble avoir davantage pesé sur le tir. La récupération devient donc une priorité.'
-      ],i,11);
-    }else if(Math.abs(diff)<=3 && p.shot.att>=100 && prev.shot.att>=100){
-      analysis+=' '+coachPick([
-        'Ton adresse reste très proche de la séance précédente malgré le volume : cette stabilité est intéressante.',
-        'Deux journées avec une efficacité similaire commencent à montrer de la régularité, pas seulement un bon jour isolé.',
-        'Tu confirmes un niveau d’adresse proche de la dernière séance : la répétition de la qualité est un vrai progrès.'
-      ],i,12);
-    }else if(volumeDiff>=60 && diff>=-3){
-      analysis+=' '+coachPick([
-        'Tu as nettement augmenté le volume sans perdre beaucoup d’adresse : c’est une bonne résistance technique.',
-        'Le nombre de tirs monte fortement alors que ton pourcentage reste stable. C’est exactement le type de progression utile.',
-        'Plus de volume, presque la même précision : ton geste résiste mieux à la répétition.'
-      ],i,13);
-    }
+  if(p.sleep && p.sleep<9){
+    watch='Sommeil insuffisant pour un joueur en croissance.';
+    mission='Priorité à la récupération et à une nuit longue.';
   }
-
-  let strength='';
-  if(p.shootPct>=78 && p.shot.att>=80){
-    strength=coachPick([
-      'Ton meilleur point aujourd’hui est la précision : tu as su répéter un geste efficace.',
-      'L’adresse est clairement le point fort de la journée. Tu as su rester propre même après beaucoup de répétitions.',
-      'Tu as donné de la valeur à ton volume de tir grâce à une vraie efficacité.',
-      'Ton shoot a été fiable aujourd’hui : c’est une arme quand elle reste stable sous fatigue.',
-      'Le point fort est technique : tes tirs ont gardé une bonne qualité sur l’ensemble de la séance.',
-      'Tu as montré une adresse qui peut devenir un vrai repère de confiance.'
-    ],i,14);
-  }else if(p.blockPct>=98){
-    strength=coachPick([
-      'Ton point fort aujourd’hui, c’est la discipline : programme complet, sans bloc laissé de côté.',
-      'La régularité ressort avant tout : tu as fait le travail prévu jusqu’au bout.',
-      'Tu as été fiable dans l’effort. Ce type de constance fait progresser sur plusieurs semaines.',
-      'La meilleure chose aujourd’hui est d’avoir respecté toute la journée, pas seulement les exercices que tu préfères.',
-      'Tu as montré une vraie capacité à finir le programme, et c’est une qualité de compétiteur.',
-      'Ton sérieux sur l’ensemble de la journée est le principal point positif.'
-    ],i,15);
-  }else if(p.confidence>=8){
-    strength=coachPick([
-      'Ta confiance est haute aujourd’hui : utilise-la pour jouer plus librement, pas pour forcer.',
-      'Tu sembles sûr de toi, et cette confiance peut t’aider à prendre des décisions plus rapides.',
-      'Le mental est un vrai point fort aujourd’hui : tu crois en ce que tu fais.',
-      'Ta confiance est solide. Garde-la connectée au travail et à la qualité des choix.',
-      'Tu abordes le travail avec de bonnes sensations mentales : profite-en pour être agressif et lucide.'
-    ],i,16);
-  }else if(strengthVolume>0){
-    strength=coachPick([
-      'La séance de renforcement est un bon point : tu construis de la force utile sans chercher la charge pour la charge.',
-      'Tu as ajouté du travail de force à la journée, ce qui rend la préparation plus complète.',
-      'Le renforcement a été bien intégré au reste : c’est cette complémentarité qui est intéressante.',
-      'La musculation du jour apporte une base physique importante, surtout si chaque répétition reste propre.',
-      'Ton travail physique complète bien le basket aujourd’hui : force et technique avancent ensemble.'
-    ],i,17);
-  }else if(runMinutes>0){
-    strength=coachPick([
-      'Le cardio est le point fort du jour : tu entretiens ta capacité à répéter les efforts.',
-      'Tu as bien intégré le travail d’endurance à la préparation sans oublier la technique.',
-      'Le travail cardio du jour renforce ta capacité à rester efficace plus longtemps.',
-      'Tu as travaillé le moteur aujourd’hui : ce sera utile quand les séquences s’enchaîneront en match.'
-    ],i,18);
-  }else{
-    strength=coachPick([
-      'Ta constance dans le travail reste ton meilleur atout aujourd’hui.',
-      'Le point fort est la qualité générale de la journée : rien de spectaculaire, mais beaucoup de travail utile.',
-      'Tu continues à accumuler des répétitions propres, et c’est ce qui construit les automatismes.',
-      'Ta progression vient aujourd’hui de ta régularité plus que d’un chiffre isolé.',
-      'Tu as gardé une bonne implication du début à la fin.'
-    ],i,19);
+  if(p.fatigue>=8){
+    watch='Fatigue élevée : éviter d’ajouter une séance intense.';
+    mission='Mobilité douce, hydratation et récupération.';
   }
-
-  let watch='';
-  if(journal.includes('douleur')||journal.includes('genou')||journal.includes('cheville')||journal.includes('dos')){
-    watch=coachPick([
-      'Une douleur est mentionnée : ne cherche pas à la masquer. Si elle augmente ou modifie tes appuis, arrête le travail concerné et parle-en à un adulte.',
-      'Le signal douleur doit passer avant le programme. Surveille son évolution et ne force pas dessus.',
-      'Attention au signal physique noté aujourd’hui : aucune séance ne vaut le risque de transformer une gêne en vraie blessure.'
-    ],i,20);
-  }else if(p.fatigue>=8){
-    watch=coachPick([
-      'La fatigue est élevée. Ce soir, la priorité est simple : manger, boire et dormir.',
-      'Ton niveau de fatigue indique qu’il ne faut rien rajouter ce soir. La récupération fait partie du programme.',
-      'La charge commence à se sentir : protège la nuit qui arrive pour pouvoir remettre de la qualité demain.',
-      'Avec cette fatigue, le meilleur travail supplémentaire serait de récupérer correctement.',
-      'Attention à ne pas confondre courage et surcharge : aujourd’hui, la bonne décision est de récupérer.'
-    ],i,21);
-  }else if(p.sleep>0 && p.sleep<9){
-    watch=coachPick([
-      'Le sommeil est un peu court pour soutenir cette charge. Essaie de récupérer davantage cette nuit.',
-      'Le principal axe de vigilance n’est pas sur le terrain : c’est la durée de sommeil.',
-      'Ta récupération peut encore progresser. Une nuit plus longue donnera plus de qualité aux séances suivantes.',
-      'Avec ce volume de travail, le sommeil doit rester une priorité au même titre que le shoot ou le physique.',
-      'Tu peux gagner de la performance simplement en protégeant mieux ta nuit.'
-    ],i,22);
-  }else if(p.shot.att>=180){
-    watch=coachPick([
-      'Le volume de tirs est important. Surveille surtout la qualité des jambes et des appuis sur les dernières séries.',
-      'Beaucoup de répétitions aujourd’hui : inutile d’en rajouter ce soir. Laisse le geste se consolider.',
-      'Le volume est élevé. Dès que la mécanique se dégrade, la répétition perd de sa valeur.',
-      'Avec autant de tirs, la vigilance porte sur la fraîcheur : demain, repars avec des jambes disponibles.'
-    ],i,23);
-  }else if(strengthVolume>2500){
-    watch=coachPick([
-      'La charge de renforcement est conséquente : inutile de chercher un supplément de musculation ce soir.',
-      'Le volume muscu est important. La qualité de récupération déterminera ce que tu en retireras.',
-      'Bonne séance de force, mais ne cherche pas à battre une charge demain : laisse le corps assimiler.'
-    ],i,24);
-  }else if(p.confidence>0 && p.confidence<=5){
-    watch=coachPick([
-      'La confiance est plus basse aujourd’hui. Reviens demain à des objectifs simples et mesurables pour accumuler des réussites.',
-      'Le mental est le point à surveiller : ne juge pas ton niveau sur une seule séance.',
-      'Confiance moyenne aujourd’hui : concentre-toi sur les actions que tu contrôles, pas sur le résultat final.',
-      'Quand les sensations sont moins bonnes, simplifie le jeu et reconstruis la confiance par de petites réussites.'
-    ],i,25);
-  }else if(p.blockPct<80 && p.blockPct>0){
-    watch=coachPick([
-      'Le principal axe de progrès est de mieux tenir l’ensemble du programme.',
-      'La journée est utile, mais elle manque encore de continuité entre les blocs.',
-      'Demain, cherche surtout à mieux organiser ton énergie pour aller plus loin dans le programme.',
-      'Tu peux encore gagner en régularité en terminant davantage de blocs prévus.'
-    ],i,26);
-  }else{
-    watch=coachPick([
-      'La seule vigilance ce soir : ne rajoute pas du travail juste pour en faire plus. Assimile la séance.',
-      'Garde de la fraîcheur. Une bonne préparation alterne charge et récupération.',
-      'Continue à surveiller tes sensations pour garder de la qualité demain.',
-      'Reste exigeant sur la récupération : hydratation, repas et sommeil sont aussi des outils de performance.',
-      'Ne cherche pas à gagner la semaine en une soirée. La régularité vaut plus que la surcharge.',
-      'Le piège maintenant serait d’en faire trop. Le travail utile est déjà fait pour aujourd’hui.',
-      'Protège tes jambes et ton sommeil : demain doit commencer avec de l’énergie.',
-      'La préparation avance bien ; veille simplement à conserver de la fraîcheur.'
-    ],i,27);
+  if(p.confidence && p.confidence<=4){
+    strength='Le fait d’avoir travaillé malgré une confiance basse.';
+    mission='Chercher une réussite simple dès le début de la prochaine séance.';
   }
-
-  let mission='';
+  if(journal.includes('douleur') || journal.includes('genou') || journal.includes('cheville')){
+    watch='Une douleur est mentionnée dans le journal.';
+    mission='Réduire la charge et prévenir un adulte ou le coach si la douleur persiste.';
+  }
   if(next){
-    const missionTemplates=[
-      `Demain, ton axe annoncé est « ${next} ». Transforme-le en objectif concret dès le premier exercice.`,
-      `Cap sur « ${next} » demain : cherche une amélioration visible, même petite, plutôt qu’un grand changement d’un coup.`,
-      `Tu as choisi « ${next} » pour demain. Prépare-toi à l’attaquer avec la même rigueur que le travail d’aujourd’hui.`,
-      `Demain : « ${next} ». Fais-en un vrai challenge mesurable, avec un seuil clair à atteindre.`,
-      `Ton objectif de demain est « ${next} ». Reste concentré dessus sans vouloir tout corriger en même temps.`,
-      `Pour demain, priorité à « ${next} ». Une séance réussie sera celle où tu peux dire précisément ce qui a progressé.`,
-      `Demain, mets « ${next} » au centre de ta séance et cherche surtout de la qualité.`,
-      `Le prochain objectif est « ${next} ». Commence simple, puis augmente la difficulté si les sensations sont bonnes.`
-    ];
-    mission=coachPick(missionTemplates,i,28);
-  }else if(p.fatigue>=7){
-    mission=coachPick([
-      'Demain, commence par évaluer tes jambes et adapte l’intensité avant de chercher du volume.',
-      'Demain, la première mission sera d’arriver frais. La qualité passera avant la quantité.',
-      'Cap sur demain : retrouver de la vitesse et de la précision grâce à une bonne récupération ce soir.'
-    ],i,29);
-  }else{
-    mission=coachPick([
-      'Demain, fixe-toi un seuil simple à battre sur un exercice important.',
-      'Demain, cherche un petit progrès mesurable : une série plus propre, un meilleur pourcentage ou un meilleur passage.',
-      'Cap sur demain : être plus rapide dans les décisions sans perdre la qualité technique.',
-      'Demain, choisis un défi précis et va le chercher avec méthode.',
-      'La mission de demain : transformer la régularité d’aujourd’hui en un nouveau petit progrès.'
-    ],i,30);
+    mission=next;
   }
 
-  const quotes=[
-    'Le niveau ne se construit pas en une séance : il se construit dans la répétition des bonnes journées.',
-    'Le travail que personne ne voit devient souvent la confiance que tout le monde remarque en match.',
-    'La vraie progression commence quand la qualité reste présente même lorsque la séance devient difficile.',
-    'Chaque répétition propre ajoute quelque chose au joueur que tu seras au prochain match.',
-    'Tu n’as pas besoin de gagner toute la saison aujourd’hui. Gagne simplement ta journée.',
-    'Le talent ouvre des portes ; la régularité permet de rester dans la salle.',
-    'Un joueur prêt n’est pas celui qui en fait toujours plus, mais celui qui sait quoi faire et quand le faire.',
-    'Quand la fatigue arrive, la technique et les décisions montrent la qualité du travail réalisé.',
-    'La confiance durable vient des preuves que tu accumules à l’entraînement.',
-    'Les meilleurs progrès sont souvent silencieux avant de devenir évidents en match.',
-    'Chaque journée sérieuse réduit un peu l’écart entre ton niveau actuel et ton objectif.',
-    'Le chrono mesure un passage ; ta discipline mesure la préparation entière.',
-    'Une bonne séance te fatigue parfois. Une bonne préparation te rend meilleur au bon moment.',
-    'Reste exigeant sur les détails : ce sont eux qui font la différence quand le niveau monte.',
-    'Le joueur que tu veux devenir se construit surtout les jours où personne ne t’applaudit.',
-    'La vitesse impressionne ; la vitesse avec contrôle fait gagner des actions.',
-    'Une réussite répétée devient une habitude. Une habitude solide devient une arme en match.',
-    'Ne cherche pas seulement à réussir l’exercice : cherche à comprendre pourquoi tu le réussis.',
-    'Ton objectif n’est pas d’être parfait aujourd’hui, mais d’être mieux préparé demain.',
-    'Le travail physique donne des possibilités ; la technique et la lecture permettent de les utiliser.',
-    'Un bon compétiteur sait accélérer quand il faut et récupérer quand il le faut.',
-    'Les journées difficiles ne cassent pas une progression : elles apprennent à mieux la gérer.',
-    'Quand tu peux rester précis sous fatigue, ton entraînement commence à ressembler au match.',
-    'Le meilleur défi est celui qui te force à être rapide sans devenir brouillon.',
-    'Tu construis ta place avec des actions répétées, pas avec une seule grosse journée.',
-    'La préparation sert à arriver prêt, pas simplement à arriver fatigué.',
-    'Chaque fois que tu gardes une bonne technique sous pression, tu rapproches l’entraînement de la compétition.',
-    'Être sérieux dans les petites choses rend les grands moments plus simples.',
-    'La régularité transforme les bonnes intentions en vrai niveau de jeu.',
-    'Tu peux aimer les défis, mais le vrai défi reste de garder la qualité quand tu veux aller vite.',
-    'Les records sont motivants ; la capacité à reproduire la performance est encore plus importante.',
-    'Ton prochain niveau se cache souvent dans un détail que tu acceptes de répéter correctement.',
-    'Un joueur complet sait scorer, défendre, courir, décider et récupérer.',
-    'La fraîcheur est une qualité de performance quand elle arrive au bon moment.',
-    'Tu n’entraînes pas seulement ton corps : tu entraînes ta capacité à rester lucide.',
-    'Les bonnes habitudes gagnent souvent les minutes où le talent seul ne suffit plus.',
-    'Le travail d’aujourd’hui doit servir le joueur de demain, pas seulement remplir une journée.',
-    'Une préparation réussie se voit quand les jambes sont rapides et la tête claire.',
-    'Le niveau Élite demande de la qualité répétée, pas des coups d’éclat isolés.',
-    'Fais de chaque défi une occasion de rester propre, rapide et concentré.'
-  ];
-
-  // Unique by day index across the 16-day preparation before cycling.
-  const contextualMotivation=coachMotivationByContext(p,i);
-  const quote=contextualMotivation || quotes[(i*3 + Math.min(2,Math.floor(p.score/35)))%quotes.length];
-
-  return {analysis,strength,watch,mission,quote};
+  return {analysis,strength,watch,mission};
 }
 
 function coachCard(i){
@@ -1667,12 +1106,15 @@ function coachCard(i){
     <h4>Analyse du jour</h4><p>${c.analysis}</p>
     <h4>✅ Point fort</h4><p>${c.strength}</p>
     <h4>⚠️ Point de vigilance</h4><p>${c.watch}</p>
-    <h4>🎯 Cap sur demain</h4><p>${c.mission}</p><h4>💬 Le mot du Coach</h4><p><i>${c.quote}</i></p>
+    <h4>🎯 Mission demain</h4><p>${c.mission}</p>
   </div>`;
 }
 
 function validatedDayIndexes(){
-  return days.map((_,i)=>i).filter(i=>isDayValidated(i));
+  return days.map((_,i)=>i).filter(i=>
+    localStorage.getItem('journalSaved'+i)==='1' &&
+    Boolean(localStorage.getItem('validatedAt'+i))
+  );
 }
 
 function streakSummary(){
@@ -1705,8 +1147,8 @@ function computeRecords(){
     if(p.shot.att>bestVolume.v)bestVolume={v:p.shot.att,label:d.date};
     if(p.score>bestScore.v)bestScore={v:p.score,label:d.date};
     if(p.sleep>bestSleep.v)bestSleep={v:p.sleep,label:d.date};
-    const strengthVolume=p.strength.reduce((sum,e)=>sum+Math.max(0,Number(e.sets||0))*Math.max(0,Number(e.reps||0))*Math.max(0,Number(e.load||0)),0);
-    if(strengthVolume>bestStrength.v)bestStrength={v:strengthVolume,label:d.date};
+    const strengthCount=p.strength.length;
+    if(strengthCount>bestStrength.v)bestStrength={v:strengthCount,label:d.date};
     const runDistance=p.runs.reduce((s,r)=>s+Number(r.distance||0),0);
     if(runDistance>bestRun.v)bestRun={v:runDistance,label:d.date};
   });
@@ -1731,7 +1173,7 @@ function renderRecords(){
     recordItem('Plus gros volume',r.bestVolume.v+' tirs',r.bestVolume.label)+
     recordItem('Meilleur score du jour',r.bestScore.v+'/100',r.bestScore.label)+
     recordItem('Plus longue nuit',r.bestSleep.v+' h',r.bestSleep.label)+
-    recordItem('Plus grosse séance muscu',fmtStrength(r.bestStrength.v)+' kg',r.bestStrength.label)+
+    recordItem('Plus grosse séance muscu',r.bestStrength.v+' exercices',r.bestStrength.label)+
     recordItem('Plus longue course',r.bestRun.v+' km',r.bestRun.label)+
     recordItem('Record points',r.bestPoints.v,r.bestPoints.label)+
     recordItem('Record rebonds',r.bestRebounds.v,r.bestRebounds.label)+
@@ -1763,21 +1205,6 @@ function renderEliteIndex(){
     <div class="progress" style="margin-top:12px"><div class="bar" style="width:${value}%"></div></div>`;
 }
 
-
-function evolutionMetricConfig(metric){
-  const configs={
-    shoot:{title:'🎯 Adresse aux tirs',unit:' %',max:100,description:'Pourcentage de tirs réussis chaque jour.'},
-    volume:{title:'🏀 Volume de tirs',unit:' tirs',max:null,description:'Nombre total de tirs tentés chaque jour.'},
-    sleep:{title:'😴 Sommeil',unit:' h',max:12,description:'Durée de sommeil enregistrée.'},
-    fatigue:{title:'⚡ Fatigue',unit:' /10',max:10,description:'Plus la barre est haute, plus la fatigue déclarée est forte.'},
-    confidence:{title:'🧠 Confiance',unit:' /10',max:10,description:'Niveau de confiance déclaré dans le journal.'},
-    blocks:{title:'✅ Blocs réalisés',unit:' %',max:100,description:'Part des blocs terminés pour chaque journée.'},
-    strength:{title:'💪 Volume de musculation',unit:' kg',max:null,description:'Volume quotidien : séries × répétitions × charge.'},
-    run:{title:'🏃 Course / cardio',unit:' min',max:null,description:'Durée totale saisie dans les entrées course et cardio.'}
-  };
-  return configs[metric]||configs.shoot;
-}
-
 function evolutionData(metric){
   return days.map((d,i)=>{
     const p=dayPerformance(i);
@@ -1788,111 +1215,55 @@ function evolutionData(metric){
     if(metric==='fatigue')value=p.fatigue;
     if(metric==='confidence')value=p.confidence;
     if(metric==='blocks')value=p.blockPct;
-    if(metric==='strength'){
-      value=readJsonList('strengthEntries'+i).reduce((sum,e)=>
-        sum+
-        Math.max(0,Number(e.sets||0))*
-        Math.max(0,Number(e.reps||0))*
-        Math.max(0,Number(e.load||0)),0);
-    }
-    if(metric==='run'){
-      value=readJsonList('runEntries'+i).reduce((sum,e)=>sum+Math.max(0,Number(e.duration||0)),0);
-    }
-    return {
-      label:'J'+(i+1),
-      date:d.date,
-      value:Number(value||0)
-    };
+    return {label:d.date.replace(/^\w+\s+/,'').replace(' août','/08'),value};
   });
-}
-
-function formatEvolutionValue(value,metric){
-  const config=evolutionMetricConfig(metric);
-  const decimals=['sleep','fatigue','confidence'].includes(metric)?1:0;
-  return Number(value||0).toLocaleString('fr-FR',{
-    minimumFractionDigits:decimals,
-    maximumFractionDigits:decimals
-  })+config.unit;
-}
-
-function evolutionMeaning(metric,average,best,latest){
-  if(metric==='fatigue'){
-    if(latest>=8)return 'Fatigue élevée : récupération prioritaire.';
-    if(latest<=4)return 'Fatigue maîtrisée sur la dernière journée.';
-    return 'Fatigue modérée sur la dernière journée.';
-  }
-  if(metric==='sleep'){
-    if(latest>=9.5)return 'Dernière nuit adaptée à la récupération.';
-    if(latest>0&&latest<9)return 'Dernière nuit courte pour un sportif en croissance.';
-  }
-  if(metric==='confidence'){
-    if(latest>=8)return 'Confiance élevée sur la dernière journée.';
-    if(latest>0&&latest<=4)return 'Confiance basse : rechercher des réussites simples.';
-  }
-  if(metric==='shoot'){
-    if(latest>=75)return 'Très bonne adresse sur la dernière journée.';
-    if(latest>0&&latest<60)return 'Priorité à la qualité et à l’équilibre du tir.';
-  }
-  if(metric==='blocks'){
-    if(latest>=90)return 'Journée presque entièrement réalisée.';
-  }
-  return best>0?`Meilleure valeur : ${formatEvolutionValue(best,metric)}.`:'Les valeurs apparaîtront après les premières saisies.';
 }
 
 function setEvolutionMetric(metric,button){
   activeEvolutionMetric=metric;
   document.querySelectorAll('.chart-tabs button').forEach(b=>b.classList.remove('active'));
   if(button)button.classList.add('active');
-  renderEvolutionBars();
+  drawEvolutionChart();
 }
 
-function renderEvolutionBars(){
-  const title=document.getElementById('evolutionMetricTitle');
-  const summary=document.getElementById('evolutionSummary');
-  const bars=document.getElementById('evolutionBars');
-  const scale=document.getElementById('evolutionScale');
-  if(!title||!summary||!bars||!scale)return;
+function drawEvolutionChart(){
+  const c=document.getElementById('evolutionChart');
+  if(!c)return;
+  const ctx=c.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const w=Math.max(300,c.clientWidth||320),h=210;
+  c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
 
-  const metric=activeEvolutionMetric;
-  const config=evolutionMetricConfig(metric);
-  const all=evolutionData(metric);
-  const visible=all.slice(-10);
-  const nonZero=all.filter(x=>x.value>0);
-  const values=nonZero.map(x=>x.value);
-  const latest=nonZero.length?nonZero[nonZero.length-1].value:0;
-  const average=values.length?values.reduce((a,b)=>a+b,0)/values.length:0;
-  const best=values.length?Math.max(...values):0;
-  const previous=nonZero.length>1?nonZero[nonZero.length-2].value:0;
-  const change=previous?((latest-previous)/previous)*100:0;
+  const data=evolutionData(activeEvolutionMetric);
+  const values=data.map(x=>Number(x.value||0));
+  const max=Math.max(10,...values);
+  const min=0;
 
-  let axisMax=config.max||Math.max(1,...visible.map(x=>x.value));
-  if(!config.max){
-    const magnitude=Math.pow(10,Math.max(0,Math.floor(Math.log10(axisMax||1))));
-    axisMax=Math.ceil(axisMax/magnitude)*magnitude;
+  ctx.strokeStyle='#334155';ctx.lineWidth=1;
+  for(let j=0;j<=4;j++){
+    const y=18+j*(h-48)/4;
+    ctx.beginPath();ctx.moveTo(32,y);ctx.lineTo(w-12,y);ctx.stroke();
   }
 
-  title.innerHTML=`<b>${config.title}</b><br><span class="small">${config.description}<br>${evolutionMeaning(metric,average,best,latest)}</span>`;
+  const step=(w-52)/Math.max(1,data.length-1);
+  ctx.strokeStyle='#f59e0b';ctx.lineWidth=3;ctx.beginPath();
+  data.forEach((p,i)=>{
+    const x=34+i*step;
+    const y=18+(max-p.value)*(h-48)/(max-min||1);
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  });
+  ctx.stroke();
 
-  summary.innerHTML=`
-    <div class="evo-kpi"><div class="small">Dernière valeur</div><div class="value">${formatEvolutionValue(latest,metric)}</div></div>
-    <div class="evo-kpi"><div class="small">Moyenne</div><div class="value">${formatEvolutionValue(average,metric)}</div></div>
-    <div class="evo-kpi"><div class="small">Record</div><div class="value">${formatEvolutionValue(best,metric)}</div></div>
-    <div class="evo-kpi"><div class="small">Écart dernière séance</div><div class="value">${previous?(change>=0?'+':'')+Math.round(change)+' %':'—'}</div></div>`;
-
-  bars.innerHTML=visible.map(point=>{
-    const width=axisMax?Math.min(100,point.value/axisMax*100):0;
-    return `<div class="evo-bar-row" title="${point.date}">
-      <div class="evo-bar-label">${point.label}</div>
-      <div class="evo-bar-track"><div class="evo-bar-fill" style="width:${width}%"></div></div>
-      <div class="evo-bar-value">${formatEvolutionValue(point.value,metric)}</div>
-    </div>`;
-  }).join('');
-
-  scale.innerHTML=`<span></span><div class="evo-scale-values"><span>0</span><span>${formatEvolutionValue(axisMax/2,metric)}</span><span>${formatEvolutionValue(axisMax,metric)}</span></div><span></span>`;
+  ctx.fillStyle='#f59e0b';
+  data.forEach((p,i)=>{
+    const x=34+i*step;
+    const y=18+(max-p.value)*(h-48)/(max-min||1);
+    ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);ctx.fill();
+  });
 }
 
 function renderEvolutionDashboard(){
-  renderEvolutionBars();
+  drawEvolutionChart();
   renderRecords();
   const s=streakSummary();
   document.getElementById('streakStats').innerHTML=
@@ -1996,112 +1367,27 @@ function readDayShotTotals(i){
 
 
 function countCompletedBlocks(i){
-  const result=count(i);
-  return {done:result[0],total:result[1]};
-}
-
-
-
-function readDayCategoryShotTotals(i,categoryPattern){
-  let made=0,att=0;
+  let done=0,total=0;
   const d=days[i]||{};
-  (d.scoreDetails||[]).forEach((group,gi)=>{
-    if(!categoryPattern.test(String(group.name||'')))return;
-    (group.items||[]).forEach((_,ii)=>{
-      made+=numVal('v10made_'+i+'_'+gi+'_'+ii);
-      att+=numVal('v10att_'+i+'_'+gi+'_'+ii);
+  const groups=[
+    ['b',Array.isArray(d.basket)?d.basket:[]],
+    ['p',Array.isArray(d.physical)?d.physical:[]],
+    ['e',Array.isArray(d.evening)?d.evening:[]]
+  ];
+  groups.forEach(([prefix,items])=>{
+    items.forEach((_,j)=>{
+      total++;
+      if(localStorage.getItem(key(i,prefix,j))==='1')done++;
     });
   });
-  return {made,att};
+  return {done,total};
 }
 
-function completedPhysicalCategoryCount(i,patterns){
-  const d=days[i]||{};
-  let count=0;
-  (d.physical||[]).forEach((block,j)=>{
-    const text=(block||[]).join(' ').toLowerCase();
-    if(patterns.some(pattern=>text.includes(pattern)) &&
-       localStorage.getItem(key(i,'p',j))==='1'){
-      count++;
-    }
-  });
-  return count;
-}
-
-
-function collectStrengthStatistics(){
-  const all=[],byExercise=new Map(),daily=[];
-  summerDayIndexes().forEach(({i})=>{
-    const entries=readJsonList('strengthEntries'+i);
-    let dayVolume=0;
-    entries.forEach(e=>{
-      const sets=Math.max(0,Number(e.sets||0)),reps=Math.max(0,Number(e.reps||0));
-      const load=Math.max(0,Number(e.load||0)),rpe=Math.max(0,Number(e.rpe||0));
-      const totalReps=sets*reps,volume=totalReps*load;
-      const raw=String(e.exercise||'Exercice non nommé').trim();
-      const keyName=raw.toLowerCase();
-      const item={dayIndex:i,date:days[i]?.date||('J'+(i+1)),exercise:raw||'Exercice non nommé',sets,reps,load,rpe,totalReps,volume};
-      all.push(item);dayVolume+=volume;
-      if(!byExercise.has(keyName))byExercise.set(keyName,{name:item.exercise,entries:0,sessions:new Set(),totalVolume:0,totalReps:0,maxLoad:0,bestVolume:0,rpeTotal:0,rpeCount:0});
-      const s=byExercise.get(keyName);s.entries++;s.sessions.add(i);s.totalVolume+=volume;s.totalReps+=totalReps;
-      s.maxLoad=Math.max(s.maxLoad,load);s.bestVolume=Math.max(s.bestVolume,volume);
-      if(rpe>0){s.rpeTotal+=rpe;s.rpeCount++}
-    });
-    daily.push({label:'J'+(i+1),value:Math.round(dayVolume)});
-  });
-  const exercises=[...byExercise.values()].map(s=>({...s,sessions:s.sessions.size,avgRpe:s.rpeCount?s.rpeTotal/s.rpeCount:0}))
-    .sort((a,b)=>b.totalVolume-a.totalVolume||b.entries-a.entries);
-  const loads=all.filter(x=>x.load>0),rpes=all.filter(x=>x.rpe>0);
-  return {
-    all,exercises,daily,
-    sessions:new Set(all.map(x=>x.dayIndex)).size,
-    entries:all.length,
-    totalVolume:all.reduce((s,x)=>s+x.volume,0),
-    totalReps:all.reduce((s,x)=>s+x.totalReps,0),
-    avgLoad:loads.length?loads.reduce((s,x)=>s+x.load,0)/loads.length:0,
-    avgRpe:rpes.length?rpes.reduce((s,x)=>s+x.rpe,0)/rpes.length:0,
-    mostFrequent:exercises.slice().sort((a,b)=>b.entries-a.entries)[0]||null
-  };
-}
-function fmtStrength(v,d=0){return Number(v||0).toLocaleString('fr-FR',{minimumFractionDigits:d,maximumFractionDigits:d})}
-function drawStrengthProgressChart(data){
-  const c=document.getElementById('strengthProgressChart');if(!c)return;
-  const ctx=c.getContext('2d'),dpr=window.devicePixelRatio||1,w=Math.max(300,c.clientWidth||320),h=210;
-  c.width=w*dpr;c.height=h*dpr;ctx.scale(dpr,dpr);ctx.clearRect(0,0,w,h);
-  const vals=data.map(x=>Number(x.value||0)),max=Math.max(100,...vals),left=38,right=12,top=18,bottom=32,uw=w-left-right,uh=h-top-bottom;
-  ctx.strokeStyle='#334155';ctx.lineWidth=1;
-  for(let i=0;i<=4;i++){const y=top+i*uh/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke()}
-  if(!data.length)return;
-  const step=uw/Math.max(1,data.length),bw=Math.max(5,step*.58);ctx.fillStyle='#f59e0b';
-  data.forEach((p,i)=>{const bh=Number(p.value||0)/max*uh,x=left+i*step+(step-bw)/2,y=top+uh-bh;ctx.fillRect(x,y,bw,bh)});
-  ctx.fillStyle='#94a3b8';ctx.font='11px sans-serif';ctx.textAlign='center';
-  data.forEach((p,i)=>{if(data.length>10&&i%2)return;ctx.fillText(p.label,left+i*step+step/2,h-10)});
-}
-function renderStrengthStatistics(){
-  const summary=document.getElementById('strengthStatsSummary'),details=document.getElementById('strengthStatsExercises');
-  if(!summary||!details)return;
-  const s=collectStrengthStatistics();
-  summary.innerHTML=
-    statKpi(s.sessions,'Séances avec musculation')+
-    statKpi(s.entries,'Exercices enregistrés')+
-    statKpi(fmtStrength(s.totalReps),'Répétitions totales')+
-    statKpi(fmtStrength(s.totalVolume)+' kg','Volume total')+
-    statKpi(fmtStrength(s.avgLoad,1)+' kg','Charge moyenne')+
-    statKpi(fmtStrength(s.avgRpe,1)+' /10','Intensité moyenne')+
-    statKpi(s.mostFrequent?s.mostFrequent.name:'—','Exercice le plus fréquent');
-  details.innerHTML=s.exercises.length?s.exercises.map(x=>`<div class="record-item" style="display:block">
-    <div style="display:flex;justify-content:space-between;gap:12px"><b>${x.name}</b><span>${x.sessions} séance${x.sessions>1?'s':''}</span></div>
-    <div class="small" style="margin-top:7px">${fmtStrength(x.totalReps)} répétitions • ${fmtStrength(x.totalVolume)} kg de volume<br>
-    Meilleure charge : ${fmtStrength(x.maxLoad,1)} kg • Meilleur volume : ${fmtStrength(x.bestVolume)} kg${x.avgRpe?` • Intensité moyenne : ${fmtStrength(x.avgRpe,1)}/10`:''}</div>
-  </div>`).join(''):'<div class="small">Aucune donnée de musculation enregistrée.</div>';
-  drawStrengthProgressChart(s.daily);
-}
 
 function renderSummerStats(){
 
   const list=summerDayIndexes();
   let totalMade=0,totalAtt=0,doneBlocks=0,totalBlocks=0,validated=0;
-  let threeMade=0,threeAtt=0,ladderBlocks=0,sprintBlocks=0,cardioBlocks=0;
   let stretchMin=0,absMin=0;
   const daily=[];
 
@@ -2109,11 +1395,6 @@ function renderSummerStats(){
     const s=readDayShotTotals(i);
     const b=countCompletedBlocks(i);
     totalMade+=s.made; totalAtt+=s.att;
-    const three=readDayCategoryShotTotals(i,/3 points/i);
-    threeMade+=three.made; threeAtt+=three.att;
-    ladderBlocks+=completedPhysicalCategoryCount(i,['échelle']);
-    sprintBlocks+=completedPhysicalCategoryCount(i,['sprint','accélération','départ']);
-    cardioBlocks+=completedPhysicalCategoryCount(i,['cardio','intermittent']);
     doneBlocks+=b.done; totalBlocks+=b.total;
     if(localStorage.getItem('validatedAt'+i))validated++;
     stretchMin+=numVal('freeStretchMin'+i);
@@ -2131,9 +1412,7 @@ function renderSummerStats(){
     <div class="stat-kpis">
       ${statKpi(totalMade,'Tirs réussis')}
       ${statKpi(totalAtt,'Tirs tentés')}
-      ${statKpi(pct(totalMade,totalAtt)+' %','Pourcentage global')}
-      ${statKpi(threeMade+' / '+threeAtt,'Tirs à 3 points')}
-      ${statKpi(pct(threeMade,threeAtt)+' %','Adresse à 3 points')}
+      ${statKpi(pct(totalMade,totalAtt)+' %','Pourcentage')}
       ${statKpi(totalAtt-totalMade,'Tirs manqués')}
     </div>`;
 
@@ -2144,14 +1423,10 @@ function renderSummerStats(){
       ${statKpi(stretchMin+' min','Étirements libres')}
       ${statKpi(absMin+' min','Abdos / gainage')}
       ${statKpi(list.reduce((n,x)=>n+readJsonList('strengthEntries'+x.i).length,0),'Entrées musculation')}
-      ${statKpi(list.reduce((n,x)=>n+readJsonList('runEntries'+x.i).length,0),'Course / cardio saisi')}
-      ${statKpi(ladderBlocks,'Blocs échelle réalisés')}
-      ${statKpi(sprintBlocks,'Blocs sprints réalisés')}
-      ${statKpi(cardioBlocks,'Blocs cardio basket réalisés')}
+      ${statKpi(list.reduce((n,x)=>n+readJsonList('runEntries'+x.i).length,0),'Entrées course')}
     </div>`;
 
   drawSimpleProgressChart('summerProgressChart',daily);
-  renderStrengthStatistics();
 }
 
 function drawSimpleProgressChart(canvasId,data){
@@ -2281,7 +1556,7 @@ function updateStats(){
  days.forEach((d,i)=>{let dm=0,da=0;d.scoreDetails.forEach((g,gi)=>g.items.forEach((_,ii)=>{const mm=Number(localStorage.getItem('v10made_'+i+'_'+gi+'_'+ii)||0),aa=Number(localStorage.getItem('v10att_'+i+'_'+gi+'_'+ii)||0);m+=mm;a+=aa;dm+=mm;da+=aa}));if(da>0){const p=Math.round(dm/da*100);best=best===null?p:Math.max(best,p)}const sv=Number(localStorage.getItem('sleep'+i));if(sv){s+=sv;sn++;if(sv>=10)s10++}const cv=Number(localStorage.getItem('confidence'+i));if(cv){conf+=cv;cn++}});
  const gc=globalCount(),completion=gc[1]?Math.round(gc[0]/gc[1]*100):0;
  document.getElementById('statShots').textContent=a;document.getElementById('statMade').textContent=m;document.getElementById('statPct').textContent=a?Math.round(m/a*100)+' %':'—';document.getElementById('statBestPct').textContent=best===null?'—':best+' %';document.getElementById('statSleep').textContent=sn?(s/sn).toFixed(1)+' h':'—';document.getElementById('statSleep10').textContent=sn?s10+'/'+sn:'—';document.getElementById('statConfidence').textContent=cn?(conf/cn).toFixed(1)+'/10':'—';document.getElementById('statCompletion').textContent=completion+' %';
- let valid=0,journal=0;days.forEach((_,i)=>{if(isDayValidated(i)){valid++;journal++}});
+ let valid=0,journal=0;days.forEach((_,i)=>{if(localStorage.getItem('journalSaved'+i)==='1'){valid++;journal++}});
  document.getElementById('statStreak').textContent=valid;
  document.getElementById('statJournal').textContent=journal;
  renderBadges();
@@ -2290,8 +1565,7 @@ function updateStats(){
 
 
 function getDailyQuote(){
-  const dayNo=Math.floor(Date.now()/86400000);
-  const index=((dayNo*37)+(dayNo%11)*7)%championQuotes.length;
+  const index=Math.floor(Date.now()/86400000)%championQuotes.length;
   return championQuotes[(index+championQuotes.length)%championQuotes.length];
 }
 function enterApp(){
@@ -2313,7 +1587,7 @@ function computeBadges(){
   let completedDays=0,journalDays=0,totalMade=0,sleep10=0,scoreDays=0;
   days.forEach((d,i)=>{
     const c=count(i); if(c[0]===c[1])completedDays++;
-    if(isDayValidated(i))journalDays++;
+    if(localStorage.getItem('journalSaved'+i)==='1')journalDays++;
     const sl=Number(localStorage.getItem('sleep'+i));if(sl>=10)sleep10++;
     let made=0,att=0;d.basket.forEach((_,j)=>{made+=Number(localStorage.getItem('made_'+i+'_'+j)||0);att+=Number(localStorage.getItem('att_'+i+'_'+j)||0)});
     totalMade+=made;if(att>0)scoreDays++;
@@ -2333,172 +1607,6 @@ function renderBadges(){
   const el=document.getElementById('badgesGrid');if(!el)return;
   el.innerHTML=computeBadges().map(b=>`<div class="badge-card ${b[2]?'':'locked'}"><div class="badge-icon">${b[0]}</div><div class="badge-name">${b[1]}</div><div class="small">${b[2]?'Débloqué':b[3]}</div></div>`).join('');
 }
-
-
-
-let familyChatMessages=[];
-let familyChatLastRead=Number(localStorage.getItem('cloud_chat_last_read')||0);
-
-function escapeChatHtml(value){
-  return String(value??'')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;')
-    .replace(/'/g,'&#039;');
-}
-
-function chatDateValue(message){
-  if(message?.createdAt?.toMillis)return message.createdAt.toMillis();
-  if(message?.createdAt?.seconds)return Number(message.createdAt.seconds)*1000;
-  return Number(message?.clientCreatedAt||0);
-}
-
-function formatChatTime(message){
-  const timestamp=chatDateValue(message);
-  if(!timestamp)return '';
-  const date=new Date(timestamp);
-  const today=new Date();
-  const sameDay=date.toDateString()===today.toDateString();
-  return date.toLocaleString('fr-FR',sameDay
-    ?{hour:'2-digit',minute:'2-digit'}
-    :{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
-}
-
-function scrollChatToBottom(){
-  const box=document.getElementById('chatMessages');
-  if(box)box.scrollTop=box.scrollHeight;
-}
-
-function renderFamilyChat(){
-  const box=document.getElementById('chatMessages');
-  if(!box)return;
-  const myAuthor=(localStorage.getItem('cloud_chat_author')||'').trim().toLowerCase();
-
-  if(!familyChatMessages.length){
-    box.innerHTML='<div class="chat-empty">Aucun message pour le moment.<br>Écrivez le premier message familial.</div>';
-    return;
-  }
-
-  box.innerHTML=familyChatMessages.map(message=>{
-    const author=String(message.author||'Famille').trim();
-    const mine=myAuthor && author.toLowerCase()===myAuthor;
-    return `<div class="chat-row ${mine?'mine':''}">
-      <div class="chat-bubble">
-        <div class="chat-author">${escapeChatHtml(author)}</div>
-        <div class="chat-text">${escapeChatHtml(message.text||'')}</div>
-        <div class="chat-time">${formatChatTime(message)}</div>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function updateChatUnread(){
-  const badge=document.getElementById('chatUnread');
-  if(!badge)return;
-  const section=document.getElementById('chat');
-  const chatOpen=section && !section.classList.contains('hidden');
-  const unread=chatOpen?0:familyChatMessages.filter(m=>chatDateValue(m)>familyChatLastRead).length;
-  badge.textContent=unread>99?'99+':String(unread);
-  badge.classList.toggle('visible',unread>0);
-}
-
-function markChatRead(){
-  const latest=familyChatMessages.reduce((max,m)=>Math.max(max,chatDateValue(m)),Date.now());
-  familyChatLastRead=latest;
-  localStorage.setItem('cloud_chat_last_read',String(latest));
-  updateChatUnread();
-}
-
-function setFamilyChatMessages(messages){
-  const wasNearBottom=(()=>{
-    const box=document.getElementById('chatMessages');
-    return !box || box.scrollHeight-box.scrollTop-box.clientHeight<90;
-  })();
-  familyChatMessages=Array.isArray(messages)?messages:[];
-  renderFamilyChat();
-  updateChatUnread();
-  const section=document.getElementById('chat');
-  if(section && !section.classList.contains('hidden')){
-    markChatRead();
-    if(wasNearBottom)setTimeout(scrollChatToBottom,30);
-  }
-}
-
-function setChatConnectionState(connected,text){
-  const dot=document.getElementById('chatStatusDot');
-  const label=document.getElementById('chatStatusText');
-  if(dot)dot.classList.toggle('ok',!!connected);
-  if(label)label.textContent=text||'';
-  const send=document.getElementById('chatSendButton');
-  if(send)send.disabled=!connected;
-}
-
-function saveChatAuthor(){
-  const input=document.getElementById('chatAuthor');
-  const name=(input?.value||'').trim().slice(0,30);
-  const info=document.getElementById('chatMessageInfo');
-  if(!name){
-    if(info){info.textContent='Indiquez un prénom avant d’envoyer.';info.style.color='#fca5a5';}
-    return false;
-  }
-  localStorage.setItem('cloud_chat_author',name);
-  if(info){info.textContent='Prénom enregistré sur ce téléphone.';info.style.color='#94a3b8';}
-  renderFamilyChat();
-  return true;
-}
-
-function sendFamilyChatMessage(){
-  const authorInput=document.getElementById('chatAuthor');
-  const textInput=document.getElementById('chatInput');
-  const info=document.getElementById('chatMessageInfo');
-  const author=(authorInput?.value||'').trim().slice(0,30);
-  const text=(textInput?.value||'').trim().slice(0,600);
-
-  if(!author){
-    if(info){info.textContent='Indiquez votre prénom.';info.style.color='#fca5a5';}
-    authorInput?.focus();
-    return;
-  }
-  if(!text){
-    if(info){info.textContent='Écrivez un message.';info.style.color='#fca5a5';}
-    textInput?.focus();
-    return;
-  }
-
-  localStorage.setItem('cloud_chat_author',author);
-  if(info){info.textContent='Envoi…';info.style.color='#94a3b8';}
-  const button=document.getElementById('chatSendButton');
-  if(button)button.disabled=true;
-
-  if(window.firebaseSendFamilyChat){
-    Promise.resolve(window.firebaseSendFamilyChat(author,text))
-      .then(()=>{
-        if(textInput)textInput.value='';
-        if(info){info.textContent='Message envoyé.';info.style.color='#94a3b8';}
-        setTimeout(scrollChatToBottom,80);
-      })
-      .catch(error=>{
-        if(info){info.textContent='Envoi impossible : '+(error?.message||error);info.style.color='#fca5a5';}
-      })
-      .finally(()=>{if(button)button.disabled=false;});
-  }else{
-    if(info){info.textContent='Firebase est encore en cours de chargement.';info.style.color='#fbbf24';}
-    if(button)button.disabled=false;
-  }
-}
-
-document.addEventListener('DOMContentLoaded',()=>{
-  const author=document.getElementById('chatAuthor');
-  if(author)author.value=localStorage.getItem('cloud_chat_author')||'';
-  const input=document.getElementById('chatInput');
-  if(input)input.addEventListener('keydown',event=>{
-    if(event.key==='Enter' && !event.shiftKey){
-      event.preventDefault();
-      sendFamilyChatMessage();
-    }
-  });
-});
 
 
 function openCloudPanel(){
@@ -2601,24 +1709,17 @@ function exportData(){const data={};for(let i=0;i<localStorage.length;i++){const
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const data=JSON.parse(r.result);Object.entries(data).forEach(([k,v])=>localStorage.setItem(k,v));location.reload()};r.readAsText(f)}
 
 function cleanupLegacySnapshotsAtStartup(){
-  // V15.21 : ne supprime plus les anciens snapshots.
-  // Certains anciens snapshots peuvent contenir des valeurs encore récupérables.
   try{
+    const keys=[];
     for(let i=0;i<localStorage.length;i++){
       const k=localStorage.key(i);
-      if(!k || !k.startsWith('basket_gabin_state_v') || k===STATE_KEY)continue;
-      try{
-        const legacy=JSON.parse(localStorage.getItem(k)||'null');
-        if(!legacy || !legacy.values)continue;
-        Object.entries(legacy.values).forEach(([field,value])=>{
-          if(isAppStorageKey(field) && localStorage.getItem(field)===null){
-            applyAppValue(field,value,Number(legacy.updated?.[field]||1));
-          }
-        });
-      }catch(_){}
+      if(!k)continue;
+      if(k.startsWith('basket_gabin_state_v') && k!==STATE_KEY)keys.push(k);
+      if(k.startsWith('basket_gabin_field_clock_') && k!==FIELD_CLOCK_KEY)keys.push(k);
     }
+    keys.forEach(k=>localStorage.removeItem(k));
   }catch(e){
-    console.warn('Récupération snapshot historique ignorée',e);
+    console.warn('Nettoyage local ignoré',e);
   }
 }
 
@@ -2678,9 +1779,6 @@ let cloudTimer = null;
 let applyingRemote = false;
 let firstSnapshot = true;
 let lastCloudSavedAt = null;
-let unsubscribeFamilyChat = null;
-let familyChatStartedUid = null;
-
 
 function cloudDocRef(uid){
   return doc(db, "users", uid, "apps", "basket-gabin");
@@ -2688,11 +1786,6 @@ function cloudDocRef(uid){
 function cloudBackupRef(uid){
   return doc(db, "users", uid, "apps", "basket-gabin-backup");
 }
-function familyChatDocRef(uid){
-  // Separate document: manual app backups cannot overwrite the chat.
-  return doc(db, "users", uid, "apps", "basket-gabin-family-chat");
-}
-
 function setCloudUI(state, text){
   const dot=document.getElementById('cloudDot');
   const label=document.getElementById('cloudLabel');
@@ -2822,30 +1915,37 @@ function clearLocalAppDataForCloudRestore(){
 function storeCloudStateLocally(state){
   if(!state || !state.values)throw new Error('Sauvegarde Cloud invalide.');
 
-  // V15.21 : fusion non destructive.
-  // Les champs locaux ne sont plus supprimés avant une récupération Cloud.
-  const merged=mergeStates(collectState(),state);
+  // The Cloud has already been fetched successfully.
+  // Clear only Basket Gabin data, never Firebase authentication data.
+  clearLocalAppDataForCloudRestore();
+
   let stored=0;
-
-  for(const [k,v] of Object.entries(merged.values||{})){
-    if(!isAppStorageKey(k))continue;
-    applyAppValue(k,v,Number(merged.updated?.[k]||1));
-    stored++;
-  }
-
-  suppressFieldClock=true;
   try{
+    for(const [k,v] of Object.entries(state.values||{})){
+      if(!isAppStorageKey(k))continue;
+      localStorage.setItem(k,String(v));
+      stored++;
+    }
+
+    // Do not duplicate the full state in localStorage.
     localStorage.setItem(
       STATE_KEY,
-      JSON.stringify({version:'15.3',savedAt:merged.savedAt||new Date().toISOString()})
+      JSON.stringify({version:'15.3',savedAt:state.savedAt||new Date().toISOString()})
     );
     localStorage.setItem(
       'basket_gabin_last_local_save',
-      merged.savedAt||new Date().toISOString()
+      state.savedAt||new Date().toISOString()
     );
-  }finally{suppressFieldClock=false;}
-
-  return stored;
+    localStorage.setItem(FIELD_CLOCK_KEY,'{}');
+    return stored;
+  }catch(e){
+    removeRedundantLocalCopies();
+    throw new Error(
+      e && e.name==='QuotaExceededError'
+        ? 'Mémoire du téléphone insuffisante même après nettoyage.'
+        : (e.message||String(e))
+    );
+  }
 }
 
 function refreshAfterCloudLoad(){
@@ -2917,7 +2017,7 @@ window.firebaseUploadNow=async()=>{
 
 window.firebaseDownloadNow=async()=>{
   if(!currentUser)return;
-  if(!confirm('Récupérer la sauvegarde Cloud ? Les données seront fusionnées sans supprimer les données déjà présentes sur ce téléphone.'))return;
+  if(!confirm('Récupérer la sauvegarde Cloud sur ce téléphone ? Les données Basket Gabin présentes sur ce téléphone seront remplacées.'))return;
 
   try{
     setCloudUI('sync','Téléchargement de la sauvegarde…');
@@ -2955,7 +2055,6 @@ window.firebaseDownloadNow=async()=>{
   }
 };
 
-
 window.firebaseRestoreBackup=async()=>{
   if(!currentUser)return;
   if(!confirm('Restaurer la sauvegarde cloud précédente sur ce téléphone ?'))return;
@@ -2968,18 +2067,12 @@ window.firebaseRestoreBackup=async()=>{
     const state=snap.data().state;
     applyingRemote=true;
     try{
-      // V15.21 : restauration précédente = fusion, jamais effacement.
-      const merged=mergeStates(collectState(),state);
-      Object.entries(merged.values||{}).forEach(([k,v])=>{
-        if(isAppStorageKey(k))applyAppValue(k,v,Number(merged.updated?.[k]||1));
+      Object.entries(state.values||{}).forEach(([k,v])=>{
+        if(isAppStorageKey(k))applyAppValue(k,v,Number(state.updated?.[k]||1));
       });
       suppressFieldClock=true;
-      try{
-        localStorage.setItem(STATE_KEY,JSON.stringify({
-          version:'15.3',
-          savedAt:merged.savedAt||new Date().toISOString()
-        }));
-      }finally{suppressFieldClock=false;}
+      try{localStorage.setItem(STATE_KEY,JSON.stringify(state));}
+      finally{suppressFieldClock=false;}
     }finally{
       applyingRemote=false;
     }
@@ -3002,87 +2095,6 @@ restoreSnapshot(); render(); renderDays(); loadTests();
   }catch(e){
     cloudMessage('Restauration impossible : '+e.message,true);
   }
-};
-
-
-
-function normaliseFamilyChatMessages(messages){
-  return (Array.isArray(messages)?messages:[])
-    .filter(m=>m && typeof m.text==='string' && m.text.trim())
-    .map(m=>({
-      id:String(m.id||''),
-      author:String(m.author||'Famille').slice(0,30),
-      text:String(m.text||'').slice(0,600),
-      clientCreatedAt:Number(m.clientCreatedAt||0),
-      createdAt:m.createdAt||null
-    }))
-    .sort((a,b)=>{
-      const ta=Number(a.createdAt?.seconds||0)*1000||a.clientCreatedAt;
-      const tb=Number(b.createdAt?.seconds||0)*1000||b.clientCreatedAt;
-      return ta-tb;
-    })
-    .slice(-150);
-}
-
-function stopFamilyChat(){
-  if(unsubscribeFamilyChat){
-    unsubscribeFamilyChat();
-    unsubscribeFamilyChat=null;
-  }
-  familyChatStartedUid=null;
-  window.setChatConnectionState?.(false,'Chat non connecté');
-}
-
-function startFamilyChat(uid){
-  if(!uid)return;
-  if(familyChatStartedUid===uid && unsubscribeFamilyChat)return;
-  stopFamilyChat();
-  familyChatStartedUid=uid;
-  window.setChatConnectionState?.(true,'Chat familial connecté');
-
-  unsubscribeFamilyChat=onSnapshot(
-    familyChatDocRef(uid),
-    snapshot=>{
-      const messages=normaliseFamilyChatMessages(snapshot.exists()?snapshot.data()?.messages:[]);
-      window.setFamilyChatMessages?.(messages);
-      window.setChatConnectionState?.(true,'Chat familial connecté');
-    },
-    error=>{
-      console.error('Family chat listener',error);
-      window.setChatConnectionState?.(false,'Chat indisponible');
-    }
-  );
-}
-
-window.firebaseStartFamilyChat=()=>{
-  if(currentUser)startFamilyChat(currentUser.uid);
-  else window.setChatConnectionState?.(false,'Connectez le compte familial pour utiliser le chat.');
-};
-
-window.firebaseSendFamilyChat=async(author,text)=>{
-  if(!currentUser)throw new Error('Compte familial non connecté.');
-  const cleanAuthor=String(author||'').trim().slice(0,30);
-  const cleanText=String(text||'').trim().slice(0,600);
-  if(!cleanAuthor)throw new Error('Prénom manquant.');
-  if(!cleanText)throw new Error('Message vide.');
-
-  const ref=familyChatDocRef(currentUser.uid);
-  const snapshot=await getDoc(ref);
-  const current=normaliseFamilyChatMessages(snapshot.exists()?snapshot.data()?.messages:[]);
-  const now=Date.now();
-  current.push({
-    id:currentUser.uid.slice(0,8)+'-'+now+'-'+Math.random().toString(36).slice(2,7),
-    author:cleanAuthor,
-    text:cleanText,
-    clientCreatedAt:now
-  });
-
-  await setDoc(ref,{
-    ownerUid:currentUser.uid,
-    ownerEmail:currentUser.email||'',
-    updatedAt:serverTimestamp(),
-    messages:current.slice(-150)
-  },{merge:false});
 };
 
 
@@ -3125,7 +2137,6 @@ window.firebaseFamilyCreate=async function(){
 };
 window.firebaseFamilyLogout=async function(){
   if(unsubscribeCloud){unsubscribeCloud();unsubscribeCloud=null}
-  stopFamilyChat();
   await signOut(auth);
   cloudMessage('Déconnecté.');
 };
@@ -3135,7 +2146,6 @@ onAuthStateChanged(auth,async user=>{
   if(user){
     setCloudUI('sync','Connexion cloud…');
     showAccountState();
-    startFamilyChat(user.uid);
     try{
       await startCloud(user.uid);
       setCloudUI('ok','Cloud synchronisé');
@@ -3145,8 +2155,6 @@ onAuthStateChanged(auth,async user=>{
       );
     }
   }else{
-    stopFamilyChat();
-    window.setFamilyChatMessages?.([]);
     setCloudUI('','Cloud non connecté');
     showAccountState();
   }
