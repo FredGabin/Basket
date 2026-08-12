@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V16</title>
+<title>Basket Elite Gabin V16.2</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -131,10 +131,8 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 
 .library-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;margin:10px 0}.library-tabs button{white-space:nowrap;flex:0 0 auto}
 .library-grid{display:grid;grid-template-columns:1fr;gap:10px}.library-card{background:#101827;border:1px solid #29364c;border-radius:16px;padding:13px}.library-card h3{margin:0 0 7px}.library-meta{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}.library-visual{width:100%;border-radius:13px;border:1px solid #334155;background:#050a13;display:block;cursor:zoom-in}.library-list{margin:7px 0 0;padding-left:20px}.library-list li{margin:5px 0}.coach-points{border-left:4px solid #38bdf8;background:#08101d;border-radius:10px;padding:10px;margin-top:10px}.coach-points b{color:#f59e0b}.lib-exercise-grid{display:grid;grid-template-columns:1fr;gap:9px}.lib-exercise{background:#08101d;border:1px solid #334155;border-radius:13px;padding:11px}.lib-exercise .name{font-weight:900;color:#f8fafc}.lib-exercise .dose{color:#f59e0b;font-weight:800;font-size:.84rem;margin:3px 0}.lib-exercise .why{color:#cbd5e1;font-size:.88rem}.lib-exercise .cue{font-size:.82rem;color:#94a3b8;margin-top:6px}.safety-note{background:#2a1608;border:1px solid #92400e;border-left:4px solid #f59e0b;border-radius:11px;padding:10px;margin:10px 0}.lib-image-modal{position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:500;padding:12px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}.lib-image-modal img{max-width:1500px;width:100%;height:auto;border-radius:12px;margin-top:44px}.lib-image-close{position:fixed;right:15px;top:15px;z-index:501;background:#ef4444;color:#fff;font-size:1.05rem}
-
-.defense-steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}.def-step{background:#08101d;border:1px solid #334155;border-radius:12px;padding:8px}.def-step .step-title{font-weight:900;color:#f59e0b;font-size:.82rem;margin-bottom:5px}.def-diagram{position:relative;height:145px;border-radius:10px;background:linear-gradient(90deg,transparent 49.5%,#334155 50%,transparent 50.5%),linear-gradient(#102033,#102033);border:1px solid #475569;overflow:hidden}.def-diagram:after{content:'';position:absolute;left:50%;bottom:-25px;width:90px;height:65px;transform:translateX(-50%);border:2px solid #64748b;border-radius:50%}.pA,.pD,.gate,.ball,.hoop{position:absolute;z-index:2}.pA,.pD{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:1000;color:white;border:2px solid white}.pA{background:#2563eb}.pD{background:#ef4444}.gate{width:7px;height:28px;background:#f59e0b;border-radius:3px}.ball{width:12px;height:12px;border-radius:50%;background:#f97316;border:1px solid #fed7aa}.hoop{left:50%;bottom:5px;transform:translateX(-50%);width:38px;height:8px;border:3px solid #f97316;border-radius:50%}.arr{position:absolute;height:3px;background:#38bdf8;transform-origin:left center;z-index:1}.arr:after{content:'';position:absolute;right:-1px;top:-4px;border-left:9px solid #38bdf8;border-top:5px solid transparent;border-bottom:5px solid transparent}.arr.red{background:#fb7185}.arr.red:after{border-left-color:#fb7185}.def-legend{font-size:.78rem;color:#cbd5e1;margin-top:5px}.def-legend b{color:white}
-@media(max-width:520px){.defense-steps{grid-template-columns:1fr}.def-diagram{height:135px}}
 @media(min-width:760px){.library-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.lib-exercise-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.library-card.wide{grid-column:1/-1}}
+.library-link{margin-top:8px;width:auto;padding:7px 10px;font-size:.82rem;background:#172236;border-color:#475569}.library-link:hover{border-color:#f59e0b}.library-highlight{outline:3px solid #f59e0b;outline-offset:2px;transition:outline .2s}
 
 </style>
 </head>
@@ -179,7 +177,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <div><div class="small">Jours avant le stage</div><div class="score" id="countdown">—</div></div>
 <div><div class="small">Progression du camp</div><div class="score" id="globalProgress">0 %</div></div>
 </div>
-<div class="progress" style="margin-top:12px"><div class="bar" id="globalBar"></div></div>
+<div class="progress" style="margin-top:12px"><div class="bar" id="globalBar"></div></div><div id="globalProgressDetail" class="small" style="margin-top:6px"></div>
 </div>
 
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
@@ -218,21 +216,21 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
   <div class="library-tabs">
     <button class="active" data-libfilter="all" onclick="filterLibrary('all',this)">Tout</button>
     <button data-libfilter="exercise" onclick="filterLibrary('exercise',this)">🏀 Exercices</button>
+    <button data-libfilter="defense" onclick="filterLibrary('defense',this)">🛡️ Défense</button>
     <button data-libfilter="dribble" onclick="filterLibrary('dribble',this)">✋ Dribble</button>
     <button data-libfilter="shoot" onclick="filterLibrary('shoot',this)">🎯 Tir</button>
-    <button data-libfilter="defense" onclick="filterLibrary('defense',this)">🛡️ Défense</button>
     <button data-libfilter="physical" onclick="filterLibrary('physical',this)">⚡ Physique</button>
   </div>
 
   <div class="library-grid">
-    <article class="library-card wide" data-libcat="exercise">
+    <article id="lib-coast" class="library-card wide" data-libcat="exercise">
       <h3>🏀 Coast-to-Coast — 3 défis</h3>
       <div class="library-meta"><span class="tag">Terrain entier</span><span class="tag">Intensif</span><span class="tag">Rebond obligatoire</span></div>
       <img class="library-visual" src="coast-to-coast.png" alt="Fiche Coast-to-Coast" onclick="openLibraryImage('coast-to-coast.png','Coast-to-Coast')">
       <div class="coach-points"><b>Référence :</b> 10 paniers à 2 pts • 10 paniers à 3 pts • 10 paniers variés. Rebond personnel après chaque tentative, sortie immédiate et qualité technique maintenue malgré la fatigue.</div>
     </article>
 
-    <article class="library-card" data-libcat="dribble">
+    <article id="lib-dribble" class="library-card" data-libcat="dribble">
       <h3>✋ Référentiel dribbles</h3>
       <img class="library-visual" src="dribbles.png" alt="Fiche technique dribbles" onclick="openLibraryImage('dribbles.png','Dribbles')">
       <div class="coach-points"><b>Points coach :</b>
@@ -247,7 +245,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       </div>
     </article>
 
-    <article class="library-card" data-libcat="shoot">
+    <article id="lib-shoot" class="library-card" data-libcat="shoot">
       <h3>🎯 Référentiel tirs</h3>
       <img class="library-visual" src="tirs.png" alt="Fiche technique tirs" onclick="openLibraryImage('tirs.png','Tirs')">
       <div class="coach-points"><b>Points coach :</b>
@@ -263,40 +261,25 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
     </article>
 
 
-    <article class="library-card wide" data-libcat="defense">
-      <h3>🛡️ Défense — 3 jeux intensifs complémentaires</h3>
-      <div class="library-meta"><span class="tag">A = papa / attaquant</span><span class="tag">D = joueur / défenseur</span><span class="tag">Actions courtes</span></div>
-      <div class="coach-points"><b>Principe :</b> D gagne la possession par ses appuis, son angle et son deuxième effort. A crée l'incertitude sans avoir besoin de courir longtemps.</div>
-
-      <h3 style="margin-top:16px">1. 🚪 Jeu des portes — gagner l’angle</h3>
-      <div class="defense-steps">
-        <div class="def-step"><div class="step-title">① DÉPART</div><div class="def-diagram"><span class="pD" style="left:calc(50% - 14px);top:67px">D</span><span class="pA" style="left:calc(50% - 14px);top:18px">A</span><span class="ball" style="left:calc(50% + 17px);top:26px"></span><span class="gate" style="left:16%;bottom:16px"></span><span class="gate" style="left:30%;bottom:16px"></span><span class="gate" style="right:30%;bottom:16px"></span><span class="gate" style="right:16%;bottom:16px"></span></div><div class="def-legend">A à <b>3 m</b> de D. Deux portes de <b>2 m</b>, espacées d’environ <b>4 m</b>.</div></div>
-        <div class="def-step"><div class="step-title">② ACTION</div><div class="def-diagram"><span class="pD" style="left:45%;top:72px">D</span><span class="pA" style="left:57%;top:40px">A</span><span class="ball" style="left:68%;top:48px"></span><span class="gate" style="left:16%;bottom:16px"></span><span class="gate" style="left:30%;bottom:16px"></span><span class="gate" style="right:30%;bottom:16px"></span><span class="gate" style="right:16%;bottom:16px"></span><span class="arr" style="left:52%;top:55px;width:75px;transform:rotate(37deg)"></span><span class="arr red" style="left:50%;top:87px;width:55px;transform:rotate(12deg)"></span></div><div class="def-legend">A choisit une porte. D <b>slide</b>, poitrine devant, sans croiser les pieds.</div></div>
-        <div class="def-step"><div class="step-title">③ A GAGNE</div><div class="def-diagram"><span class="pA" style="right:18%;bottom:8px">A</span><span class="ball" style="right:12%;bottom:17px"></span><span class="pD" style="left:47%;bottom:42px">D</span><span class="gate" style="right:30%;bottom:16px"></span><span class="gate" style="right:16%;bottom:16px"></span></div><div class="def-legend">A franchit la porte <b>en contrôle</b> avec avantage.</div></div>
-        <div class="def-step"><div class="step-title">④ D GAGNE</div><div class="def-diagram"><span class="pD" style="right:29%;bottom:35px">D</span><span class="pA" style="right:42%;bottom:68px">A</span><span class="ball" style="right:38%;bottom:74px"></span><span class="gate" style="right:30%;bottom:16px"></span><span class="gate" style="right:16%;bottom:16px"></span></div><div class="def-legend">D force <b>stop, recul ou changement net</b> avant la porte.</div></div>
+    <article id="lib-defense" class="library-card wide" data-libcat="defense">
+      <h3>🛡️ Défense — 3 jeux de référence</h3>
+      <div class="library-meta">
+        <span class="tag">À 2</span><span class="tag">U15 Élite</span>
+        <span class="tag">Lecture + appuis + rebond</span>
       </div>
-      <div class="coach-points"><b>Dose :</b> 2 × 6 possessions • 20–30 s de récupération. <b>Coach :</b> premier pas latéral, nez/poitrine devant, petits appuis rapides, ne pas ouvrir les hanches trop tôt.</div>
-
-      <h3 style="margin-top:18px">2. 🏀 Close-out → drive → recul → tir → rebond</h3>
-      <div class="defense-steps">
-        <div class="def-step"><div class="step-title">① DÉPART</div><div class="def-diagram"><span class="hoop"></span><span class="pD" style="left:calc(50% - 14px);bottom:25px">D</span><span class="pA" style="left:calc(50% - 14px);top:16px">A</span><span class="ball" style="left:calc(50% + 17px);top:24px"></span></div><div class="def-legend">D sous le panier. A à <b>4–5 m</b> avec ballon.</div></div>
-        <div class="def-step"><div class="step-title">② CLOSE-OUT + DRIVE</div><div class="def-diagram"><span class="hoop"></span><span class="pD" style="left:47%;top:65px">D</span><span class="pA" style="left:65%;top:48px">A</span><span class="ball" style="left:75%;top:57px"></span><span class="arr red" style="left:50%;bottom:45px;width:65px;transform:rotate(-67deg)"></span><span class="arr" style="left:59%;top:52px;width:65px;transform:rotate(25deg)"></span></div><div class="def-legend">D sprint puis <b>freine</b>. A attaque droite/gauche ; D contient.</div></div>
-        <div class="def-step"><div class="step-title">③ DRIVE FERMÉ → RECUL + TIR</div><div class="def-diagram"><span class="hoop"></span><span class="pD" style="left:54%;top:68px">D</span><span class="pA" style="left:68%;top:31px">A</span><span class="ball" style="left:78%;top:40px"></span><span class="arr" style="left:70%;top:62px;width:48px;transform:rotate(-76deg)"></span><span class="arr red" style="left:58%;top:72px;width:55px;transform:rotate(-50deg)"></span></div><div class="def-legend">Si D ferme : A fait un <b>vrai dribble de recul au sol</b>, puis tire. D repart contester.</div></div>
-        <div class="def-step"><div class="step-title">④ FIN = REBOND</div><div class="def-diagram"><span class="hoop"></span><span class="pD" style="left:45%;bottom:31px">D</span><span class="pA" style="left:57%;bottom:42px">A</span><span class="ball" style="left:51%;bottom:17px"></span></div><div class="def-legend"><b>D ne gagne que s’il termine avec le ballon.</b> Stop sans rebond = possession non gagnée.</div></div>
+      <img class="library-visual" src="defense.png" alt="Fiche illustrée défense"
+           onclick="openLibraryImage('defense.png','Défense — 3 jeux')">
+      <div class="coach-points"><b>Les 3 références :</b>
+        <ul class="library-list">
+          <li><b>Jeu des portes :</b> gagner l’angle, rester poitrine devant, déplacement latéral et contrôle du drive.</li>
+          <li><b>Close-out → drive → recul → tir → rebond :</b> sprint-freinage, contenir, deuxième effort, contest puis box-out. D ne gagne que s’il termine avec le ballon.</li>
+          <li><b>Sauve le panier — départ assis :</b> relever explosif, récupérer l’angle en retard, freiner puis défendre jusqu’à la récupération du ballon.</li>
+        </ul>
+        <b>Convention des schémas :</b> A = papa / attaquant ; D = joueur / défenseur. Lire chaque exercice : départ → action → victoire A → victoire D.
       </div>
-      <div class="coach-points"><b>Dose :</b> 2 × 5–6 possessions. <b>Coach :</b> close-out sous contrôle, main haute sans sauter sur la feinte, slide sur le drive, contest puis contact/box-out immédiat.</div>
-
-      <h3 style="margin-top:18px">3. 🪑 Sauve le panier — départ assis</h3>
-      <div class="defense-steps">
-        <div class="def-step"><div class="step-title">① DÉPART</div><div class="def-diagram"><span class="hoop"></span><span class="pD" style="left:calc(50% - 14px);top:62px">D</span><span class="pA" style="left:15%;top:27px">A</span><span class="ball" style="left:24%;top:36px"></span></div><div class="def-legend">D <b>assis vers la ligne des LF</b>. A sur l’aile, environ <b>5 m</b> de D.</div></div>
-        <div class="def-step"><div class="step-title">② GO — RÉCUPÉRER L’ANGLE</div><div class="def-diagram"><span class="hoop"></span><span class="pD" style="left:43%;top:73px">D</span><span class="pA" style="left:28%;top:55px">A</span><span class="ball" style="left:25%;top:66px"></span><span class="arr" style="left:27%;top:62px;width:85px;transform:rotate(33deg)"></span><span class="arr red" style="left:50%;top:75px;width:55px;transform:rotate(150deg)"></span></div><div class="def-legend">Au GO : D se relève, <b>sprint puis freine</b> pour revenir entre A et le cercle.</div></div>
-        <div class="def-step"><div class="step-title">③ A GAGNE</div><div class="def-diagram"><span class="hoop"></span><span class="pA" style="left:48%;bottom:27px">A</span><span class="ball" style="left:55%;bottom:15px"></span><span class="pD" style="left:31%;bottom:45px">D</span></div><div class="def-legend">A obtient un <b>accès clair au cercle</b> ou marque avant que D ne contienne.</div></div>
-        <div class="def-step"><div class="step-title">④ D GAGNE</div><div class="def-diagram"><span class="hoop"></span><span class="pD" style="left:43%;bottom:42px">D</span><span class="pA" style="left:31%;bottom:65px">A</span><span class="ball" style="left:28%;bottom:76px"></span></div><div class="def-legend">D récupère la poitrine devant, stoppe l’action puis <b>termine avec le ballon/rebond</b>.</div></div>
-      </div>
-      <div class="coach-points"><b>Dose :</b> 2 variantes de départ × 5 possessions. Variantes : assis face, dos au panier, un genou au sol. <b>Pas de départ ventre au sol si la qualité de relevé se dégrade.</b></div>
     </article>
 
-    <article class="library-card wide" data-libcat="physical">
+    <article id="lib-physical" class="library-card wide" data-libcat="physical">
       <h3>⚡ Banque physique — appuis, accélération & explosivité</h3>
       <div class="safety-note"><b>U15 :</b> priorité à la vitesse d’exécution, aux réceptions propres et à la qualité. Pas de recherche de charge maximale ni de hauteur maximale. Escaliers : descente toujours en marchant.</div>
 
@@ -600,7 +583,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V16</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V16.2</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -786,6 +769,36 @@ function closeLibraryImage(){
  if(modal)modal.classList.add('hidden'); if(img)img.src=''; document.body.style.overflow='';
 }
 
+
+function libraryRefForExercise(name,detail,p){
+ const txt=((name||'')+' '+(detail||'')).toLowerCase()
+   .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+ // Musculation / endurance : saisie libre, volontairement sans fiche imposée.
+ if(/muscu|developpe|rowing|traction|farmer|force fonctionnelle|step-up|pont fessier/.test(txt))return null;
+ if(/endurance|course aerobie|fractionne|course facile|course moderee/.test(txt))return null;
+ if(/coast.?to.?coast|parcours coast/.test(txt))return {id:'lib-coast',cat:'exercise',label:'Coast-to-Coast'};
+ if(/defen|close.?out|pas chass|lateral|t-drill|5-10-5/.test(txt))return {id:'lib-defense',cat:'defense',label:'Défense'};
+ if(/dribble|handle|cross|between|behind|in.?out|hesitation|combo/.test(txt))return {id:'lib-dribble',cat:'dribble',label:'Dribbles'};
+ if(/tir|shoot|catch|pull-up|lancer|floater|flotteur|mecanique|3 points|3 pts|finition|lay-up|reverse|eurostep/.test(txt))return {id:'lib-shoot',cat:'shoot',label:'Tirs / finitions'};
+ if(/echelle|jump box|saut|pliometr|acceleration|sprint|reaction|coordination|escalier|pneu|appui/.test(txt))return {id:'lib-physical',cat:'physical',label:'Physique'};
+ return null;
+}
+function openLibraryRef(id,cat){
+ show('library');
+ const btn=document.querySelector(`[data-libfilter="${cat}"]`);
+ if(btn)filterLibrary(cat,btn);
+ setTimeout(()=>{
+   const card=document.getElementById(id);if(!card)return;
+   card.scrollIntoView({behavior:'smooth',block:'start'});
+   card.classList.add('library-highlight');
+   setTimeout(()=>card.classList.remove('library-highlight'),1800);
+ },60);
+}
+function libraryButtonForExercise(name,detail,p){
+ const ref=libraryRefForExercise(name,detail,p);if(!ref)return '';
+ return `<button type="button" class="library-link" onclick="openLibraryRef('${ref.id}','${ref.cat}')">📚 Voir fiche ${ref.label}</button>`;
+}
+
 function showTrainingTab(tab){
  document.getElementById('summerTraining').classList.toggle('hidden',tab!=='summer');
  document.getElementById('seasonTraining').classList.toggle('hidden',tab!=='season');
@@ -878,6 +891,11 @@ function count(i){
  let done=0;
  const basket=Array.isArray(d.basket)?d.basket:[];
  const physical=Array.isArray(d.physical)?d.physical:[];
+ const total=basket.length+physical.length+2;
+
+ // Une journée validée signifie "journée terminée" : elle ne doit jamais
+ // redescendre dans la progression si un ancien téléphone a perdu un checkbox.
+ if(isDayValidated(i))return [total,total];
 
  basket.forEach((_,j)=>{
    if(localStorage.getItem(key(i,'b',j))==='1')done++;
@@ -890,13 +908,13 @@ function count(i){
  if(localStorage.getItem('freeStretch'+i)==='1')done++;
  if(localStorage.getItem('freeAbs'+i)==='1')done++;
 
- return [done,basket.length+physical.length+2];
+ return [done,total];
 }
 
 function globalCount(){let d=0,t=0;days.forEach((_,i)=>{const c=count(i);d+=c[0];t+=c[1]});return[d,t]}
 
 function section(title,arr,p){
- return `<div class="card"><h2>${title}</h2>${arr.map((x,j)=>`<div class="exercise"><label class="check"><input type="checkbox" ${localStorage.getItem(key(idx,p,j))==='1'?'checked':''} onchange="toggle('${p}',${j},this.checked)"><span><b>${x[0]}</b> <span class="tag">${x[1]}</span><br><span class="small">${x[2]}</span></span></label></div>`).join('')}</div>`
+ return `<div class="card"><h2>${title}</h2>${arr.map((x,j)=>`<div class="exercise"><label class="check"><input type="checkbox" ${localStorage.getItem(key(idx,p,j))==='1'?'checked':''} onchange="toggle('${p}',${j},this.checked)"><span><b>${x[0]}</b> <span class="tag">${x[1]}</span><br><span class="small">${x[2]}</span></span></label>${libraryButtonForExercise(x[0],x[2],p)}</div>`).join('')}</div>`
 }
 
 
@@ -1013,7 +1031,7 @@ function render(){
  document.getElementById('mindset').textContent=d.mindset;
  document.getElementById('load').textContent='Charge : '+d.load;
  const c=count(idx);document.getElementById('bar').style.width=Math.round(c[0]/c[1]*100)+'%';document.getElementById('prog').textContent=`${c[0]} / ${c[1]} blocs terminés`;
- const gc=globalCount();const gp=Math.round(gc[0]/gc[1]*100);document.getElementById('globalProgress').textContent=gp+' %';document.getElementById('globalBar').style.width=gp+'%';
+ const gc=globalCount();const gp=Math.round(gc[0]/gc[1]*100);document.getElementById('globalProgress').textContent=gp+' %';document.getElementById('globalBar').style.width=gp+'%';const gpd=document.getElementById('globalProgressDetail');if(gpd)gpd.textContent=`${gc[0]} / ${gc[1]} blocs • journées validées comptées à 100 %`;
  const now=new Date();const target=new Date('2026-08-17T08:00:00');document.getElementById('countdown').textContent=Math.max(0,Math.ceil((target-now)/86400000))+' j';
 
  const scores=d.scoreDetails.map((g,gi)=>`<div class="card"><h3>${g.name}</h3>${g.items.map((it,ii)=>`<div class="exercise"><b>${it}</b><div class="grid2" style="margin-top:8px"><input id="made_${gi}_${ii}" type="number" placeholder="Réussis" value="${localStorage.getItem('v10made_'+idx+'_'+gi+'_'+ii)||''}" oninput="saveMadeField(${gi},${ii},this.value);updateTotals()"><input id="att_${gi}_${ii}" type="number" placeholder="Tentés" value="${localStorage.getItem('v10att_'+idx+'_'+gi+'_'+ii)||''}" oninput="saveAttField(${gi},${ii},this.value);updateTotals()"></div></div>`).join('')}</div>`).join('');
@@ -1088,7 +1106,7 @@ function render(){
 
 
 
-// V16: global vars intentionally used here: Firebase module callbacks on some Android WebViews
+// V15.24: global vars intentionally used here: Firebase module callbacks on some Android WebViews
 // could hit the global lexical TDZ with top-level const bindings.
 var STATE_KEY='basket_gabin_state_v153';
 
