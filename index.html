@@ -7,7 +7,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<title>Basket Elite Gabin V16.4</title>
+<title>Basket Elite Gabin V16.4.1</title>
 <style>
 :root{--bg:#050812;--panel:#101827;--panel2:#09111f;--line:#29364c;--txt:#f8fafc;--muted:#94a3b8;--gold:#f59e0b;--green:#22c55e;--blue:#38bdf8;--red:#ef4444}
 *{box-sizing:border-box} body{margin:0;background:linear-gradient(180deg,#03050a,#0f172a);color:var(--txt);font-family:Arial,system-ui,sans-serif;line-height:1.45}
@@ -177,7 +177,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
 <div><div class="small">Jours avant le stage</div><div class="score" id="countdown">—</div></div>
 <div><div class="small">Progression du camp</div><div class="score" id="globalProgress">0 %</div></div>
 </div>
-<div class="progress" style="margin-top:12px"><div class="bar" id="globalBar"></div></div><div id="globalProgressDetail" class="small" style="margin-top:6px"></div><div class="card" style="margin-top:12px;border-color:#22c55e"><b>✅ Préparation été clôturée</b><br><span class="small">Travail physique terminé après le 12 août. Du 13 au 16 août : récupération prescrite avant le stage. Une journée de repos respectée compte comme 100 %.</span></div>
+<div class="progress" style="margin-top:12px"><div class="bar" id="globalBar"></div></div><div id="globalProgressDetail" class="small" style="margin-top:6px"></div><div class="card" style="margin-top:12px;border-color:#22c55e"><b>✅ Préparation été clôturée</b><br><span class="small">Travail physique terminé après le 12 août. Du 13 au 16 août : récupération prescrite avant le stage. Préparation estivale : 100 %. Du 13 au 16 août, la récupération prescrite prépare le stage.</span></div>
 </div>
 
 <div class="hero" id="dailyQuoteCard"><div class="small">INSPIRATION DU JOUR</div><p class="quote" id="dailyQuote" style="font-size:1.08rem;margin-bottom:6px"></p><div class="small" id="dailyAuthor"></div></div>
@@ -583,7 +583,7 @@ canvas.performance-chart{width:100%;height:210px;background:#050a13;border-radiu
       <p class="small">Le mot de passe est géré par Firebase et n’est jamais enregistré dans le code de l’application.</p>
     </div>
     <div id="cloudSignedIn" class="hidden">
-      <div class="cloud-note"><b>V16.4</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
+      <div class="cloud-note"><b>V16.4.1</b><br>Sauvegarde locale automatique • Cloud uniquement par boutons.</div>
       <p><b>Compte connecté :</b><br><span id="cloudUserEmail"></span></p>
       <p id="cloudLastSync" class="small">Synchronisation en attente.</p>
       <div class="cloud-actions">
@@ -716,18 +716,7 @@ function cleanInvalidValidationMarkers(){
 cleanInvalidValidationMarkers();
 repairHistoricalValidation810();
 
-function applySummerPrepClosureV164(){
- const recoveryDates=new Set(['Jeudi 13 août','Vendredi 14 août','Samedi 15 août','Dimanche 16 août']);
- days.forEach((d,i)=>{
-   if(!recoveryDates.has(d.date))return;
-   if(localStorage.getItem('summerPrepRestV164_'+i)==='1')return;
-   setAppValue('journalSaved'+i,'1');
-   setAppValue('validatedAt'+i,new Date().toISOString());
-   setAppValue('summerPrepRestV164_'+i,'1');
- });
- try{localStorage.setItem('basket_gabin_summer_prep_closed_v164','1')}catch(_){}
-}
-applySummerPrepClosureV164();
+try{localStorage.setItem('basket_gabin_summer_prep_closed_v164','1')}catch(_){}
 
 let idx=currentProgramDayIndex();
 
@@ -1047,7 +1036,12 @@ function render(){
  document.getElementById('mindset').textContent=d.mindset;
  document.getElementById('load').textContent='Charge : '+d.load;
  const c=count(idx);document.getElementById('bar').style.width=Math.round(c[0]/c[1]*100)+'%';document.getElementById('prog').textContent=`${c[0]} / ${c[1]} blocs terminés`;
- const gc=globalCount();const gp=Math.round(gc[0]/gc[1]*100);document.getElementById('globalProgress').textContent=gp+' %';document.getElementById('globalBar').style.width=gp+'%';const gpd=document.getElementById('globalProgressDetail');if(gpd)gpd.textContent=`${gc[0]} / ${gc[1]} blocs • journées validées comptées à 100 %`;
+ const prepClosed=localStorage.getItem('basket_gabin_summer_prep_closed_v164')==='1';
+ const gc=globalCount();const gp=prepClosed?100:Math.round(gc[0]/gc[1]*100);
+ document.getElementById('globalProgress').textContent=gp+' %';
+ document.getElementById('globalBar').style.width=gp+'%';
+ const gpd=document.getElementById('globalProgressDetail');
+ if(gpd)gpd.textContent=prepClosed?'Préparation estivale terminée • objectif atteint à 100 %':`${gc[0]} / ${gc[1]} blocs • journées validées comptées à 100 %`;
  const now=new Date();const target=new Date('2026-08-17T08:00:00');document.getElementById('countdown').textContent=Math.max(0,Math.ceil((target-now)/86400000))+' j';
 
  const scores=d.scoreDetails.map((g,gi)=>`<div class="card"><h3>${g.name}</h3>${g.items.map((it,ii)=>`<div class="exercise"><b>${it}</b><div class="grid2" style="margin-top:8px"><input id="made_${gi}_${ii}" type="number" placeholder="Réussis" value="${localStorage.getItem('v10made_'+idx+'_'+gi+'_'+ii)||''}" oninput="saveMadeField(${gi},${ii},this.value);updateTotals()"><input id="att_${gi}_${ii}" type="number" placeholder="Tentés" value="${localStorage.getItem('v10att_'+idx+'_'+gi+'_'+ii)||''}" oninput="saveAttField(${gi},${ii},this.value);updateTotals()"></div></div>`).join('')}</div>`).join('');
